@@ -138,23 +138,23 @@ export function useRadioUpNext() {
           )
 
           for (const show of dayShows) {
-            const baseDate = new Date(now)
-            baseDate.setDate(now.getDate() + offset)
+  const baseDate = new Date(now)
+  baseDate.setDate(now.getDate() + offset)
 
-            const start = parseHHmm(show._start, baseDate, tz)
-            const end = parseHHmm(show._end, baseDate, tz)
+  const start = parseHHmm(show._start, baseDate)
+  const end = parseHHmm(show._end, baseDate)
 
-            // LIVE (today only)
-            if (offset === 0 && now >= start && now <= end) {
-              foundLive = show
-              break
-            }
+  // LIVE (today only)
+  if (offset === 0 && now >= start && now <= end) {
+    foundLive = show
+    break
+  }
 
-            // NEXT (today or future day)
-            if (!foundNext && start > now) {
-              foundNext = show
-            }
-          }
+  // NEXT (today or future day)
+  if (!foundNext && start > now) {
+    foundNext = show
+  }
+}
 
           if (foundLive) break
         }
