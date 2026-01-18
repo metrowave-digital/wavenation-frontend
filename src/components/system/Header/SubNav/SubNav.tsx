@@ -5,25 +5,43 @@ import { usePathname } from 'next/navigation'
 import { MAIN_NAV } from '../nav/nav.config'
 import styles from './SubNav.module.css'
 
+import type {
+  MegaMenuItem,
+  MegaMenuLink,
+} from '../MegaMenu/MegaMenu.types'
+
 /* ======================================================
-   Types (local safety, no config refactor needed)
+   Helpers
 ====================================================== */
 
-interface SubNavLink {
-  label: string
-  href: string
+function isLink(
+  item: MegaMenuLink
+): item is MegaMenuLink & { href: string } {
+  return typeof item.href === 'string'
 }
+
+/* ======================================================
+   Component
+====================================================== */
 
 export function SubNav() {
   const pathname = usePathname()
 
-  const active = MAIN_NAV.find(item =>
-    item.children?.some((child: SubNavLink) =>
-      pathname.startsWith(child.href)
-    )
+  // Find top-level section whose child link matches the path
+  const active = MAIN_NAV.find(
+    (item: MegaMenuItem) =>
+      item.children?.some(
+        (child: MegaMenuLink) =>
+          isLink(child) &&
+          pathname.startsWith(child.href)
+      )
   )
 
   if (!active?.children?.length) return null
+
+  const links = active.children.filter(isLink)
+
+  if (!links.length) return null
 
   return (
     <div
@@ -32,8 +50,9 @@ export function SubNav() {
       aria-label={`${active.label} sub navigation`}
     >
       <nav className={styles.nav}>
-        {active.children.map((link: SubNavLink) => {
-          const isActive = pathname.startsWith(link.href)
+        {links.map(link => {
+          const isActive =
+            pathname.startsWith(link.href)
 
           return (
             <Link
@@ -42,9 +61,13 @@ export function SubNav() {
               className={`${styles.link} ${
                 isActive ? styles.active : ''
               }`}
-              aria-current={isActive ? 'page' : undefined}
+              aria-current={
+                isActive ? 'page' : undefined
+              }
             >
-              <span className={styles.label}>{link.label}</span>
+              <span className={styles.label}>
+                {link.label}
+              </span>
             </Link>
           )
         })}

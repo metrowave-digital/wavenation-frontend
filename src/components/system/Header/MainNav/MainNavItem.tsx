@@ -5,26 +5,14 @@ import type { ComponentType } from 'react'
 import { HeaderContext } from '../Header.context'
 import styles from './MainNavItem.module.css'
 
-/* ======================================================
-   Types
-====================================================== */
-
-export interface MainNavConfigItem {
-  id: string
-  label: string
-  icon: ComponentType<{
-    size?: number
-    strokeWidth?: number
-  }>
-  hasMenu?: boolean
-}
+import type { MegaMenuItem } from '../MegaMenu/MegaMenu.types'
 
 /* ======================================================
    Props
 ====================================================== */
 
 interface MainNavItemProps {
-  item: MainNavConfigItem
+  item: MegaMenuItem
 }
 
 /* ======================================================
@@ -32,8 +20,15 @@ interface MainNavItemProps {
 ====================================================== */
 
 export function MainNavItem({ item }: MainNavItemProps) {
-  const { activeMenu, setActiveMenu } = useContext(HeaderContext)
-  const Icon = item.icon
+  const { activeMenu, setActiveMenu } =
+    useContext(HeaderContext)
+
+  const Icon = item.icon as
+    | ComponentType<{
+        size?: number
+        strokeWidth?: number
+      }>
+    | undefined
 
   const isActive = activeMenu === item.id
 
@@ -44,15 +39,34 @@ export function MainNavItem({ item }: MainNavItemProps) {
   return (
     <button
       type="button"
-      className={`${styles.item} ${isActive ? styles.active : ''}`}
+      className={`${styles.item} ${
+        isActive ? styles.active : ''
+      }`}
       onClick={handleClick}
       data-active={isActive || undefined}
-      aria-haspopup={item.hasMenu ? 'dialog' : undefined}
-      aria-expanded={item.hasMenu ? isActive : undefined}
-      aria-controls={item.hasMenu ? `mega-${item.id}` : undefined}
+      aria-haspopup={
+        item.children?.length ? 'dialog' : undefined
+      }
+      aria-expanded={
+        item.children?.length ? isActive : undefined
+      }
+      aria-controls={
+        item.children?.length
+          ? `mega-${item.id}`
+          : undefined
+      }
     >
-      <Icon size={18} strokeWidth={2} aria-hidden />
-      <span className={styles.label}>{item.label}</span>
+      {Icon && (
+        <Icon
+          size={18}
+          strokeWidth={2}
+          aria-hidden
+        />
+      )}
+
+      <span className={styles.label}>
+        {item.label}
+      </span>
     </button>
   )
 }
