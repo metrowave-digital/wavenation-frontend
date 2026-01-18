@@ -5,31 +5,36 @@ export interface NormalizedNowPlaying {
 }
 
 /**
- * Safely normalize unknown NowPlaying payloads
- * without violating strict TS or ESLint rules.
+ * Normalize Now Playing metadata from multiple sources:
+ * - NowPlayingContext ({ track, artist, artwork })
+ * - AudioContext ({ title, artist, artwork })
+ * - Defensive against partial / unknown payloads
  */
 export function normalizeNowPlaying(
   value: unknown
 ): NormalizedNowPlaying {
   if (typeof value !== 'object' || value === null) {
     return {
-      track: 'Unknown Track',
-      artist: 'Unknown Artist',
+      track: 'Live Radio',
+      artist: 'WaveNation',
       artwork: null,
     }
   }
 
   const record = value as Record<string, unknown>
 
+  // ✅ Accept BOTH `track` and `title`
   const track =
     typeof record.track === 'string'
       ? record.track
-      : 'Unknown Track'
+      : typeof record.title === 'string'
+        ? record.title
+        : 'Live Radio'
 
   const artist =
     typeof record.artist === 'string'
       ? record.artist
-      : 'Unknown Artist'
+      : 'WaveNation'
 
   const artwork =
     typeof record.artwork === 'string'

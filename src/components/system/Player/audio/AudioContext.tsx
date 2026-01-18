@@ -23,21 +23,129 @@ const LS_WANTS_PLAY = 'wn_player_wants_play'
    NOW PLAYING (dynamic metadata)
 ====================================================== */
 
-type NowPlayingPayload = {
+type FlatNowPlaying = {
   title?: string | null
+  track?: string | null
   artist?: string | null
   album?: string | null
   artwork?: string | null | { url?: string | null }
+  cover?: string | null
   isLive?: boolean | null
 }
 
+type WrappedNowPlaying = {
+  nowPlaying?: FlatNowPlaying | null
+}
+
+type AzuraCastNowPlaying = {
+  is_online?: boolean
+  now_playing?: {
+    is_live?: boolean
+    song?: {
+      title?: string | null
+      artist?: string | null
+      art?: string | null
+    } | null
+  } | null
+}
+
+type NowPlayingPayload =
+  | FlatNowPlaying
+  | WrappedNowPlaying
+  | AzuraCastNowPlaying
+  | null
+
+
 function normalizeArtworkUrl(
-  artwork: NowPlayingPayload['artwork']
+  artwork: string | { url?: string | null } | null | undefined
 ): string | null {
   if (!artwork) return null
   if (typeof artwork === 'string') return artwork
-  if (typeof artwork === 'object' && artwork?.url) return artwork.url
+  if (typeof artwork === 'object' && artwork.url) return artwork.url
   return null
+}
+
+function hasWrappedNowPlaying(
+  p: NowPlayingPayload
+): p is WrappedNowPlaying {
+  return (
+    typeof p === 'object' &&
+    p !== null &&
+    'nowPlaying' in p
+  )
+}
+
+function hasAzuraCastNowPlaying(
+  p: NowPlayingPayload
+): p is AzuraCastNowPlaying {
+  return (
+    typeof p === 'object' &&
+    p !== null &&
+    'now_playing' in p
+  )
+}
+
+
+function extractNowPlaying(payload: NowPlayingPayload): {
+  title: string
+  artist: string
+  album: string
+  artwork: string | null
+  isLive: boolean
+} {
+  let title = ''
+  let artist = ''
+  let album = ''
+  let artwork: string | null = null
+  let isLive = false
+
+  if (!payload) {
+    return { title, artist, album, artwork, isLive }
+  }
+
+  /* ---------- Wrapped payload ---------- */
+  if (hasWrappedNowPlaying(payload)) {
+    const np = payload.nowPlaying
+    if (!np) return { title, artist, album, artwork, isLive }
+
+    title = (np.title ?? np.track ?? '').trim()
+    artist = (np.artist ?? '').trim()
+    album = (np.album ?? '').trim()
+    artwork =
+      normalizeArtworkUrl(np.artwork) ??
+      normalizeArtworkUrl(np.cover)
+    isLive = Boolean(np.isLive)
+
+    return { title, artist, album, artwork, isLive }
+  }
+
+  /* ---------- AzuraCast payload ---------- */
+  if (hasAzuraCastNowPlaying(payload)) {
+    const song = payload.now_playing?.song
+
+    if (song) {
+      title = (song.title ?? '').trim()
+      artist = (song.artist ?? '').trim()
+      artwork = normalizeArtworkUrl(song.art)
+    }
+
+    isLive =
+      Boolean(payload.is_online) &&
+      Boolean(payload.now_playing?.is_live)
+
+    return { title, artist, album, artwork, isLive }
+  }
+
+  /* ---------- Flat payload ---------- */
+  title = (payload.title ?? payload.track ?? '').trim()
+  artist = (payload.artist ?? '').trim()
+  album = (payload.album ?? '').trim()
+  artwork =
+    normalizeArtworkUrl(payload.artwork) ??
+    normalizeArtworkUrl(payload.cover)
+  isLive = Boolean(payload.isLive)
+
+  return { title, artist, album, artwork, isLive }
 }
 
 /* ======================================================
@@ -61,6 +169,7 @@ type ScheduleNowPayload = {
 ====================================================== */
 
 export interface AudioState {
+  /* ================= PLAYBACK ================= */
   playing: boolean
   isLive: boolean
 
@@ -70,10 +179,19 @@ export interface AudioState {
   currentTime: number
   duration: number
 
+  /* ================= UI ================= */
   autoplayBlocked: boolean
   showUnmuteToast: boolean
   dismissUnmuteToast: () => void
 
+  /* ================= NOW PLAYING ================= */
+  nowPlaying: {
+    track: string
+    artist: string
+    artwork: string | null
+  }
+
+  /* ================= CONTROLS ================= */
   play: () => Promise<void>
   pause: () => void
   seek: (time: number) => void
@@ -574,47 +692,46 @@ export function AudioProvider({
     return () => window.removeEventListener('online', onOnline)
   }, [scheduleReconnect])
 
-  /* ======================================================
-     NOW PLAYING POLLER
-  ====================================================== */
+ /* ======================================================
+   NOW PLAYING POLLER
+====================================================== */
 
-  useEffect(() => {
-    let alive = true
-    const ctrl = new AbortController()
+useEffect(() => {
+  let alive = true
+  const ctrl = new AbortController()
 
-    const fetchNowPlaying = async () => {
-      try {
-        const res = await fetch(nowPlayingUrl, {
-          cache: 'no-store',
-          signal: ctrl.signal,
-        })
-        if (!res.ok) return
-        const data = (await res.json()) as NowPlayingPayload
-        if (!alive) return
+  const fetchNowPlaying = async () => {
+    try {
+      const res = await fetch(nowPlayingUrl, {
+        cache: 'no-store',
+        signal: ctrl.signal,
+      })
+      if (!res.ok) return
 
-        const title = (data.title || '').trim()
-        const artist = (data.artist || '').trim()
-        const album = (data.album || '').trim()
-        const artwork = normalizeArtworkUrl(data.artwork)
+      const raw = (await res.json()) as NowPlayingPayload
+      if (!alive) return
 
-        if (title) setNpTitle(title)
-        if (artist) setNpArtist(artist)
-        if (album) setNpAlbum(album)
-        if (artwork) setNpArtwork(artwork)
-      } catch {
-        // ignore; next tick
-      }
+      const parsed = extractNowPlaying(raw)
+
+      // IMPORTANT: update even if empty so UI can reflect state changes
+      setNpTitle(parsed.title || 'WaveNation Live')
+      setNpArtist(parsed.artist || 'WaveNation FM')
+      setNpAlbum(parsed.album || 'Live Radio')
+      setNpArtwork(parsed.artwork || null)
+    } catch {
+      // ignore; next tick
     }
+  }
 
-    fetchNowPlaying()
-    const id = window.setInterval(fetchNowPlaying, 15_000)
+  fetchNowPlaying()
+  const id = window.setInterval(fetchNowPlaying, 15_000)
 
-    return () => {
-      alive = false
-      ctrl.abort()
-      window.clearInterval(id)
-    }
-  }, [nowPlayingUrl])
+  return () => {
+    alive = false
+    ctrl.abort()
+    window.clearInterval(id)
+  }
+}, [nowPlayingUrl])
 
   /* ======================================================
      SCHEDULE / “NOW AIRING” POLLER (lockscreen show line)
@@ -1018,43 +1135,56 @@ audio.currentTime = 0
   ====================================================== */
 
   const value = useMemo<AudioState>(
-    () => ({
-      playing,
-      isLive,
+  () => ({
+    /* ================= PLAYBACK ================= */
+    playing,
+    isLive,
 
-      muted,
-      volume,
+    muted,
+    volume,
 
-      currentTime,
-      duration,
+    currentTime,
+    duration,
 
-      autoplayBlocked,
-      showUnmuteToast,
-      dismissUnmuteToast,
+    /* ================= UI ================= */
+    autoplayBlocked,
+    showUnmuteToast,
+    dismissUnmuteToast,
 
-      play,
-      pause,
-      seek,
-      setVolume,
-      toggleMute,
-    }),
-    [
-      playing,
-      isLive,
-      muted,
-      volume,
-      currentTime,
-      duration,
-      autoplayBlocked,
-      showUnmuteToast,
-      dismissUnmuteToast,
-      play,
-      pause,
-      seek,
-      setVolume,
-      toggleMute,
-    ]
-  )
+    /* ================= NOW PLAYING ================= */
+    nowPlaying: {
+      track: npTitle,
+      artist: npArtist,
+      artwork: npArtwork,
+    },
+
+    /* ================= CONTROLS ================= */
+    play,
+    pause,
+    seek,
+    setVolume,
+    toggleMute,
+  }),
+  [
+    playing,
+    isLive,
+    muted,
+    volume,
+    currentTime,
+    duration,
+    autoplayBlocked,
+    showUnmuteToast,
+    dismissUnmuteToast,
+    npTitle,
+    npArtist,
+    npArtwork,
+    play,
+    pause,
+    seek,
+    setVolume,
+    toggleMute,
+  ]
+)
 
   return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>
 }

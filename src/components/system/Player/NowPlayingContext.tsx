@@ -11,7 +11,7 @@ import {
    Types
 ====================================================== */
 
-interface NowPlaying {
+export interface NowPlaying {
   track: string
   artist: string
   artwork: string | null
@@ -47,15 +47,31 @@ export function NowPlayingProvider({
 
         if (!res.ok) return
 
-        const data = await res.json()
+        const data = (await res.json()) as
+          | {
+              track?: string
+              title?: string
+              artist?: string
+              artwork?: string | null
+            }
+          | null
 
-        if (
-          alive &&
-          data?.track &&
-          data?.artist
-        ) {
-          setNowPlaying(data)
-        }
+        if (!alive || !data) return
+
+        const track =
+          typeof data.track === 'string'
+            ? data.track
+            : typeof data.title === 'string'
+              ? data.title
+              : null
+
+        if (!track || !data.artist) return
+
+        setNowPlaying({
+          track,
+          artist: data.artist,
+          artwork: data.artwork ?? null,
+        })
       } catch {
         // silent fail
       }

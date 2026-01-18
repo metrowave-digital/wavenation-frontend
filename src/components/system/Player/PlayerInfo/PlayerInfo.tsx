@@ -4,7 +4,6 @@ import { useMemo } from 'react'
 import Image from 'next/image'
 import styles from './PlayerInfo.module.css'
 
-import { useNowPlaying } from '@/components/system/Player/NowPlayingContext'
 import { useAudio } from '@/components/system/Player/audio/AudioContext'
 import { normalizeNowPlaying } from '@/app/utils/normalizeNowPlaying'
 
@@ -17,11 +16,15 @@ import { getNextAirLabel } from '@/app/lib/shows/getNextAirLabel'
 
 export function PlayerInfo() {
   /* ================= MUSIC ================= */
-  const rawNow = useNowPlaying()
-  const now = useMemo(() => normalizeNowPlaying(rawNow), [rawNow])
+  const audio = useAudio()
+
+  // 🔥 SOURCE OF TRUTH: AudioContext
+  const now = useMemo(
+    () => normalizeNowPlaying(audio.playing),
+    [audio.playing]
+  )
 
   /* ================= AUDIO STATE ================= */
-  const audio = useAudio()
   const isPlaying =
     typeof audio.currentTime === 'number' &&
     typeof audio.duration === 'number' &&
@@ -77,7 +80,7 @@ export function PlayerInfo() {
         {now.artwork && (
           <Image
             src={now.artwork}
-            alt={now.track ?? 'Now playing'}
+            alt={now.track}
             fill
             sizes="40px"
             className={styles.image}
@@ -88,11 +91,11 @@ export function PlayerInfo() {
       {/* ===== Text ===== */}
       <div className={styles.text}>
         <div className={styles.track} title={now.track}>
-          {now.track || 'Live Radio'}
+          {now.track}
         </div>
 
         <div className={styles.artist} title={now.artist}>
-          {now.artist || 'WaveNation'}
+          {now.artist}
         </div>
 
         <div
