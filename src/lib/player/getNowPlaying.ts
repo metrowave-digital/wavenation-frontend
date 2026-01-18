@@ -1,24 +1,57 @@
-import type { NowPlayingTrack } from "./UpNextTypes";
+import { NextResponse } from 'next/server'
 
-// Replace with your Live365 station API endpoint:
-const LIVE365_ENDPOINT = "https://api.live365.com/station/YOUR_STATION_ID/now";
+/* ======================================================
+   Types
+====================================================== */
 
-export async function getNowPlaying(): Promise<NowPlayingTrack | null> {
+type AzuraCastSong = {
+  id?: string
+  artist: string
+  title: string
+  art?: string
+}
+
+type AzuraCastResponse = {
+  is_online: boolean
+  now_playing?: {
+    is_live?: boolean
+    song?: AzuraCastSong
+  }
+}
+
+/* ======================================================
+   Route
+====================================================== */
+
+export async function GET() {
   try {
-    const res = await fetch(LIVE365_ENDPOINT, {
-      cache: "no-store",
-    });
+    const res = await fetch(
+      'https://a12.asurahosting.com/api/nowplaying/307',
+      { cache: 'no-store' }
+    )
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      throw new Error('AzuraCast unavailable')
+    }
 
-    const data = await res.json();
+    const data: AzuraCastResponse = await res.json()
+    const song = data?.now_playing?.song
 
-    return {
-      track: data?.title ?? "",
-      artist: data?.artist ?? "",
-      cover: data?.art?.large ?? null,
-    };
+    if (!song) {
+      return NextResponse.json(null)
+    }
+
+    const artwork =
+      song.art && !song.art.includes('generic_song')
+        ? song.art
+        : null
+
+    return NextResponse.json({
+      track: song.title ?? '',
+      artist: song.artist ?? '',
+      artwork,
+    })
   } catch {
-    return null; // eslint-clean way of ignoring errors
+    return NextResponse.json(null)
   }
 }

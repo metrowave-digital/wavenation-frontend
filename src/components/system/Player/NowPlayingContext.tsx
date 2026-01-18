@@ -7,14 +7,26 @@ import {
   useState,
 } from 'react'
 
+/* ======================================================
+   Types
+====================================================== */
+
 interface NowPlaying {
   track: string
   artist: string
   artwork: string | null
 }
 
+/* ======================================================
+   Context
+====================================================== */
+
 const NowPlayingContext =
   createContext<NowPlaying | null>(null)
+
+/* ======================================================
+   Provider
+====================================================== */
 
 export function NowPlayingProvider({
   children,
@@ -25,25 +37,38 @@ export function NowPlayingProvider({
     useState<NowPlaying | null>(null)
 
   useEffect(() => {
-  async function fetchNowPlaying() {
-    try {
-      const res = await fetch('/api/now-playing', {
-        cache: 'no-store',
-      })
-      const data = await res.json()
-      if (data) setNowPlaying(data)
-    } catch {
-      // silent fail
+    let alive = true
+
+    async function fetchNowPlaying() {
+      try {
+        const res = await fetch('/api/now-playing', {
+          cache: 'no-store',
+        })
+
+        if (!res.ok) return
+
+        const data = await res.json()
+
+        if (
+          alive &&
+          data?.track &&
+          data?.artist
+        ) {
+          setNowPlaying(data)
+        }
+      } catch {
+        // silent fail
+      }
     }
-  }
 
-  fetchNowPlaying()
+    fetchNowPlaying()
+    const interval = setInterval(fetchNowPlaying, 15_000)
 
-  const interval = setInterval(fetchNowPlaying, 15_000)
-
-  return () => clearInterval(interval)
-}, [])
-
+    return () => {
+      alive = false
+      clearInterval(interval)
+    }
+  }, [])
 
   return (
     <NowPlayingContext.Provider value={nowPlaying}>
@@ -51,6 +76,10 @@ export function NowPlayingProvider({
     </NowPlayingContext.Provider>
   )
 }
+
+/* ======================================================
+   Hook
+====================================================== */
 
 export function useNowPlaying() {
   return useContext(NowPlayingContext)

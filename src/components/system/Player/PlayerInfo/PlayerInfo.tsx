@@ -70,7 +70,10 @@ export function PlayerInfo() {
 
       {/* ===== Artwork ===== */}
       <div className={styles.artwork}>
-        {!now.artwork && <div className={styles.artworkSkeleton} />}
+        {!now.artwork && (
+          <div className={styles.artworkSkeleton} />
+        )}
+
         {now.artwork && (
           <Image
             src={now.artwork}
