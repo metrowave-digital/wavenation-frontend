@@ -42,12 +42,11 @@ export function PlayerBar() {
         aria-label="Audio player"
         data-expanded={popupOpen}
       >
-        <PlayerInfo placement="sticky_player" />
+        <PlayerInfo />
 
-        <PlayerControls placement="sticky_player" />
+        <PlayerControls />
 
         <PlayerActions
-          placement="sticky_player"
           onExpand={() => setPopupOpen(true)}
           aria-haspopup="dialog"
           aria-expanded={popupOpen}
