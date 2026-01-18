@@ -1,0 +1,115 @@
+.root {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+}
+
+/* HERO */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.heroText h1 {
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  line-height: 1.05;
+}
+
+.subtitle {
+  opacity: 0.85;
+  max-width: 520px;
+}
+
+.heroImage img {
+  border-radius: 18px;
+}
+
+/* IDENTITY */
+
+.identityRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.identityRail {
+  display: grid;
+  gap: 1rem;
+}
+
+.identityRail span {
+  font-size: 12px;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+.identityRail strong {
+  font-size: 15px;
+}
+
+/* FEATURED RELEASE */
+
+.featuredRelease {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.badge {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+/* CONTENT */
+
+.content {
+  max-width: 760px;
+  margin: 0 auto;
+  line-height: 1.75;
+}
+
+/* PULL QUOTE */
+
+.pullQuote {
+  float: right;
+  max-width: 280px;
+  margin: 1.5rem 0 1.5rem 2rem;
+  font-size: 1.2rem;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* ADS */
+
+.adSlot {
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  padding: 2rem;
+  text-align: center;
+  margin: 3rem 0;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .identityRow {
+    grid-template-columns: 1fr;
+  }
+
+  .pullQuote {
+    float: none;
+    margin: 2rem 0;
+    max-width: 100%;
+  }
+}

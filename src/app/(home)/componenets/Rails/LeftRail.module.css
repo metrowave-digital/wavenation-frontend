@@ -1,0 +1,30 @@
+.leftRail {
+  position: relative; /* ⬅️ NOT sticky */
+  align-self: flex-start;
+
+  width: 100%;
+  max-width: 320px;
+
+  display: flex;
+  flex-direction: column;
+
+  height: auto;
+}
+
+/* ===============================
+   TABLET
+=============================== */
+@media (max-width: 1024px) {
+  .leftRail {
+    max-width: 100%;
+  }
+}
+
+/* ===============================
+   MOBILE
+=============================== */
+@media (max-width: 768px) {
+  .leftRail {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,52 @@
+/* ======================================================
+   Page Layout — WaveNation
+   Dark-only • Token-aligned • App-safe
+====================================================== */
+
+.page {
+  /* Page-scoped tokens (derived from globals) */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  --text-primary: #ededed;
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-subtle: rgba(255, 255, 255, 0.45);
+
+  min-height: 100vh;
+  width: 100%;
+
+  background-color: var(--background);
+  color: var(--foreground);
+
+  font-family: var(--font-geist-sans);
+}
+
+/* ======================================================
+   Main Content Wrapper
+====================================================== */
+
+.main {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ======================================================
+   Container
+   (Editorial / layout rows)
+====================================================== */
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ======================================================
+   Intentional: NO light mode
+   WaveNation is dark-only by design
+====================================================== */
+
+/* 🚫 prefers-color-scheme: light intentionally omitted */

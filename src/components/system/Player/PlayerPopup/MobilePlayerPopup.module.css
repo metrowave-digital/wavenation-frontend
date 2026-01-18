@@ -1,0 +1,258 @@
+/* ======================================================
+   BACKDROP
+====================================================== */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+/* ======================================================
+   BOTTOM SHEET
+====================================================== */
+
+.sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  height: 92vh;
+
+  background: #0a0a0a;
+
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+
+  padding: 0.75rem 1rem 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ======================================================
+   HANDLE / HEADER
+====================================================== */
+
+.handleRow {
+  position: relative;
+  padding-bottom: 0.75rem;
+  display: flex;
+  justify-content: center;
+}
+
+.handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.close {
+  position: absolute;
+  right: 0;
+  top: -4px;
+
+  background: none;
+  border: none;
+
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 1.25rem;
+}
+
+.close:hover {
+  color: #4da3ff;
+}
+
+/* ======================================================
+   NOW PLAYING
+====================================================== */
+
+.nowRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.artwork {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  overflow: hidden;
+
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  flex-shrink: 0;
+}
+
+.artworkSkeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.18) 37%,
+    rgba(255, 255, 255, 0.08) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.track {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ededed;
+}
+
+.artist {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 0.5rem;
+}
+
+/* ======================================================
+   SHOW CARD
+====================================================== */
+
+.showCard {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+
+  background: #111;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  margin-bottom: 1rem;
+}
+
+.showArt {
+  width: 44px;
+  height: 44px;
+
+  background: #111;
+  border-radius: 8px;
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.showImage {
+  border-radius: 8px;
+}
+
+.showMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.showTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ededed;
+}
+
+.showHosts,
+.showTime {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ======================================================
+   RECENT TRACKS
+====================================================== */
+
+.sectionTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: rgba(255, 255, 255, 0.55);
+  margin: 1rem 0 0.5rem;
+}
+
+.recent {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recentItem {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.recentTrack {
+  font-size: 0.875rem;
+  color: #ededed;
+}
+
+.recentArtist {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.empty {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ======================================================
+   SOUND BARS (BRAND BLUE)
+====================================================== */
+
+.soundBars {
+  display: flex;
+  gap: 3px;
+  height: 14px;
+}
+
+.soundBars span {
+  width: 2px;
+  background: #4da3ff;
+  opacity: 0.45;
+}
+
+.playing span:nth-child(1) {
+  animation: bar 0.8s infinite ease-in-out;
+}
+.playing span:nth-child(2) {
+  animation: bar 0.8s infinite ease-in-out 0.15s;
+}
+.playing span:nth-child(3) {
+  animation: bar 0.8s infinite ease-in-out 0.3s;
+}
+
+@keyframes bar {
+  0% { height: 4px; opacity: 0.35; }
+  50% { height: 14px; opacity: 0.85; }
+  100% { height: 4px; opacity: 0.35; }
+}
+
+/* ======================================================
+   SHIMMER
+====================================================== */
+
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}

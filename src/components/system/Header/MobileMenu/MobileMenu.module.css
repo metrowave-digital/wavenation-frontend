@@ -1,0 +1,320 @@
+/* ===============================
+   GLOBAL SAFETY
+================================ */
+
+.overlay,
+.panel,
+.nav,
+.slideTrack,
+.level {
+  box-sizing: border-box;
+}
+
+/* ===============================
+   OVERLAY
+================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  justify-content: flex-end;
+
+  overflow-x: hidden;
+}
+
+/* ===============================
+   PANEL
+================================ */
+
+.panel {
+  width: 100%;
+  max-width: 420px;
+  height: 100dvh;
+
+  background: linear-gradient(180deg, #050507 0%, #0b0b10 100%);
+  display: flex;
+  flex-direction: column;
+
+  animation: slideIn 360ms cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
+
+  overflow: hidden;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 14px;
+}
+
+.brand {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+/* ===============================
+   NAV (MOMENTUM + DESKTOP)
+================================ */
+
+.nav {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 20px 20px 40px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ===============================
+   SCROLL SHADOWS
+================================ */
+
+.nav::before,
+.nav::after {
+  content: '';
+  position: sticky;
+  left: 0;
+  right: 0;
+  height: 20px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.nav::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 5, 7, 0.85),
+    rgba(5, 5, 7, 0)
+  );
+}
+
+.nav::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 5, 7, 0.85),
+    rgba(5, 5, 7, 0)
+  );
+}
+
+/* ===============================
+   SECTION
+================================ */
+
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: -32px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* ===============================
+   SECTION TITLE
+================================ */
+
+.sectionTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeUp 420ms ease forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   LINKS
+================================ */
+
+.links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.linkItem {
+  opacity: 0;
+  transform: translateX(14px);
+  animation: fadeSlide 460ms ease forwards;
+}
+
+@keyframes fadeSlide {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.link {
+  appearance: none;
+  background: none;
+  border: none;
+
+  width: 100%;
+  text-align: left;
+
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+
+  padding: 12px 0;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+/* ===============================
+   SLIDE LEVELS
+================================ */
+
+.slideTrack {
+  display: flex;
+  width: 200%;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shifted {
+  transform: translateX(-50%);
+}
+
+.level {
+  width: 50%;
+  padding-right: 1rem;
+}
+
+/* ===============================
+   SUB LEVEL
+================================ */
+
+.subLevel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 16px;
+}
+
+.subLink {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+
+  opacity: 0;
+  transform: translateX(10px);
+  animation: fadeSlide 360ms ease forwards;
+}
+
+/* ===============================
+   CONTROLS
+================================ */
+
+.back {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chev {
+  float: right;
+  opacity: 0.6;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+
+.footer {
+  flex-shrink: 0;
+  padding: 16px 20px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tagline {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ===============================
+   DESKTOP SAFETY
+================================ */
+
+@media (min-width: 1025px) {
+  .overlay {
+    display: none;
+  }
+}

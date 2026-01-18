@@ -1,0 +1,33 @@
+.rightRail {
+  position: relative; /* ⬅️ NOT sticky */
+  align-self: flex-start;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  width: 100%;
+  max-width: 340px;
+
+  height: auto;
+  overflow: visible;
+  padding-right: 0;
+}
+
+/* ===============================
+   TABLET
+=============================== */
+@media (max-width: 1024px) {
+  .rightRail {
+    max-width: 100%;
+  }
+}
+
+/* ===============================
+   MOBILE
+=============================== */
+@media (max-width: 768px) {
+  .rightRail {
+    gap: 20px;
+  }
+}
