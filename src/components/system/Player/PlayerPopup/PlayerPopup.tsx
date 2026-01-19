@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react'
 import { MobilePlayerPopup } from './MobilePlayerPopup'
 import { DesktopPlayerPopup } from './DesktopPlayerPopup'
 
-import { useNowPlaying } from '@/components/system/Player/NowPlayingContext'
 import { useAudio } from '@/components/system/Player/audio/AudioContext'
-import { normalizeNowPlaying } from '@/app/utils/normalizeNowPlaying'
 
 /* ======================================================
    MEDIA QUERY
@@ -37,10 +35,8 @@ interface PlayerPopupProps {
 }
 
 export function PlayerPopup({ open, onClose }: PlayerPopupProps) {
-  const rawNow = useNowPlaying()
-  const now = normalizeNowPlaying(rawNow)
-
   const audio = useAudio()
+
   const isPlaying =
     typeof audio.currentTime === 'number' &&
     typeof audio.duration === 'number' &&
@@ -55,17 +51,15 @@ export function PlayerPopup({ open, onClose }: PlayerPopupProps) {
     <DesktopPlayerPopup
       open={open}
       onClose={onClose}
-      now={now}
       isPlaying={isPlaying}
-      recent={[]} /* recent already handled inside popup */
+      recent={[]} // TODO: replace with Redis-backed API
     />
   ) : (
     <MobilePlayerPopup
       open={open}
       onClose={onClose}
-      now={now}
       isPlaying={isPlaying}
-      recent={[]} /* recent already handled inside popup */
+      recent={[]} // TODO: replace with Redis-backed API
     />
   )
 }
