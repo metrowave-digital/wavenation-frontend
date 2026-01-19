@@ -1,64 +1,47 @@
 'use client'
 
-import { useMemo } from 'react'
 import Image from 'next/image'
 import styles from './PlayerInfo.module.css'
 
 import { useAudio } from '@/components/system/Player/audio/AudioContext'
-import { normalizeNowPlaying } from '@/app/utils/normalizeNowPlaying'
-
 import { useRadioUpNext } from '@/app/lib/shows/useRadioUpNext'
 import { getNextAirLabel } from '@/app/lib/shows/getNextAirLabel'
 
 /* ======================================================
-   Component
+   COMPONENT
 ====================================================== */
 
 export function PlayerInfo() {
-  /* ================= MUSIC ================= */
   const audio = useAudio()
+  const now = audio.nowPlaying
 
-  // 🔥 SOURCE OF TRUTH: AudioContext
-  const now = useMemo(
-    () => normalizeNowPlaying(audio.playing),
-    [audio.playing]
-  )
-
-  /* ================= AUDIO STATE ================= */
   const isPlaying =
-    typeof audio.currentTime === 'number' &&
-    typeof audio.duration === 'number' &&
     audio.currentTime > 0 &&
+    audio.duration > 0 &&
     audio.currentTime < audio.duration
 
   /* ================= SHOW STATE ================= */
   const { live, upNext } = useRadioUpNext()
   const show = live ?? upNext
 
-  const showText = useMemo(() => {
+  const showText = (() => {
     if (!show) return 'Live Radio'
 
-    if (live) {
-      return `LIVE · ${show.radioShow.title}`
-    }
+    if (live) return `LIVE · ${show.radioShow.title}`
 
     const airsIn = getNextAirLabel(show._days)
     return `UP NEXT · ${show.radioShow.title}${
       airsIn ? ` · ${airsIn}` : ''
     }`
-  }, [show, live])
+  })()
 
   const showStateClass = live
     ? styles.live
     : styles.upNext
 
-  /* ======================================================
-     Render
-  ===================================================== */
-
   return (
     <div className={styles.playerInfo}>
-      {/* ===== Waveform ===== */}
+      {/* ===== WAVEFORM ===== */}
       <div
         className={`${styles.waveform} ${
           isPlaying ? styles.playing : ''
@@ -71,7 +54,7 @@ export function PlayerInfo() {
         <span />
       </div>
 
-      {/* ===== Artwork ===== */}
+      {/* ===== ARTWORK ===== */}
       <div className={styles.artwork}>
         {!now.artwork && (
           <div className={styles.artworkSkeleton} />
@@ -88,7 +71,7 @@ export function PlayerInfo() {
         )}
       </div>
 
-      {/* ===== Text ===== */}
+      {/* ===== TEXT ===== */}
       <div className={styles.text}>
         <div className={styles.track} title={now.track}>
           {now.track}

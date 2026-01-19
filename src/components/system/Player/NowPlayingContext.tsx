@@ -47,30 +47,24 @@ export function NowPlayingProvider({
 
         if (!res.ok) return
 
-        const data = (await res.json()) as
-          | {
-              track?: string
-              title?: string
-              artist?: string
-              artwork?: string | null
-            }
-          | null
+        const json = (await res.json()) as {
+          nowPlaying?: {
+            title?: string
+            artist?: string
+            artwork?: string | null
+          }
+        }
 
-        if (!alive || !data) return
+        if (!alive || !json?.nowPlaying) return
 
-        const track =
-          typeof data.track === 'string'
-            ? data.track
-            : typeof data.title === 'string'
-              ? data.title
-              : null
+        const { title, artist, artwork } = json.nowPlaying
 
-        if (!track || !data.artist) return
+        if (!title || !artist) return
 
         setNowPlaying({
-          track,
-          artist: data.artist,
-          artwork: data.artwork ?? null,
+          track: title,
+          artist,
+          artwork: artwork ?? null,
         })
       } catch {
         // silent fail

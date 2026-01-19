@@ -1,23 +1,32 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import styles from './DesktopPlayerPopup.module.css'
 
+import { useAudio } from '@/components/system/Player/audio/AudioContext'
 import { useRadioUpNext } from '@/app/lib/shows/useRadioUpNext'
 import { formatHHmm } from '@/lib/time'
 
 /* ======================================================
-   TYPES
+   MOTION
 ====================================================== */
 
-interface NowPlaying {
-  track: string | null
-  artist: string | null
-  artwork: string | null
-  album?: string | null
+const fadeSwap: Variants = {
+  initial: { opacity: 0, y: 6 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -6 },
 }
+
+const listItem: Variants = {
+  initial: { opacity: 0, y: 6 },
+  animate: { opacity: 1, y: 0 },
+}
+
+/* ======================================================
+   COMPONENT
+====================================================== */
 
 interface RecentTrack {
   key: string
@@ -29,123 +38,43 @@ interface RecentTrack {
 interface DesktopPlayerPopupProps {
   open: boolean
   onClose: () => void
-  now: NowPlaying
   recent: RecentTrack[]
   isPlaying: boolean
 }
 
-/* ======================================================
-   HELPERS
-====================================================== */
-
-function asRecord(v: unknown): Record<string, unknown> | null {
-  return v && typeof v === 'object' ? (v as Record<string, unknown>) : null
-}
-
-function firstString(...vals: unknown[]) {
-  for (const v of vals) {
-    if (typeof v === 'string' && v.trim()) return v
-  }
-  return null
-}
-
-function getShowHosts(radioShow: unknown): string | null {
-  const rs = asRecord(radioShow)
-  if (!rs) return null
-
-  if (Array.isArray(rs.hosts)) {
-    const names = rs.hosts
-      .map(h => {
-        const hr = asRecord(h)
-        return firstString(hr?.name, hr?.displayName, hr?.title)
-      })
-      .filter(Boolean) as string[]
-    return names.length ? names.join(', ') : null
-  }
-
-  return firstString(
-    rs.hostNames,
-    rs.hostName,
-    rs.host,
-    rs.dj,
-    rs.presenter
-  )
-}
-
-function getShowArtwork(radioShow: unknown): string | null {
-  const rs = asRecord(radioShow)
-  if (!rs) return null
-
-  const image = asRecord(rs.image)
-  const coverImage = asRecord(rs.coverImage)
-  const hero = asRecord(rs.hero)
-  const heroImage = hero ? asRecord(hero.image) : null
-  const artworkObj = asRecord(rs.artwork)
-
-  return firstString(
-    rs.artwork,
-    artworkObj?.url,
-    image?.url,
-    coverImage?.url,
-    heroImage?.url,
-    rs.thumbnail,
-    rs.poster
-  )
-}
-
-/* ======================================================
-   MOTION (v12-safe)
-====================================================== */
-
-const backdrop: Variants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1 },
-  exit: { opacity: 0 },
-}
-
-const panel: Variants = {
-  hidden: { opacity: 0, scale: 0.98, y: 12 },
-  show: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      type: 'spring' as const,
-      stiffness: 520,
-      damping: 36,
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.98,
-    y: 12,
-    transition: { duration: 0.12 },
-  },
-}
-
-/* ======================================================
-   COMPONENT
-====================================================== */
-
 export function DesktopPlayerPopup({
   open,
   onClose,
-  now,
   recent,
   isPlaying,
 }: DesktopPlayerPopupProps) {
+  /* ================= AUDIO (SAME SOURCE AS PlayerInfo) ================= */
+  const audio = useAudio()
+  const now = audio.nowPlaying
+
+  /* ================= SHOW STATE ================= */
   const { live, upNext } = useRadioUpNext()
   const show = live ?? upNext
 
-  const showTitle = show?.radioShow?.title ?? null
-  const showHosts = getShowHosts(show?.radioShow)
-  const showArtwork = getShowArtwork(show?.radioShow)
+  const showTitle =
+    show?.radioShow?.title ?? 'WaveNation Radio'
+
   const showTimeLabel = live
     ? 'Live now'
     : show
     ? `Starts ${formatHHmm(show._start)}`
     : null
 
+  /* ================= STABLE NORMALIZATION ================= */
+  const normalized = useMemo(() => {
+    return {
+      track: now.track || 'Live Radio',
+      artist: now.artist || 'WaveNation',
+      artwork: now.artwork || null,
+    }
+  }, [now.track, now.artist, now.artwork])
+
+  /* ================= SCROLL LOCK ================= */
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow
@@ -155,30 +84,32 @@ export function DesktopPlayerPopup({
     }
   }, [open])
 
+  const recentFive = recent.slice(0, 5)
+
   return (
     <AnimatePresence>
       {open && (
         <motion.div
           className={styles.overlay}
-          variants={backdrop}
-          initial="hidden"
-          animate="show"
-          exit="exit"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.section
             className={styles.panel}
-            variants={panel}
-            initial="hidden"
-            animate="show"
-            exit="exit"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
             onClick={e => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
-            aria-label="Now Playing"
           >
+            {/* ================= HEADER ================= */}
             <header className={styles.header}>
-              <div className={styles.headerTitle}>Now Playing</div>
+              <div className={styles.headerTitle}>
+                Now Playing
+              </div>
               <button
                 className={styles.close}
                 onClick={onClose}
@@ -189,13 +120,17 @@ export function DesktopPlayerPopup({
             </header>
 
             <div className={styles.grid}>
+              {/* ================= LEFT ================= */}
               <div className={styles.left}>
                 <div className={styles.artwork}>
-                  {!now.artwork && <div className={styles.artworkSkeleton} />}
-                  {now.artwork && (
+                  {!normalized.artwork && (
+                    <div className={styles.artworkSkeleton} />
+                  )}
+
+                  {normalized.artwork && (
                     <Image
-                      src={now.artwork}
-                      alt={now.track ?? 'Now playing'}
+                      src={normalized.artwork}
+                      alt={`${normalized.track} by ${normalized.artist}`}
                       fill
                       priority
                       className={styles.image}
@@ -203,8 +138,23 @@ export function DesktopPlayerPopup({
                   )}
                 </div>
 
-                <div className={styles.track}>{now.track}</div>
-                <div className={styles.artist}>{now.artist}</div>
+                {/* Track (animate only on real change) */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${normalized.track}-${normalized.artist}`}
+                    variants={fadeSwap}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className={styles.track}
+                  >
+                    {normalized.track}
+                  </motion.div>
+                </AnimatePresence>
+
+                <div className={styles.artist}>
+                  {normalized.artist}
+                </div>
 
                 <div
                   className={`${styles.soundBars} ${
@@ -218,54 +168,72 @@ export function DesktopPlayerPopup({
                 </div>
               </div>
 
+              {/* ================= RIGHT ================= */}
               <div className={styles.right}>
                 <div className={styles.sectionTitle}>
                   {live ? 'On Air' : 'Up Next'}
                 </div>
 
-                {(showTitle || showTimeLabel) ? (
-                  <div className={styles.showCard}>
-                    <div className={styles.showArt}>
-                      {!showArtwork && <div className={styles.showArtSkeleton} />}
-                      {showArtwork && (
-                        <Image
-                          src={showArtwork}
-                          alt={showTitle ?? 'Show'}
-                          width={52}
-                          height={52}
-                          className={styles.showImage}
-                        />
-                      )}
+                <div className={styles.showCard}>
+                  <div className={styles.showMeta}>
+                    <div className={styles.showTitle}>
+                      {showTitle}
                     </div>
-
-                    <div className={styles.showMeta}>
-                      <div className={styles.showTitle}>
-                        {showTitle ?? 'WaveNation Radio'}
+                    {showTimeLabel && (
+                      <div className={styles.showTime}>
+                        {showTimeLabel}
                       </div>
-                      {showHosts && (
-                        <div className={styles.showHosts}>{showHosts}</div>
-                      )}
-                      {showTimeLabel && (
-                        <div className={styles.showTime}>{showTimeLabel}</div>
-                      )}
-                    </div>
+                    )}
                   </div>
-                ) : (
-                  <div className={styles.empty}>No show data available.</div>
-                )}
+                </div>
 
-                <div className={styles.sectionTitle}>Last 5 tracks</div>
-                {recent.length ? (
+                <div className={styles.sectionTitle}>
+                  Last 5 tracks
+                </div>
+
+                {recentFive.length ? (
                   <ul className={styles.recent}>
-                    {recent.map(t => (
-                      <li key={t.key} className={styles.recentItem}>
-                        <div className={styles.recentTrack}>{t.track}</div>
-                        <div className={styles.recentArtist}>{t.artist}</div>
-                      </li>
-                    ))}
+                    <AnimatePresence>
+                      {recentFive.map(t => {
+                        const art =
+                          t.artwork ||
+                          '/images/player/default-artwork.jpg'
+
+                        return (
+                          <motion.li
+                            key={t.key}
+                            variants={listItem}
+                            initial="initial"
+                            animate="animate"
+                            exit="initial"
+                            className={styles.recentItem}
+                          >
+                            <div className={styles.recentArt}>
+                              <Image
+                                src={art}
+                                alt={t.track}
+                                width={36}
+                                height={36}
+                                className={styles.recentImage}
+                              />
+                            </div>
+                            <div>
+                              <div className={styles.recentTrack}>
+                                {t.track}
+                              </div>
+                              <div className={styles.recentArtist}>
+                                {t.artist}
+                              </div>
+                            </div>
+                          </motion.li>
+                        )
+                      })}
+                    </AnimatePresence>
                   </ul>
                 ) : (
-                  <div className={styles.empty}>No recent tracks yet.</div>
+                  <div className={styles.empty}>
+                    No recent tracks yet.
+                  </div>
                 )}
               </div>
             </div>

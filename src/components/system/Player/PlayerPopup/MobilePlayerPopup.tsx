@@ -1,23 +1,17 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import styles from './MobilePlayerPopup.module.css'
 
+import { useAudio } from '@/components/system/Player/audio/AudioContext'
 import { useRadioUpNext } from '@/app/lib/shows/useRadioUpNext'
 import { formatHHmm } from '@/lib/time'
 
 /* ======================================================
    TYPES
 ====================================================== */
-
-interface NowPlaying {
-  track: string | null
-  artist: string | null
-  artwork: string | null
-  album?: string | null
-}
 
 interface RecentTrack {
   key: string
@@ -29,13 +23,12 @@ interface RecentTrack {
 interface MobilePlayerPopupProps {
   open: boolean
   onClose: () => void
-  now: NowPlaying
   recent: RecentTrack[]
   isPlaying: boolean
 }
 
 /* ======================================================
-   HELPERS
+   SHOW HELPERS (SAFE)
 ====================================================== */
 
 function asRecord(v: unknown): Record<string, unknown> | null {
@@ -94,7 +87,7 @@ function getShowArtwork(radioShow: unknown): string | null {
 }
 
 /* ======================================================
-   MOTION (v12-safe)
+   MOTION
 ====================================================== */
 
 const backdrop: Variants = {
@@ -108,7 +101,7 @@ const sheet: Variants = {
   show: {
     y: 0,
     transition: {
-      type: 'spring' as const,
+      type: 'spring',
       stiffness: 520,
       damping: 42,
     },
@@ -116,7 +109,7 @@ const sheet: Variants = {
   exit: {
     y: '100%',
     transition: {
-      type: 'spring' as const,
+      type: 'spring',
       stiffness: 520,
       damping: 48,
     },
@@ -130,22 +123,36 @@ const sheet: Variants = {
 export function MobilePlayerPopup({
   open,
   onClose,
-  now,
   recent,
   isPlaying,
 }: MobilePlayerPopupProps) {
+  /* ================= AUDIO (SAME AS PlayerInfo) ================= */
+  const audio = useAudio()
+  const now = audio.nowPlaying
+
+  const normalized = useMemo(() => {
+    return {
+      track: now.track || 'Live Radio',
+      artist: now.artist || 'WaveNation',
+      artwork: now.artwork || null,
+    }
+  }, [now.track, now.artist, now.artwork])
+
+  /* ================= SHOW ================= */
   const { live, upNext } = useRadioUpNext()
   const show = live ?? upNext
 
   const showTitle = show?.radioShow?.title ?? null
   const showHosts = getShowHosts(show?.radioShow)
   const showArtwork = getShowArtwork(show?.radioShow)
+
   const showTimeLabel = live
     ? 'Live now'
     : show
     ? `Starts ${formatHHmm(show._start)}`
     : null
 
+  /* ================= SCROLL LOCK ================= */
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow
@@ -177,14 +184,15 @@ export function MobilePlayerPopup({
             dragElastic={0.22}
             onClick={e => e.stopPropagation()}
             onDragEnd={(_, info) => {
-              const distance = info.offset.y
-              const velocity = info.velocity.y
-              if (distance > 140 || velocity > 900) onClose()
+              if (info.offset.y > 140 || info.velocity.y > 900) {
+                onClose()
+              }
             }}
             role="dialog"
             aria-modal="true"
             aria-label="Now Playing"
           >
+            {/* ================= HANDLE ================= */}
             <div className={styles.handleRow}>
               <div className={styles.handle} aria-hidden />
               <button
@@ -196,13 +204,16 @@ export function MobilePlayerPopup({
               </button>
             </div>
 
+            {/* ================= NOW PLAYING ================= */}
             <div className={styles.nowRow}>
               <div className={styles.artwork}>
-                {!now.artwork && <div className={styles.artworkSkeleton} />}
-                {now.artwork && (
+                {!normalized.artwork && (
+                  <div className={styles.artworkSkeleton} />
+                )}
+                {normalized.artwork && (
                   <Image
-                    src={now.artwork}
-                    alt={now.track ?? 'Now playing'}
+                    src={normalized.artwork}
+                    alt={`${normalized.track} by ${normalized.artist}`}
                     fill
                     priority
                     className={styles.image}
@@ -211,8 +222,12 @@ export function MobilePlayerPopup({
               </div>
 
               <div className={styles.meta}>
-                <div className={styles.track}>{now.track}</div>
-                <div className={styles.artist}>{now.artist}</div>
+                <div className={styles.track}>
+                  {normalized.track}
+                </div>
+                <div className={styles.artist}>
+                  {normalized.artist}
+                </div>
 
                 <div
                   className={`${styles.soundBars} ${
@@ -227,10 +242,13 @@ export function MobilePlayerPopup({
               </div>
             </div>
 
+            {/* ================= SHOW ================= */}
             {(showTitle || showTimeLabel) && (
               <div className={styles.showCard}>
                 <div className={styles.showArt}>
-                  {!showArtwork && <div className={styles.showArtSkeleton} />}
+                  {!showArtwork && (
+                    <div className={styles.showArtSkeleton} />
+                  )}
                   {showArtwork && (
                     <Image
                       src={showArtwork}
@@ -246,28 +264,44 @@ export function MobilePlayerPopup({
                   <div className={styles.showTitle}>
                     {showTitle ?? 'WaveNation Radio'}
                   </div>
-                  {showHosts && <div className={styles.showHosts}>{showHosts}</div>}
+                  {showHosts && (
+                    <div className={styles.showHosts}>
+                      {showHosts}
+                    </div>
+                  )}
                   {showTimeLabel && (
-                    <div className={styles.showTime}>{showTimeLabel}</div>
+                    <div className={styles.showTime}>
+                      {showTimeLabel}
+                    </div>
                   )}
                 </div>
               </div>
             )}
 
-            <div className={styles.sectionTitle}>Last 5 tracks</div>
+            {/* ================= RECENT ================= */}
+            <div className={styles.sectionTitle}>
+              Last 5 tracks
+            </div>
+
             {recent.length ? (
               <ul className={styles.recent}>
                 {recent.map(t => (
                   <li key={t.key} className={styles.recentItem}>
                     <div className={styles.recentText}>
-                      <div className={styles.recentTrack}>{t.track}</div>
-                      <div className={styles.recentArtist}>{t.artist}</div>
+                      <div className={styles.recentTrack}>
+                        {t.track}
+                      </div>
+                      <div className={styles.recentArtist}>
+                        {t.artist}
+                      </div>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className={styles.empty}>No recent tracks yet.</div>
+              <div className={styles.empty}>
+                No recent tracks yet.
+              </div>
             )}
           </motion.section>
         </motion.div>

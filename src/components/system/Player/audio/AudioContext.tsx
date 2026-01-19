@@ -10,6 +10,7 @@ import React, {
   useState,
 } from 'react'
 import { trackEvent } from '@/lib/analytics'
+import { json } from 'stream/consumers'
 
 /* ======================================================
    STORAGE KEYS
@@ -692,46 +693,45 @@ export function AudioProvider({
     return () => window.removeEventListener('online', onOnline)
   }, [scheduleReconnect])
 
- /* ======================================================
-   NOW PLAYING POLLER
+
+/* ======================================================
+   NOW PLAYING POLLER (FINAL – MATCHES API)
 ====================================================== */
 
 useEffect(() => {
   let alive = true
-  const ctrl = new AbortController()
 
   const fetchNowPlaying = async () => {
     try {
-      const res = await fetch(nowPlayingUrl, {
-        cache: 'no-store',
-        signal: ctrl.signal,
-      })
+      const res = await fetch('/api/now-playing', { cache: 'no-store' })
       if (!res.ok) return
 
-      const raw = (await res.json()) as NowPlayingPayload
-      if (!alive) return
+      const json = await res.json()
 
-      const parsed = extractNowPlaying(raw)
+      console.log('[NowPlaying API]', json)
 
-      // IMPORTANT: update even if empty so UI can reflect state changes
-      setNpTitle(parsed.title || 'WaveNation Live')
-      setNpArtist(parsed.artist || 'WaveNation FM')
-      setNpAlbum(parsed.album || 'Live Radio')
-      setNpArtwork(parsed.artwork || null)
-    } catch {
-      // ignore; next tick
+      if (!alive || !json?.nowPlaying) return
+
+      const { title, artist, artwork } = json.nowPlaying
+
+      if (title) setNpTitle(title)
+      if (artist) setNpArtist(artist)
+      if (artwork) setNpArtwork(artwork)
+    } catch (e) {
+      console.error('[NowPlaying error]', e)
     }
   }
 
   fetchNowPlaying()
-  const id = window.setInterval(fetchNowPlaying, 15_000)
+  const id = setInterval(fetchNowPlaying, 15_000)
 
   return () => {
     alive = false
-    ctrl.abort()
-    window.clearInterval(id)
+    clearInterval(id)
   }
-}, [nowPlayingUrl])
+}, [])
+
+
 
   /* ======================================================
      SCHEDULE / “NOW AIRING” POLLER (lockscreen show line)

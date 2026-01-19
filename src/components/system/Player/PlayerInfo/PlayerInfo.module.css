@@ -181,3 +181,19 @@
   from { background-position: 100% 0; }
   to { background-position: 0 0; }
 }
+
+@media (max-width: 768px) {
+  .playerInfo {
+    padding: 0.35rem 0.5rem;
+    gap: 0.5rem;
+  }
+
+  /* 🔥 Hide waveform on mobile */
+  .waveform {
+    display: none;
+  }
+
+  .showLabel {
+    display: none;
+  }
+}
