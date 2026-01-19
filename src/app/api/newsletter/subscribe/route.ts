@@ -18,8 +18,8 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'WaveNation <newsletter@wavenation.online>',
-        to: ['team@wavenation.media'],
+        from: 'WaveNation <team@wavenation.media>',
+        to: ['team@wavenation.online'],
         subject: 'New Newsletter Signup 🌊',
         html: `
           <h2>New Signup</h2>
