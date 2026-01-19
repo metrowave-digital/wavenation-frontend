@@ -35,6 +35,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* ================= Google AdSense ================= */}
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-6631983121456407"
+        />
+
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6631983121456407"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
+
         {/* ================= GA4 ================= */}
         {process.env.NEXT_PUBLIC_GA4_ID && (
           <>
