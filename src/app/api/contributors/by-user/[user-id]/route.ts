@@ -1,14 +1,18 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL!
 
 export async function GET(
-  _: Request,
-  { params }: { params: { userId: string } }
+  _request: NextRequest,
+  context: {
+    params: Promise<{ userId: string }>
+  }
 ) {
+  const { userId } = await context.params
+
   const url = new URL('/api/contributors', CMS_URL)
 
-  url.searchParams.set('where[user][equals]', params.userId)
+  url.searchParams.set('where[user][equals]', userId)
   url.searchParams.set('limit', '1')
   url.searchParams.set('depth', '2')
 
