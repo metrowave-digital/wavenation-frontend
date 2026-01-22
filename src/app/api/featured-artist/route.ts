@@ -11,52 +11,53 @@ if (!CMS_URL) {
 }
 
 /* ======================================================
-   Minimal CMS Types (API-safe)
+   CMS Types (Payload REST shape)
 ====================================================== */
 
 type MediaSize = {
-  url: string
-  width?: number
-  height?: number
+  url?: string | null
+  width?: number | null
+  height?: number | null
 }
 
 type MediaImage = {
-  url?: string
-  alt?: string
-  caption?: string
-  credit?: string
+  url?: string | null
+  alt?: string | null
+  caption?: string | null
+  credit?: string | null
   sizes?: {
-    square?: MediaSize
-    card?: MediaSize
-    hero?: MediaSize
-    thumb?: MediaSize
+    square?: MediaSize | null
+    card?: MediaSize | null
+    hero?: MediaSize | null
+    thumb?: MediaSize | null
   }
 }
 
 type Author = {
-  displayName: string
+  displayName?: string | null
 }
 
 type ArtistSpotlightBlock = {
   blockType: 'artistSpotlight'
   artistName: string
-  image?: MediaImage
-  description?: string
+  image?: MediaImage | null
+  description?: string | null
 }
 
 type UnknownBlock = {
   blockType: string
+  [key: string]: unknown
 }
 
 type ArticleDoc = {
   slug: string
   title: string
-  excerpt?: string
-  author?: Author
+  excerpt?: string | null
+  author?: Author | null
   hero?: {
-    image?: MediaImage
-  }
-  contentBlocks?: Array<ArtistSpotlightBlock | UnknownBlock>
+    image?: MediaImage | null
+  } | null
+  contentBlocks?: Array<ArtistSpotlightBlock | UnknownBlock> | null
 }
 
 /* ======================================================
@@ -92,7 +93,8 @@ export async function GET() {
   try {
     const url = new URL('/api/articles', CMS_URL)
 
-    url.searchParams.set('where[status][equals]', 'published')
+    // ✅ Payload REST filters
+    url.searchParams.set('where[_status][equals]', 'published')
     url.searchParams.set('where[isFeatured][equals]', 'true')
     url.searchParams.set('sort', '-publishDate')
     url.searchParams.set('limit', '1')
@@ -103,7 +105,7 @@ export async function GET() {
     })
 
     if (!res.ok) {
-      throw new Error('CMS request failed')
+      throw new Error(`CMS request failed: ${res.status}`)
     }
 
     const data = (await res.json()) as {
@@ -113,7 +115,7 @@ export async function GET() {
     const doc = data?.docs?.[0]
 
     if (!doc || !Array.isArray(doc.contentBlocks)) {
-      return NextResponse.json(null)
+      return NextResponse.json({ featured: null })
     }
 
     /* =========================================
@@ -126,23 +128,27 @@ export async function GET() {
     )
 
     if (!spotlightBlock) {
-      return NextResponse.json(null)
+      return NextResponse.json({ featured: null })
     }
 
     /* =========================================
-       Resolve artist image (safe)
+       Resolve artist image
     ========================================= */
 
     const spotlightImage =
       spotlightBlock.image?.sizes?.square?.url ||
-      spotlightBlock.image?.url
+      spotlightBlock.image?.sizes?.card?.url ||
+      spotlightBlock.image?.url ||
+      null
 
     /* =========================================
-       Resolve hero image (safe)
+       Resolve hero image
     ========================================= */
 
     const heroImage =
-      doc.hero?.image?.sizes?.hero?.url
+      doc.hero?.image?.sizes?.hero?.url ||
+      doc.hero?.image?.url ||
+      null
 
     /* =========================================
        Build response
@@ -151,7 +157,7 @@ export async function GET() {
     const response: FeaturedArtistResponse = {
       slug: doc.slug,
       articleTitle: doc.title,
-      excerpt: doc.excerpt,
+      excerpt: doc.excerpt ?? undefined,
 
       author: doc.author?.displayName
         ? { name: doc.author.displayName }
@@ -162,7 +168,7 @@ export async function GET() {
         image: spotlightImage
           ? {
               url: spotlightImage,
-              alt: spotlightBlock.image?.alt,
+              alt: spotlightBlock.image?.alt ?? undefined,
             }
           : undefined,
       },
@@ -170,8 +176,8 @@ export async function GET() {
       heroImage: heroImage
         ? {
             url: heroImage,
-            alt: doc.hero?.image?.alt,
-            caption: doc.hero?.image?.caption,
+            alt: doc.hero?.image?.alt ?? undefined,
+            caption: doc.hero?.image?.caption ?? undefined,
           }
         : undefined,
     }
@@ -179,6 +185,9 @@ export async function GET() {
     return NextResponse.json(response)
   } catch (error) {
     console.error('[featured-artist]', error)
-    return NextResponse.json(null)
+    return NextResponse.json(
+      { featured: null },
+      { status: 500 }
+    )
   }
 }
