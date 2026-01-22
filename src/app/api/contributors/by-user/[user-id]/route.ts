@@ -5,10 +5,11 @@ const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL!
 export async function GET(
   _request: NextRequest,
   context: {
-    params: Promise<{ userId: string }>
+    params: Promise<{ 'user-id': string }>
   }
 ) {
-  const { userId } = await context.params
+  const params = await context.params
+  const userId = params['user-id']
 
   const url = new URL('/api/contributors', CMS_URL)
 
