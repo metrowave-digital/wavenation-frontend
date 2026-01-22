@@ -1,0 +1,202 @@
+/* ======================================================
+   EDITORIAL NEWSLETTER CTA
+====================================================== */
+
+.root {
+  margin: 72px auto 64px;
+  padding: 0 1.5rem;
+}
+
+.inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 40px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ======================================================
+   COPY
+====================================================== */
+
+.copy {
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: #4da3ff;
+}
+
+.title {
+  font-size: 28px;
+  line-height: 1.25;
+  margin-bottom: 10px;
+  color: #ededed;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #bdbdbd;
+}
+
+/* ======================================================
+   FORM
+====================================================== */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form input {
+  height: 44px;
+  padding: 0 14px;
+
+  font-size: 14px;
+  color: #ededed;
+
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+
+  outline: none;
+}
+
+.form input::placeholder {
+  color: #777;
+}
+
+.form input:focus {
+  border-color: #4da3ff;
+}
+
+/* ======================================================
+   OPTIONS
+====================================================== */
+
+.options {
+  border: none;
+  padding: 0;
+  margin-top: 4px;
+}
+
+.options legend {
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: #999;
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 14px;
+  color: #ddd;
+}
+
+.options input {
+  accent-color: #4da3ff;
+}
+
+/* ======================================================
+   BUTTON + STATES
+====================================================== */
+
+.form button {
+  height: 46px;
+  margin-top: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #000;
+  background: #4da3ff;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.form button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.inlineError {
+  font-size: 12px;
+  color: #ff6b6b;
+}
+
+.error {
+  font-size: 13px;
+  color: #ff6b6b;
+}
+
+/* ======================================================
+   SUCCESS
+====================================================== */
+
+.success {
+  text-align: center;
+  padding: 32px 0;
+}
+
+.success h3 {
+  font-size: 22px;
+  margin-bottom: 6px;
+  color: #ededed;
+}
+
+.success p {
+  font-size: 14px;
+  color: #bdbdbd;
+}
+
+.emoji {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 768px) {
+  .inner {
+    padding: 32px 20px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .nameRow {
+    grid-template-columns: 1fr;
+  }
+}

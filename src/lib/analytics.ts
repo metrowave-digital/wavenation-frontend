@@ -36,6 +36,11 @@ export type AnalyticsEvent =
   | 'player_expand'
   | 'player_collapse'
   | 'newsletter_signup'
+  | 'author_hover'
+  | 'author_click'
+  | 'tag_click'
+  | 'tag_show_all_click'
+  | 'category_click'
 
 /* ======================================================
    Core Dispatcher (GA4 + PostHog)

@@ -1,12 +1,73 @@
+/* ======================================================
+   Pull Quote – Editorial / Magazine Style
+====================================================== */
+
 .root {
-  border-left: 4px solid #0af;
-  padding-left: 1rem;
-  margin: 2.5rem 0;
-  font-style: italic;
+  position: relative;
+  margin: 48px 0;
+  padding: 28px 32px;
+
+  font-size: 22px;
+  line-height: 1.5;
+  font-weight: 600;
+
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+
+  border-left: 4px solid var(--accent, #4da3ff);
+  border-radius: 12px;
 }
 
+/* Quote text */
+.root p {
+  margin: 0;
+}
+
+/* Attribution */
 .root cite {
   display: block;
-  margin-top: 0.5rem;
-  opacity: 0.7;
+  margin-top: 16px;
+
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+
+  color: var(--text-secondary);
+}
+
+/* ======================================================
+   Desktop Floating Rail Behavior
+====================================================== */
+
+@media (min-width: 1024px) {
+  .root {
+    float: right;
+    width: 42%;
+
+    /* creates magazine-style offset */
+    margin: 16px -8% 32px 48px;
+  }
+}
+
+/* ======================================================
+   Tablet Adjustments
+====================================================== */
+
+@media (max-width: 1023px) {
+  .root {
+    float: none;
+    width: 100%;
+    margin: 40px 0;
+  }
+}
+
+/* ======================================================
+   Mobile Refinement
+====================================================== */
+
+@media (max-width: 640px) {
+  .root {
+    padding: 20px 20px;
+    font-size: 18px;
+  }
 }

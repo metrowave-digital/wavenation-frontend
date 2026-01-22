@@ -1,0 +1,132 @@
+/* ======================================================
+   FLOATING PULL QUOTE – EDITORIAL (GRID SAFE)
+====================================================== */
+
+.main :global(.pullQuote) {
+  position: relative;
+
+  /* Size & containment */
+  width: 100%;
+  max-width: 320px;
+
+  /* Float behavior */
+  float: right;
+  clear: right;
+
+  /* Spacing (INSIDE COLUMN ONLY) */
+  margin: 16px 0 32px 32px;
+  padding: 20px 22px;
+
+  /* Visual */
+  border-left: 4px solid #4da3ff;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+
+  /* Typography */
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #ffffff;
+
+  box-sizing: border-box;
+}
+
+/* ======================================================
+   QUOTE TEXT
+====================================================== */
+
+.main :global(.pullQuote .quote) {
+  position: relative;
+  display: block;
+
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 600;
+
+  padding-left: 14px;
+}
+
+/* Opening quotation mark */
+.main :global(.pullQuote .mark) {
+  position: absolute;
+  left: -2px;
+  top: 6px;
+
+  font-size: 32px;
+  line-height: 0;
+  color: #4da3ff;
+}
+
+/* ======================================================
+   ATTRIBUTION
+====================================================== */
+
+.main :global(.pullQuote .attribution),
+.main :global(.pullQuote cite) {
+  display: block;
+  margin-top: 12px;
+
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: #999999;
+}
+
+/* ======================================================
+   LEFT-FLOAT VARIANT
+====================================================== */
+
+@media (min-width: 1024px) {
+  .main :global(.pullQuote[data-align='left']) {
+    float: left;
+    clear: left;
+    margin: 16px 32px 32px 0;
+  }
+}
+
+/* ======================================================
+   MOBILE RESET (NO FLOATS)
+====================================================== */
+
+@media (max-width: 1023px) {
+  .main :global(.pullQuote) {
+    float: none;
+    clear: both;
+
+    max-width: none;
+    width: 100%;
+
+    margin: 40px auto;
+    padding: 20px 18px;
+
+    text-align: center;
+  }
+
+  .main :global(.pullQuote .quote) {
+    padding-left: 0;
+    font-size: 20px;
+  }
+
+  .main :global(.pullQuote .mark) {
+    position: static;
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 28px;
+  }
+}
+
+/* ======================================================
+   CMS SAFETY — STRIP DANGEROUS INLINE STYLES
+====================================================== */
+
+.main :global(.pullQuote[style*='margin']),
+.main :global(.pullQuote[style*='width']),
+.main :global(.pullQuote[style*='float']),
+.main :global(blockquote[style*='float']) {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  max-width: 100% !important;
+}

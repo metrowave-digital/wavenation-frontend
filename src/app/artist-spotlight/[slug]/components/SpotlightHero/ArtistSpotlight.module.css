@@ -1,0 +1,143 @@
+/* ======================================================
+   HERO ROOT
+====================================================== */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 72vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+
+/* ======================================================
+   MEDIA
+====================================================== */
+
+.mediaWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.media {
+  object-fit: cover;
+  object-position: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.55) 55%,
+      rgba(0, 0, 0, 0.85) 100%
+    );
+}
+
+/* ======================================================
+   CONTENT WRAPPER
+====================================================== */
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 960px;
+
+  padding: 64px 24px 56px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ======================================================
+   EYEBROW
+====================================================== */
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #4da3ff;
+}
+
+/* ======================================================
+   TITLE
+====================================================== */
+
+.title {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  max-width: 22ch;
+}
+
+/* ======================================================
+   SUBTITLE
+====================================================== */
+
+.subtitle {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 52ch;
+}
+
+/* ======================================================
+   BYLINE
+====================================================== */
+
+.bylineWrap {
+  margin-top: 8px;
+}
+
+/* ======================================================
+   TABLET
+====================================================== */
+
+@media (max-width: 1024px) {
+  .hero {
+    min-height: 64vh;
+  }
+
+  .inner {
+    padding: 56px 20px 48px;
+  }
+
+  .title {
+    max-width: 100%;
+  }
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 60vh;
+  }
+
+  .inner {
+    padding: 40px 16px 36px;
+    gap: 16px;
+  }
+
+  .title {
+    font-size: clamp(1.9rem, 7vw, 2.6rem);
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+}

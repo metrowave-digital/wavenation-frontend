@@ -16,19 +16,34 @@ export interface LexicalRoot {
 }
 
 /* ======================================================
+   Base Block (shared)
+====================================================== */
+
+interface BaseBlock {
+  id: string
+  blockType: string
+  blockName?: string | null
+}
+
+/* ======================================================
    Blocks
 ====================================================== */
 
-export interface RichTextBlockData {
-  id: string
+export interface RichTextBlockData extends BaseBlock {
   blockType: 'richText'
   content: {
-    root: LexicalRoot
+    root: {
+      children: Array<{
+        type: string
+        children: Array<{
+          text: string
+        }>
+      }>
+    }
   }
 }
 
-export interface ImageBlockData {
-  id: string
+export interface ImageBlockData extends BaseBlock {
   blockType: 'image'
   image: {
     url: string
@@ -39,15 +54,13 @@ export interface ImageBlockData {
   fullWidth?: boolean | null
 }
 
-export interface PullQuoteBlockData {
-  id: string
+export interface PullQuoteBlockData extends BaseBlock {
   blockType: 'pullQuote'
   quote: string
   attribution?: string | null
 }
 
-export interface DividerBlockData {
-  id: string
+export interface DividerBlockData extends BaseBlock {
   blockType: 'divider'
 }
 
@@ -58,12 +71,51 @@ export interface TimelineItem {
   highlight?: boolean | null
 }
 
-export interface TimelineBlockData {
-  id: string
+export interface TimelineBlockData extends BaseBlock {
   blockType: 'timeline'
   title?: string | null
   style?: 'vertical' | 'horizontal' | 'compact'
   items: TimelineItem[]
+}
+
+export interface VideoBlockData extends BaseBlock {
+  blockType: 'video'
+
+  provider?: 'youtube' | 'vimeo' | 'native' | null
+  url?: string | null
+
+  file?: {
+    url: string
+    mimeType?: string | null
+  } | null
+
+  caption?: string | null
+
+  aspectRatio?: '16:9' | '4:5' | '1:1' | null
+  autoplay?: boolean | null
+  muted?: boolean | null
+  controls?: boolean | null
+}
+
+export interface ArtistSpotlightLink {
+  id: string
+  label: string
+  url: string
+}
+
+export interface ArtistSpotlightBlockData extends BaseBlock {
+  blockType: 'artistSpotlight'
+
+  artistName: string
+
+  image?: {
+    url: string
+    alt?: string | null
+  } | null
+
+  description?: string | null
+
+  links?: ArtistSpotlightLink[] | null
 }
 
 /* ======================================================
@@ -76,3 +128,5 @@ export type ContentBlock =
   | PullQuoteBlockData
   | DividerBlockData
   | TimelineBlockData
+  | VideoBlockData
+  | ArtistSpotlightBlockData

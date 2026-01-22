@@ -1,115 +1,134 @@
+/* ======================================================
+   ROOT ARTICLE
+====================================================== */
+
 .root {
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: 4rem 1.5rem 6rem;
-}
-
-/* HERO */
-
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  margin-bottom: 4rem;
-}
-
-.heroText h1 {
-  font-size: clamp(2.5rem, 4vw, 4rem);
-  line-height: 1.05;
-}
-
-.subtitle {
-  opacity: 0.85;
-  max-width: 520px;
-}
-
-.heroImage img {
-  border-radius: 18px;
-}
-
-/* IDENTITY */
-
-.identityRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.identityRail {
-  display: grid;
-  gap: 1rem;
-}
-
-.identityRail span {
-  font-size: 12px;
-  opacity: 0.6;
-  text-transform: uppercase;
-}
-
-.identityRail strong {
-  font-size: 15px;
-}
-
-/* FEATURED RELEASE */
-
-.featuredRelease {
+  width: 100%;
   display: flex;
-  gap: 1rem;
-  align-items: center;
-  cursor: pointer;
+  flex-direction: column;
 }
 
-.badge {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  opacity: 0.7;
-}
-
-/* CONTENT */
+/* ======================================================
+   CONTENT GRID (MAIN + RAIL)
+====================================================== */
 
 .content {
-  max-width: 760px;
+  width: 100%;
+  max-width: 1280px;
+
   margin: 0 auto;
-  line-height: 1.75;
+  padding: 32px 24px 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-/* PULL QUOTE */
-
-.pullQuote {
-  float: right;
-  max-width: 280px;
-  margin: 1.5rem 0 1.5rem 2rem;
-  font-size: 1.2rem;
-  font-style: italic;
-  opacity: 0.85;
+/* Desktop: main content + rail */
+@media (min-width: 1024px) {
+  .content {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 48px;
+    align-items: start;
+  }
 }
 
-/* ADS */
+/* ======================================================
+   MAIN ARTICLE COLUMN
+====================================================== */
 
-.adSlot {
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  padding: 2rem;
-  text-align: center;
-  margin: 3rem 0;
-  font-size: 12px;
-  opacity: 0.5;
+.main {
+  min-width: 0;
 }
 
-/* MOBILE */
+/* Editorial width guardrails */
+.main :global(p),
+.main :global(li) {
+  max-width: 72ch;
+}
+
+/* Section spacing */
+.main :global(h2) {
+  margin-top: 48px;
+}
+
+.main :global(h3) {
+  margin-top: 36px;
+}
+
+.main :global(h4) {
+  margin-top: 28px;
+}
+
+/* ======================================================
+   RIGHT RAIL COLUMN
+====================================================== */
+
+.rail {
+  width: 100%;
+  position: relative;
+}
+
+/* Sticky behavior — ONLY on desktop */
+@media (min-width: 1024px) {
+  .rail {
+    position: sticky;
+    top: 96px; /* below site header */
+    align-self: flex-start;
+  }
+}
+
+/* ======================================================
+   INLINE AD SLOT (OPTIONAL)
+====================================================== */
+
+.adInline {
+  margin: 48px 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* ======================================================
+   RESPONSIVE ADJUSTMENTS
+====================================================== */
+
+@media (max-width: 1024px) {
+  .content {
+    padding: 28px 20px 0;
+  }
+
+  .rail {
+    position: static;
+  }
+}
 
 @media (max-width: 768px) {
-  .hero {
+  .content {
     grid-template-columns: 1fr;
+    padding: 24px 16px 0;
   }
 
-  .identityRow {
-    grid-template-columns: 1fr;
+  .adInline {
+    margin: 40px 0;
   }
+}
 
-  .pullQuote {
-    float: none;
-    margin: 2rem 0;
-    max-width: 100%;
+@media (max-width: 640px) {
+  .content {
+    padding: 20px 14px 0;
   }
+}
+
+/* ======================================================
+   HARD CONTENT CONTAINMENT
+====================================================== */
+
+.main {
+  min-width: 0;
+  position: relative;
+  overflow: visible;
+}
+
+/* Prevent any child from exceeding column */
+.main > * {
+  max-width: 100%;
 }

@@ -1,0 +1,120 @@
+/* ======================================================
+   Rich Text Editorial Block
+====================================================== */
+
+.richText {
+  max-width: 760px;
+  margin: 56px auto;
+  padding: 0 16px;
+}
+
+/* ======================================================
+   Section Heading
+====================================================== */
+
+.heading {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 20px;
+  color: #ffffff;
+}
+
+/* ======================================================
+   Body Typography
+====================================================== */
+
+.body {
+  font-size: 17px;
+  line-height: 1.75;
+  color: #e5e5e5;
+}
+
+.body p {
+  margin: 0 0 22px;
+}
+
+/* ======================================================
+   Emphasis
+====================================================== */
+
+.body strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.body em {
+  font-style: italic;
+  color: #dddddd;
+}
+
+/* ======================================================
+   Links
+====================================================== */
+
+.body a {
+  color: #4da3ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(77, 163, 255, 0.4);
+  transition: border-color 0.2s ease;
+}
+
+.body a:hover {
+  border-bottom-color: #4da3ff;
+}
+
+/* ======================================================
+   Lists
+====================================================== */
+
+.body ul,
+.body ol {
+  padding-left: 22px;
+  margin: 24px 0;
+}
+
+.body li {
+  margin-bottom: 10px;
+}
+
+/* ======================================================
+   Quotes
+====================================================== */
+
+.body blockquote {
+  margin: 32px 0;
+  padding-left: 20px;
+  border-left: 3px solid #4da3ff;
+  color: #cccccc;
+  font-style: italic;
+}
+
+/* ======================================================
+   Dividers
+====================================================== */
+
+.body hr {
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 40px 0;
+}
+
+/* ======================================================
+   Mobile
+====================================================== */
+
+@media (max-width: 768px) {
+  .richText {
+    margin: 40px auto;
+  }
+
+  .heading {
+    font-size: 22px;
+  }
+
+  .body {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}

@@ -1,0 +1,117 @@
+/* ======================================================
+   RAIL
+====================================================== */
+
+.rail {
+  position: sticky;
+  top: 96px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  width: 100%;
+  max-width: 240px;
+}
+
+/* Hide on mobile (MobileContents replaces it) */
+@media (max-width: 768px) {
+  .rail {
+    display: none;
+  }
+}
+
+/* ======================================================
+   LABEL
+====================================================== */
+
+.label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  color: #4da3ff;
+}
+
+/* ======================================================
+   LIST
+====================================================== */
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ======================================================
+   LINKS
+====================================================== */
+
+.list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.list a:hover {
+  color: #fff;
+  transform: translateX(2px);
+}
+
+/* ======================================================
+   DOT INDICATOR
+====================================================== */
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+/* ======================================================
+   ACTIVE STATE
+====================================================== */
+
+.active {
+  color: #fff;
+  font-weight: 700;
+}
+
+.active .dot {
+  background: #4da3ff;
+  transform: scale(1.2);
+}
+
+/* ======================================================
+   REDUCED MOTION
+====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .list a,
+  .dot {
+    transition: none;
+  }
+}

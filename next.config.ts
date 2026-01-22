@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
+        protocol: 'https',
+        hostname: 'wavenation.media',
+        pathname: '/api/media/**',
+      },
+      {
         protocol: 'http',
         hostname: '127.0.0.1',
         port: '3000',

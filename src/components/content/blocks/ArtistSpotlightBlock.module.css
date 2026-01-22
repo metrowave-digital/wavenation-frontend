@@ -1,0 +1,109 @@
+/* ======================================================
+   Artist Spotlight Content Block
+====================================================== */
+
+.block {
+  margin: 3rem 0;
+  padding: 2rem;
+
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.9),
+    rgba(10, 10, 10, 0.9)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ===============================
+   HEADER
+=============================== */
+
+.header {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.image {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kicker {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4da3ff;
+  font-weight: 700;
+}
+
+.name {
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+/* ===============================
+   DESCRIPTION
+=============================== */
+
+.description {
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #d0d0d0;
+}
+
+/* ===============================
+   LINKS
+=============================== */
+
+.links {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+}
+
+.links a {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  color: #ededed;
+  transition: background 0.2s ease;
+}
+
+.links a:hover {
+  background: rgba(77, 163, 255, 0.25);
+}
+
+/* ===============================
+   MOBILE
+=============================== */
+
+@media (max-width: 640px) {
+  .block {
+    padding: 1.5rem;
+  }
+
+  .image {
+    width: 72px;
+    height: 72px;
+  }
+}

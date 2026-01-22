@@ -1,0 +1,68 @@
+/* ======================================================
+   ROOT
+====================================================== */
+
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+/* ======================================================
+   PILL
+====================================================== */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 12px;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  color: #cfd8ff;
+  background: rgba(77, 163, 255, 0.12);
+
+  border: 1px solid rgba(77, 163, 255, 0.35);
+  border-radius: 999px;
+
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.pill:hover {
+  background: rgba(77, 163, 255, 0.22);
+  border-color: rgba(77, 163, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.pill:focus-visible {
+  outline: 2px solid #4da3ff;
+  outline-offset: 3px;
+}
+
+/* ======================================================
+   MOBILE OPTIMIZATION
+====================================================== */
+
+@media (max-width: 640px) {
+  .root {
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .pill {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}

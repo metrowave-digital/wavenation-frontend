@@ -1,0 +1,81 @@
+/* ======================================================
+   RAIL CONTAINER
+====================================================== */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ======================================================
+   BLOCK
+====================================================== */
+
+.block {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* ======================================================
+   EYEBROW
+====================================================== */
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 10px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  color: #4da3ff;
+}
+
+/* ======================================================
+   RELATED SHOW
+====================================================== */
+
+.show {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.showArt {
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.showMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.meta {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 768px) {
+  .rail {
+    gap: 20px;
+  }
+
+  .block {
+    padding: 14px;
+  }
+}

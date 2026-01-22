@@ -1,0 +1,301 @@
+/* ======================================================
+   ROOT / PAGE
+====================================================== */
+
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #000;
+  color: #ededed;
+  overflow-x: hidden;
+}
+
+.glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(900px 520px at 18% 10%, rgba(77,163,255,.25), transparent 60%),
+    radial-gradient(720px 520px at 82% 22%, rgba(155,77,255,.18), transparent 60%),
+    radial-gradient(900px 700px at 50% 90%, rgba(0,255,160,.12), transparent 65%);
+}
+
+/* ======================================================
+   CONTAINER
+====================================================== */
+
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 18px 80px;
+}
+
+/* ======================================================
+   BACK LINK
+====================================================== */
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #4da3ff;
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+/* ======================================================
+   HERO LAYOUT
+====================================================== */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  margin-bottom: 48px;
+}
+
+/* ======================================================
+   COVER
+====================================================== */
+
+.coverWrap {
+  position: relative;
+  max-width: 520px;
+}
+
+.coverWrap::before {
+  content: '';
+  position: absolute;
+  inset: -18px;
+  border-radius: 28px;
+  background:
+    radial-gradient(260px 260px at 20% 20%, rgba(77,163,255,.45), transparent 60%),
+    radial-gradient(300px 300px at 80% 80%, rgba(155,77,255,.35), transparent 60%);
+  filter: blur(28px);
+  z-index: -1;
+}
+
+.cover {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.02);
+  box-shadow:
+    0 28px 120px rgba(0,0,0,.85),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+/* ======================================================
+   HERO TEXT
+====================================================== */
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.06;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+/* ======================================================
+   META PILLS
+====================================================== */
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.metaPill {
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+/* ======================================================
+   DESCRIPTION
+====================================================== */
+
+.description {
+  max-width: 70ch;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(237,237,237,.78);
+}
+
+/* ======================================================
+   TRACK SECTION
+====================================================== */
+
+.trackSection {
+  margin-top: 32px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(237,237,237,.75);
+  margin-bottom: 18px;
+}
+
+/* ======================================================
+   TRACKLIST
+====================================================== */
+
+.tracklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(255,255,255,.02);
+  transition:
+    transform .18s ease,
+    background .18s ease,
+    border .18s ease;
+}
+
+.track:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.14);
+}
+
+.trackNum {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 950;
+  color: #4da3ff;
+  background: rgba(77,163,255,.18);
+  border: 1px solid rgba(77,163,255,.35);
+}
+
+.trackMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trackTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 950;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackArtist {
+  font-size: 12px;
+  color: rgba(237,237,237,.6);
+}
+
+.explicit {
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(255,80,80,.2);
+  border: 1px solid rgba(255,80,80,.4);
+  color: rgba(255,220,220,.95);
+}
+
+.playBtn {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  color: #ededed;
+}
+
+.playBtn:hover {
+  background: rgba(255,255,255,.1);
+}
+
+/* ======================================================
+   EMPTY STATE
+====================================================== */
+
+.empty {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.18);
+  color: rgba(237,237,237,.6);
+}
+
+/* ======================================================
+   RESPONSIVE — TABLET
+====================================================== */
+
+@media (min-width: 768px) {
+  .hero {
+    grid-template-columns: 420px 1fr;
+    align-items: center;
+  }
+}
+
+/* ======================================================
+   RESPONSIVE — DESKTOP
+====================================================== */
+
+@media (min-width: 1200px) {
+  .container {
+    padding: 40px 24px 100px;
+  }
+
+  .track {
+    padding: 16px 18px;
+  }
+}

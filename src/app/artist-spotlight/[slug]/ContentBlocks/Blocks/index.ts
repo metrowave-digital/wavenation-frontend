@@ -1,0 +1,5 @@
+export { ArtistSpotlightBlock } from './ArtistSpotlightBlock'
+export { RichTextBlock } from './RichTextBlock'
+export { PullQuoteBlock } from './PullQuoteBlock'
+export { VideoBlock } from './VideoBlock'
+export { DividerBlock } from './DividerBlock'

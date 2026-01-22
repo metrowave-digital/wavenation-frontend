@@ -16,12 +16,12 @@ if (!CMS_URL) {
 
 type MediaSize = {
   url: string
-  width: number
-  height: number
+  width?: number
+  height?: number
 }
 
 type MediaImage = {
-  url: string
+  url?: string
   alt?: string
   caption?: string
   credit?: string
@@ -29,7 +29,12 @@ type MediaImage = {
     square?: MediaSize
     card?: MediaSize
     hero?: MediaSize
+    thumb?: MediaSize
   }
+}
+
+type Author = {
+  displayName: string
 }
 
 type ArtistSpotlightBlock = {
@@ -47,16 +52,24 @@ type ArticleDoc = {
   slug: string
   title: string
   excerpt?: string
+  author?: Author
   hero?: {
     image?: MediaImage
   }
   contentBlocks?: Array<ArtistSpotlightBlock | UnknownBlock>
 }
 
+/* ======================================================
+   API Response Shape
+====================================================== */
+
 type FeaturedArtistResponse = {
   slug: string
   articleTitle: string
   excerpt?: string
+  author?: {
+    name: string
+  }
   artist: {
     name: string
     image?: {
@@ -83,7 +96,7 @@ export async function GET() {
     url.searchParams.set('where[isFeatured][equals]', 'true')
     url.searchParams.set('sort', '-publishDate')
     url.searchParams.set('limit', '1')
-    url.searchParams.set('depth', '2') // REQUIRED for blocks + media
+    url.searchParams.set('depth', '2')
 
     const res = await fetch(url.toString(), {
       next: { revalidate: 300 },
@@ -103,40 +116,62 @@ export async function GET() {
       return NextResponse.json(null)
     }
 
-    // 🔍 Narrow block type safely
+    /* =========================================
+       Find Artist Spotlight block
+    ========================================= */
+
     const spotlightBlock = doc.contentBlocks.find(
-      (
-        block,
-      ): block is ArtistSpotlightBlock =>
-        block.blockType === 'artistSpotlight',
+      (block): block is ArtistSpotlightBlock =>
+        block.blockType === 'artistSpotlight'
     )
 
     if (!spotlightBlock) {
       return NextResponse.json(null)
     }
 
-    const image =
-      spotlightBlock.image?.sizes?.square ??
-      spotlightBlock.image
+    /* =========================================
+       Resolve artist image (safe)
+    ========================================= */
+
+    const spotlightImage =
+      spotlightBlock.image?.sizes?.square?.url ||
+      spotlightBlock.image?.url
+
+    /* =========================================
+       Resolve hero image (safe)
+    ========================================= */
+
+    const heroImage =
+      doc.hero?.image?.sizes?.hero?.url
+
+    /* =========================================
+       Build response
+    ========================================= */
 
     const response: FeaturedArtistResponse = {
       slug: doc.slug,
       articleTitle: doc.title,
       excerpt: doc.excerpt,
+
+      author: doc.author?.displayName
+        ? { name: doc.author.displayName }
+        : undefined,
+
       artist: {
         name: spotlightBlock.artistName,
-        image: image?.url
+        image: spotlightImage
           ? {
-              url: image.url,
+              url: spotlightImage,
               alt: spotlightBlock.image?.alt,
             }
           : undefined,
       },
-      heroImage: doc.hero?.image?.sizes?.hero
+
+      heroImage: heroImage
         ? {
-            url: doc.hero.image.sizes.hero.url,
-            alt: doc.hero.image.alt,
-            caption: doc.hero.image.caption,
+            url: heroImage,
+            alt: doc.hero?.image?.alt,
+            caption: doc.hero?.image?.caption,
           }
         : undefined,
     }

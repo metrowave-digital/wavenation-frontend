@@ -5,13 +5,15 @@ import { ImageBlock } from './blocks/ImageBlock'
 import { PullQuoteBlock } from './blocks/PullQuoteBlock'
 import { DividerBlock } from './blocks/DividerBlock'
 import { TimelineBlock } from './blocks/TimelineBlock'
+import { VideoBlock } from './blocks/VideoBlock'
+import { ArtistSpotlightBlock } from './blocks/ArtistSpotlightBlock'
 
 interface Props {
   blocks?: ContentBlock[]
 }
 
 export function ContentRenderer({ blocks }: Props) {
-  if (!blocks) return null
+  if (!blocks || blocks.length === 0) return null
 
   return (
     <>
@@ -23,6 +25,9 @@ export function ContentRenderer({ blocks }: Props) {
           case 'image':
             return <ImageBlock key={block.id} block={block} />
 
+          case 'video':
+            return <VideoBlock key={block.id} block={block} />
+
           case 'pullQuote':
             return <PullQuoteBlock key={block.id} block={block} />
 
@@ -31,6 +36,14 @@ export function ContentRenderer({ blocks }: Props) {
 
           case 'timeline':
             return <TimelineBlock key={block.id} block={block} />
+
+          case 'artistSpotlight':
+            return (
+    <ArtistSpotlightBlock
+      key={block.id}
+      block={block}
+    />
+  )
 
           default:
             return null

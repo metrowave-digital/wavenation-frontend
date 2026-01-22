@@ -12,8 +12,8 @@ if (!CMS_URL) {
    GraphQL Query
    - Published
    - Featured
-   - Latest 2
-   - Uses SUBCATEGORIES (primary = first)
+   - Latest
+   - NO subcategory filtering here
 ====================================================== */
 
 const SPOTLIGHT_ARTICLES_QUERY = `
@@ -24,7 +24,7 @@ const SPOTLIGHT_ARTICLES_QUERY = `
         isFeatured: { equals: true }
       }
       sort: "-publishDate"
-      limit: 2
+      limit: 5
     ) {
       docs {
         id
@@ -36,13 +36,13 @@ const SPOTLIGHT_ARTICLES_QUERY = `
         hero {
           image {
             url
+            alt
+            caption
+            credit
             sizes {
               card { url }
               thumb { url }
             }
-            alt
-            caption
-            credit
           }
         }
       }
@@ -54,38 +54,39 @@ const SPOTLIGHT_ARTICLES_QUERY = `
    Types
 ====================================================== */
 
-interface GraphQLImage {
+interface ImageSizes {
+  card?: { url?: string | null }
+  thumb?: { url?: string | null }
+}
+
+interface Image {
   url?: string | null
   alt?: string | null
   caption?: string | null
   credit?: string | null
-  sizes?: {
-    card?: { url?: string | null }
-    thumb?: { url?: string | null }
-  }
+  sizes?: ImageSizes
 }
 
-interface GraphQLSubcategory {
+interface Subcategory {
   name?: string | null
 }
 
-interface GraphQLArticle {
+interface Article {
   id: number
   title: string
   slug: string
-  subcategories?: GraphQLSubcategory[] | null
+  subcategories?: Subcategory[] | null
   hero?: {
-    image?: GraphQLImage | null
+    image?: Image | null
   } | null
 }
 
 interface GraphQLResponse {
   data?: {
     Articles?: {
-      docs: GraphQLArticle[]
+      docs?: Article[]
     }
   }
-  errors?: unknown
 }
 
 /* ======================================================
@@ -96,12 +97,8 @@ export async function GET() {
   try {
     const res = await fetch(`${CMS_URL}/api/graphql`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: SPOTLIGHT_ARTICLES_QUERY,
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: SPOTLIGHT_ARTICLES_QUERY }),
       next: { revalidate: 60 },
     })
 
@@ -109,16 +106,27 @@ export async function GET() {
       return NextResponse.json([], { status: 200 })
     }
 
-    const result = (await res.json()) as GraphQLResponse
+    const json = (await res.json()) as GraphQLResponse
+    const docs = json.data?.Articles?.docs ?? []
 
-    const docs = result.data?.Articles?.docs
-    if (!docs) {
-      return NextResponse.json([], { status: 200 })
-    }
+    /* =========================================
+       FILTER OUT "Artist Profiles"
+    ========================================= */
 
-    const items = docs.map((article) => {
-      const heroImage = article.hero?.image ?? null
-      const subcategory =
+    const filtered = docs.filter((article) => {
+      const subs = article.subcategories ?? []
+      return !subs.some(
+        (s) => s?.name?.toLowerCase() === 'artist profiles'
+      )
+    })
+
+    /* =========================================
+       Map response
+    ========================================= */
+
+    const items = filtered.slice(0, 2).map((article) => {
+      const image = article.hero?.image ?? null
+      const category =
         article.subcategories?.[0]?.name ?? 'Featured'
 
       return {
@@ -127,21 +135,21 @@ export async function GET() {
         href: `/news/${article.slug}`,
 
         imageUrl:
-          heroImage?.sizes?.card?.url ??
-          heroImage?.sizes?.thumb?.url ??
-          heroImage?.url ??
+          image?.sizes?.card?.url ??
+          image?.sizes?.thumb?.url ??
+          image?.url ??
           null,
 
-        imageAlt: heroImage?.alt ?? '',
-        category: subcategory,
-        caption: heroImage?.caption ?? '',
-        credit: heroImage?.credit ?? '',
+        imageAlt: image?.alt ?? '',
+        category,
+        caption: image?.caption ?? '',
+        credit: image?.credit ?? '',
       }
     })
 
     return NextResponse.json(items)
-  } catch (err) {
-    console.error('[spotlight-articles]', err)
+  } catch (error) {
+    console.error('[spotlight-articles]', error)
     return NextResponse.json([], { status: 200 })
   }
 }
