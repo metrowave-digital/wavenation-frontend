@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import styles from './ArtistSpotlight.module.css'
-import { trackPageView } from '@/lib/analytics'
+import { trackEvent, trackPageView } from '@/lib/analytics'
 
 import { ArtistSpotlightHero } from './components/SpotlightHero/ArtistSpotlightHero'
 import { ContentBlocksRenderer } from './ContentBlocks/ContentBlocksRenderer'
@@ -65,7 +65,7 @@ interface Section {
 }
 
 /* ======================================================
-   Type Guard (NO any)
+   Type Guard
 ====================================================== */
 
 function isRichTextSectionBlock(
@@ -93,7 +93,7 @@ export default function ArtistSpotlightClient({
   article: ArtistSpotlightArticle
 }) {
   /* -------------------------------
-     Analytics
+     Analytics: Page View
   ------------------------------- */
   useEffect(() => {
     if (!article.slug) return
@@ -101,9 +101,39 @@ export default function ArtistSpotlightClient({
   }, [article.slug])
 
   /* -------------------------------
+     Analytics: Spotlight Impression
+  ------------------------------- */
+  const impressionFired = useRef(false)
+
+  useEffect(() => {
+    if (impressionFired.current) return
+    impressionFired.current = true
+
+    trackEvent('content_impression', {
+      content_type: 'artist_spotlight',
+      slug: article.slug,
+      title: article.title,
+      artist: article.relatedAlbum?.primaryArtist ?? null,
+    })
+  }, [article.slug, article.title, article.relatedAlbum])
+
+  /* -------------------------------
      Hero Image
   ------------------------------- */
   const hero = article.hero?.image
+
+  /* -------------------------------
+     Analytics: Hero Impression
+  ------------------------------- */
+  useEffect(() => {
+    if (!hero?.url) return
+
+    trackEvent('hero_interaction', {
+      type: 'impression',
+      placement: 'artist_spotlight_hero',
+      slug: article.slug,
+    })
+  }, [hero?.url, article.slug])
 
   /* -------------------------------
      Reading Sections
@@ -120,7 +150,7 @@ export default function ArtistSpotlightClient({
   }, [article.contentBlocks])
 
   /* -------------------------------
-     Active Section (DERIVED ONCE)
+     Active Section
   ------------------------------- */
   const [activeSectionId, setActiveSectionId] =
     useState<string | null>(() =>
@@ -128,10 +158,14 @@ export default function ArtistSpotlightClient({
     )
 
   /* -------------------------------
-     Optional: Reading Complete Hook
+     Analytics: Reading Complete
   ------------------------------- */
   function handleReadingComplete() {
-    // analytics, CTA reveal, etc.
+    trackEvent('content_interaction', {
+      action: 'read_complete',
+      content_type: 'artist_spotlight',
+      slug: article.slug,
+    })
   }
 
   /* -------------------------------
@@ -200,12 +234,8 @@ export default function ArtistSpotlightClient({
                 <ReadingProgressRail
                   sections={sections}
                   activeId={activeSectionId}
-                  onActiveChange={
-                    setActiveSectionId
-                  }
-                  onComplete={
-                    handleReadingComplete
-                  }
+                  onActiveChange={setActiveSectionId}
+                  onComplete={handleReadingComplete}
                 />
               )}
             </ArtistIdentityRail>

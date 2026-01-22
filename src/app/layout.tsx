@@ -48,25 +48,22 @@ export default function RootLayout({
         />
 
         {/* ================= GA4 ================= */}
-        {process.env.NEXT_PUBLIC_GA4_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA4_ID}`}
-              strategy="afterInteractive"
-            />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-YWB08LCGHY"
+          strategy="afterInteractive"
+        />
 
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GA4_ID}', {
-                  send_page_view: false
-                });
-              `}
-            </Script>
-          </>
-        )}
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-YWB08LCGHY', {
+              send_page_view: false
+            });
+          `}
+        </Script>
       </head>
 
       <body>
@@ -75,7 +72,9 @@ export default function RootLayout({
           <AnalyticsListener />
 
           {/* ================= Global Audio ================= */}
-          <AudioProvider streamUrl={process.env.NEXT_PUBLIC_RADIO_STREAM_URL!}>
+          <AudioProvider
+            streamUrl={process.env.NEXT_PUBLIC_RADIO_STREAM_URL!}
+          >
             {/* ================= Global System UI ================= */}
             <NewsTicker />
             <Header />

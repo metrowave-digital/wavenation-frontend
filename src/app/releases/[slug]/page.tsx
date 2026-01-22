@@ -4,6 +4,13 @@ import Link from 'next/link'
 
 import styles from './ReleasePage.module.css'
 
+// Analytics
+import { ReleaseImpression } from '../ReleaseImpression'
+import {
+  trackTrackImpression,
+  trackTrackPlay,
+} from '../TrackAnalytics'
+
 /* ======================================================
    Types (albums collection)
 ====================================================== */
@@ -90,6 +97,17 @@ export default async function ReleasePage({
 
   return (
     <main className={styles.page}>
+      {/* ===============================
+         Release Impression (Analytics)
+      =============================== */}
+      <ReleaseImpression
+        slug={album.slug}
+        title={album.title}
+        artist={album.primaryArtist ?? undefined}
+        label={album.label ?? undefined}
+        releaseDate={album.releaseDate}
+      />
+
       <div className={styles.glow} aria-hidden />
 
       <div className={styles.container}>
@@ -123,7 +141,9 @@ export default async function ReleasePage({
                   {album.primaryArtist}
                 </span>
               )}
-              {date && <span className={styles.metaPill}>{date}</span>}
+              {date && (
+                <span className={styles.metaPill}>{date}</span>
+              )}
               {album.label && (
                 <span className={styles.metaPill}>{album.label}</span>
               )}
@@ -145,27 +165,47 @@ export default async function ReleasePage({
 
           {tracks.length ? (
             <ol className={styles.tracklist}>
-              {tracks.map((track, i) => (
-                <li key={track.id} className={styles.track}>
-                  <span className={styles.trackNum}>
-                    {(i + 1).toString().padStart(2, '0')}
-                  </span>
+              {tracks.map((track, i) => {
+                // fire impression once per render
+                trackTrackImpression({
+                  album: album.title,
+                  track: track.title,
+                  position: i + 1,
+                })
 
-                  <div className={styles.trackMain}>
-                    <span className={styles.trackTitle}>
-                      {track.title}
-                      {track.isExplicit && (
-                        <span className={styles.explicit}>E</span>
-                      )}
+                return (
+                  <li key={track.id} className={styles.track}>
+                    <span className={styles.trackNum}>
+                      {(i + 1).toString().padStart(2, '0')}
                     </span>
-                    <span className={styles.trackArtist}>
-                      {track.artist ?? album.primaryArtist}
-                    </span>
-                  </div>
 
-                  <button className={styles.playBtn}>Play</button>
-                </li>
-              ))}
+                    <div className={styles.trackMain}>
+                      <span className={styles.trackTitle}>
+                        {track.title}
+                        {track.isExplicit && (
+                          <span className={styles.explicit}>E</span>
+                        )}
+                      </span>
+                      <span className={styles.trackArtist}>
+                        {track.artist ?? album.primaryArtist}
+                      </span>
+                    </div>
+
+                    <button
+                      className={styles.playBtn}
+                      onClick={() =>
+                        trackTrackPlay({
+                          album: album.title,
+                          track: track.title,
+                          position: i + 1,
+                        })
+                      }
+                    >
+                      Play
+                    </button>
+                  </li>
+                )
+              })}
             </ol>
           ) : (
             <p className={styles.empty}>No tracks listed.</p>

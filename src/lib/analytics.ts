@@ -41,6 +41,7 @@ export type AnalyticsEvent =
   | 'tag_click'
   | 'tag_show_all_click'
   | 'category_click'
+  | 'content_interaction'
 
 /* ======================================================
    Core Dispatcher (GA4 + PostHog)

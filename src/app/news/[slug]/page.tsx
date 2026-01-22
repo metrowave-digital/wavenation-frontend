@@ -7,6 +7,9 @@ import { NewsletterCta } from '@/components/newsletter/NewsletterCTA'
 import { ContentRenderer } from '@/components/content/ContentRenderer'
 import type { ContentBlock } from '@/components/content/types'
 
+// Analytics
+import { ArticleImpression } from '../ArticleImpression'
+
 // Sidebar widgets
 import { TrendingArticles } from '@/components/articles/TrendingArticles'
 import { SidebarAd } from '@/components/ads/SidebarAd'
@@ -143,6 +146,16 @@ export default async function NewsArticlePage({
       sidebar={<TrendingArticles />}
       sidebarAd={<SidebarAd />}
     >
+      {/* ===============================
+         Article Impression (Analytics)
+      =============================== */}
+      <ArticleImpression
+        slug={article.slug}
+        title={article.title}
+        category={category?.name}
+        author={article.author?.displayName ?? undefined}
+      />
+
       {/* ===============================
          Hero Image
       =============================== */}

@@ -5,6 +5,9 @@ import ChartsArchiveClient from './ChartsArchiveClient'
 import { getHomepageCharts } from '@/app/lib/charts/getHomepageCharts'
 import type { Chart } from '@/app/lib/types/chart'
 
+// Analytics (client component)
+import { ChartsArchiveImpression } from './ChartsArchiveAnalytics'
+
 export const metadata = {
   title: 'Charts Archive | WaveNation',
   description:
@@ -16,6 +19,14 @@ export default async function ChartsIndexPage() {
 
   return (
     <main className="page">
+      {/* ===============================
+         PAGE IMPRESSION (Analytics)
+      =============================== */}
+      <ChartsArchiveImpression />
+
+      {/* ===============================
+         HERO
+      =============================== */}
       <EditorialHero
         variant="charts"
         eyebrow="Charts & Culture"
@@ -28,6 +39,9 @@ export default async function ChartsIndexPage() {
         ]}
       />
 
+      {/* ===============================
+         ARCHIVE GRID (Client)
+      =============================== */}
       <ChartsArchiveClient charts={charts} />
     </main>
   )

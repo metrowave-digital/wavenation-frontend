@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import styles from './ChartsOverview.module.css'
+import { trackEvent } from '@/lib/analytics'
 
 /* ======================================================
    TYPES
@@ -43,6 +44,11 @@ export default function ChartsClient({
   )
 
   /* ======================================================
+     ANALYTICS: Lane impressions (fire once)
+  ====================================================== */
+  const seenLanes = useRef<Set<string>>(new Set())
+
+  /* ======================================================
      SCROLL SPY
   ====================================================== */
   useEffect(() => {
@@ -56,7 +62,18 @@ export default function ChartsClient({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveLane(entry.target.id)
+            const lane = entry.target.id
+            setActiveLane(lane)
+
+            // 🔍 Lane impression (once)
+            if (!seenLanes.current.has(lane)) {
+              seenLanes.current.add(lane)
+
+              trackEvent('content_impression', {
+                content_type: 'chart_lane',
+                chartKey: lane,
+              })
+            }
           }
         })
       },
@@ -103,6 +120,13 @@ export default function ChartsClient({
                     ? styles.latestPrimary
                     : ''
                 } ${isActive ? styles.latestActive : ''}`}
+                onClick={() =>
+                  trackEvent('navigation_click', {
+                    location: 'charts_overview_strip',
+                    chartKey: c.chartKey,
+                    label: c.label,
+                  })
+                }
               >
                 <span className={styles.latestLabel}>
                   {c.label}
@@ -160,9 +184,9 @@ export default function ChartsClient({
               <Block title="Top 5">
                 <ol>
                   {chart.topFive.map((e, index) => (
-  <li key={index}>
-    #{index + 1}{' '}
-    <strong>{e.trackTitle}</strong>
+                    <li key={index}>
+                      #{index + 1}{' '}
+                      <strong>{e.trackTitle}</strong>
                       <span>{e.artist}</span>
                     </li>
                   ))}
@@ -222,7 +246,16 @@ export default function ChartsClient({
                 Powered by The Urban Influencer™
               </span>
 
-              <Link href={chart.href}>
+              <Link
+                href={chart.href}
+                onClick={() =>
+                  trackEvent('content_click', {
+                    content_type: 'chart',
+                    chartKey: chart.chartKey,
+                    label: chart.label,
+                  })
+                }
+              >
                 View Full Chart →
               </Link>
             </footer>

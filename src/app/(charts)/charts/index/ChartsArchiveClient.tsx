@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import styles from './ChartsArchive.module.css'
+import { trackEvent } from '@/lib/analytics'
+import { ChartArchiveItemImpression } from './ChartsArchiveAnalytics'
 
 /* ======================================================
    TYPES
@@ -42,16 +44,10 @@ function parseSlug(slug: string): Meta {
   }
 }
 
-/**
- * US-aligned month buckets (simple + predictable)
- */
 function monthFromWeek(week: number) {
   return Math.min(12, Math.max(1, Math.ceil(week / 4)))
 }
 
-/**
- * Current year + week (used for "This Week" highlight)
- */
 function getCurrentWeekStamp() {
   const now = new Date()
   const start = new Date(now.getFullYear(), 0, 1)
@@ -68,9 +64,6 @@ function getCurrentWeekStamp() {
   }
 }
 
-/**
- * Convert YYYY + WXX → "Week of Jan 15, 2026"
- */
 function weekToDate(year: number, week: number) {
   const firstDay = new Date(year, 0, 1)
   const date = new Date(
@@ -188,6 +181,18 @@ export default function ChartsArchiveClient({
   }, [parsed, genre, year, month, week])
 
   const shown = filtered.slice(0, visible)
+
+  /* ================= FILTER ANALYTICS ================= */
+
+  useEffect(() => {
+    trackEvent('search_perform', {
+      context: 'charts_archive',
+      genre: genre || null,
+      year: year || null,
+      month: month || null,
+      week: week || null,
+    })
+  }, [genre, year, month, week])
 
   /* ================= RENDER ================= */
 
@@ -311,7 +316,24 @@ export default function ChartsArchiveClient({
               href={`/chart/${chart.slug}`}
               className={styles.card}
               data-current={isThisWeek ? 'true' : undefined}
+              onClick={() =>
+                trackEvent('content_click', {
+                  content_type: 'chart_archive_item',
+                  chartKey: chart.chartKey,
+                  genre: m.genre,
+                  year: m.year,
+                  week: m.week,
+                })
+              }
             >
+              {/* 🔍 Impression (fires once per card) */}
+              <ChartArchiveItemImpression
+                chartKey={chart.chartKey}
+                genre={m.genre}
+                year={m.year}
+                week={m.week}
+              />
+
               <div className={styles.cardGenre}>
                 {m.genre}
               </div>
@@ -326,9 +348,7 @@ export default function ChartsArchiveClient({
               </div>
 
               <div className={styles.cardTop}>
-                <span className={styles.cardRank}>
-                  #1
-                </span>
+                <span className={styles.cardRank}>#1</span>
                 <span className={styles.cardTrack}>
                   {no1?.trackTitle ?? '—'}
                 </span>
@@ -348,12 +368,18 @@ export default function ChartsArchiveClient({
           <button
             type="button"
             className={styles.loadMore}
-            onClick={() =>
+            onClick={() => {
               setVisible((v) => v + PAGE_SIZE)
-            }
+
+              trackEvent('navigation_click', {
+                action: 'load_more',
+                context: 'charts_archive',
+              })
+            }}
           >
             Load more
           </button>
+
           <div className={styles.loadMeta}>
             Showing {shown.length} of{' '}
             {filtered.length}

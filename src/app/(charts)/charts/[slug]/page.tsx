@@ -11,6 +11,12 @@ import {
   type ChartEntry,
 } from '../../../lib/charts/getChartsByGenre'
 
+// ✅ analytics (client helpers – no hooks here)
+import {
+  ChartGenreImpression,
+  ChartSectionImpression,
+} from './ChartGenreAnalytics'
+
 /* ======================================================
    GENRE CONFIG
 ====================================================== */
@@ -22,7 +28,7 @@ type GenreConfig = {
 }
 
 const GENRES: Record<string, GenreConfig> = {
-  'hitlist': {
+  hitlist: {
     title: 'The Hit List',
     lede:
       'WaveNation’s flagship chart — tracking the records driving culture right now across radio, streets, and digital.',
@@ -149,8 +155,6 @@ export default async function ChartGenreEditorialPage({
     previousChart?.entries,
   )
 
-  /* ================= METRICS ================= */
-
   const biggestGainers = entriesWithMovement
     .filter((e) => e.delta !== null && e.delta > 0)
     .sort((a, b) => (b.delta ?? 0) - (a.delta ?? 0))
@@ -170,20 +174,27 @@ export default async function ChartGenreEditorialPage({
 
   return (
     <main className={styles.page}>
-        
-      {/* ================= HERO ================= */}
+      {/* ================= ANALYTICS ================= */}
+      <ChartGenreImpression
+        genre={slug}
+        title={genre.title}
+        week={currentChart.week}
+      />
+
       {/* ================= HERO META ================= */}
-<div className={styles.heroMeta}>
-  <span className={styles.heroMetaLabel}>Powered by</span>
-  <a
-    href="https://urbaninfluencer.media"
-    target="_blank"
-    rel="noopener noreferrer"
-    className={styles.heroMetaLink}
-  >
-    Urban Influencer
-  </a>
-</div>
+      <div className={styles.heroMeta}>
+        <span className={styles.heroMetaLabel}>Powered by</span>
+        <a
+          href="https://urbaninfluencer.media"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.heroMetaLink}
+        >
+          Urban Influencer
+        </a>
+      </div>
+
+      {/* ================= HERO ================= */}
       <EditorialHero
         variant="charts"
         eyebrow="Charts · Genre"
@@ -199,6 +210,12 @@ export default async function ChartGenreEditorialPage({
 
       {/* ================= CURRENT ================= */}
       <section className={styles.current}>
+        <ChartSectionImpression
+          section="current_chart"
+          genre={slug}
+          week={currentChart.week}
+        />
+
         <header className={styles.currentHeader}>
           <div className={styles.currentTitleRow}>
             <h2>Current Chart</h2>
@@ -260,6 +277,12 @@ export default async function ChartGenreEditorialPage({
 
       {/* ================= MOVEMENT ================= */}
       <section className={styles.history}>
+        <ChartSectionImpression
+          section="movement_panels"
+          genre={slug}
+          week={currentChart.week}
+        />
+
         <div className={styles.movementGrid}>
           {biggestGainers.length > 0 && (
             <MovementPanel
@@ -286,6 +309,12 @@ export default async function ChartGenreEditorialPage({
 
       {/* ================= 5 WEEK SNAPSHOT ================= */}
       <section className={styles.snapshot}>
+        <ChartSectionImpression
+          section="five_week_snapshot"
+          genre={slug}
+          week={currentChart.week}
+        />
+
         <header className={styles.snapshotHeader}>
           <h3>5-Week Snapshot</h3>
         </header>
@@ -309,6 +338,12 @@ export default async function ChartGenreEditorialPage({
 
       {/* ================= TOP 5 · LAST 3 WEEKS ================= */}
       <section className={styles.topWeeks}>
+        <ChartSectionImpression
+          section="top_five_last_three"
+          genre={slug}
+          week={currentChart.week}
+        />
+
         <header className={styles.topWeeksHeader}>
           <h3>Top 5 · Last 3 Weeks</h3>
         </header>

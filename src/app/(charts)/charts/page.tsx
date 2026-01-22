@@ -5,6 +5,12 @@ import CountUpClient from './CountUpClient'
 import { getChartMetrics } from '../../lib/charts/getChartMetrics'
 import { EditorialHero } from '@/components/editorial/EditorialHero'
 
+// Analytics (client components)
+import {
+  ChartsPageImpression,
+  ChartMetricImpression,
+} from './ChartEditorialAnalytics'
+
 export const metadata = {
   title: 'Charts | WaveNation',
   description:
@@ -67,36 +73,41 @@ export default async function ChartEditorialPage() {
 
   return (
     <main className={styles.page}>
+      {/* ===============================
+         PAGE IMPRESSION (Analytics)
+      =============================== */}
+      <ChartsPageImpression />
+
       {/* ================= HERO ================= */}
-<EditorialHero
-  variant="charts"
-  eyebrow="Charts & Culture"
-  weekStamp="Week of January 12"
-  pills={[
-    'Updated weekly',
-    'Editor-curated',
-    'Culture-first',
-  ]}
-  title={
-    <>
-      Not just rankings.
-      <br />
-      <span>Reflections of the culture.</span>
-    </>
-  }
-  lede="Every WaveNation chart tells a story — what’s rising, what’s breaking through, and what’s leading the sound this week."
-  actions={[
-    {
-      label: "View This Week’s Charts",
-      href: '/charts/index',
-    },
-    {
-      label: 'Chart Coverage',
-      href: '/news?tag=charts',
-      variant: 'secondary',
-    },
-  ]}
-/>
+      <EditorialHero
+        variant="charts"
+        eyebrow="Charts & Culture"
+        weekStamp="Week of January 12"
+        pills={[
+          'Updated weekly',
+          'Editor-curated',
+          'Culture-first',
+        ]}
+        title={
+          <>
+            Not just rankings.
+            <br />
+            <span>Reflections of the culture.</span>
+          </>
+        }
+        lede="Every WaveNation chart tells a story — what’s rising, what’s breaking through, and what’s leading the sound this week."
+        actions={[
+          {
+            label: "View This Week’s Charts",
+            href: '/charts/index',
+          },
+          {
+            label: 'Chart Coverage',
+            href: '/news?tag=charts',
+            variant: 'secondary',
+          },
+        ]}
+      />
 
       {/* ================= WEEKLY PREVIEW STRIP ================= */}
       <section
@@ -104,10 +115,7 @@ export default async function ChartEditorialPage() {
         aria-labelledby="weekly-preview"
       >
         <div className={styles.stripHeader}>
-          <h2
-            id="weekly-preview"
-            className={styles.stripTitle}
-          >
+          <h2 id="weekly-preview" className={styles.stripTitle}>
             This Week on the Charts
           </h2>
 
@@ -119,6 +127,11 @@ export default async function ChartEditorialPage() {
 
         <div className={styles.previewGrid}>
           {/* BIGGEST GAINER */}
+          <ChartMetricImpression
+            metric="biggest_gainer"
+            track={rawMetrics.biggestGainer?.trackTitle}
+            artist={rawMetrics.biggestGainer?.artist}
+          />
           <MetricCard
             label="Biggest Gainer"
             title="Momentum Shift"
@@ -132,6 +145,11 @@ export default async function ChartEditorialPage() {
           />
 
           {/* HIGHEST DEBUT */}
+          <ChartMetricImpression
+            metric="highest_debut"
+            track={rawMetrics.highestDebut?.trackTitle}
+            artist={rawMetrics.highestDebut?.artist}
+          />
           <MetricCard
             label="Highest Debut"
             title="New Entry"
@@ -185,7 +203,7 @@ export default async function ChartEditorialPage() {
 }
 
 /* ======================================================
-   Local Components
+   Local Components (UNCHANGED)
 ====================================================== */
 
 function MetricCard(props: {
@@ -260,11 +278,11 @@ function MetricCard(props: {
           </span>
 
           <div className={styles.sparkWrap}>
-  <Sparkline
-    values={spark}
-    label={`${label} sparkline`}
-  />
-</div>
+            <Sparkline
+              values={spark}
+              label={`${label} sparkline`}
+            />
+          </div>
         </div>
       )}
 

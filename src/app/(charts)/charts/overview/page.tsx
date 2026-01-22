@@ -3,6 +3,9 @@ import styles from './ChartsOverview.module.css'
 import { getChartsOverviewEditorial } from '../../../lib/charts/getLatestChartsOverview'
 import ChartsClient from './ChartsClient'
 
+// Analytics (client components)
+import { ChartsOverviewImpression } from './ChartsOverviewAnalytics'
+
 export default async function ChartsOverviewPage() {
   const rawCharts = await getChartsOverviewEditorial()
 
@@ -15,7 +18,7 @@ export default async function ChartsOverviewPage() {
     // "2026-W03" → 3
     week: Number(chart.week?.split('-W')?.[1] ?? 0),
 
-    /* ---------- TOP 5 (rank derived) ---------- */
+    /* ---------- TOP 5 ---------- */
     topFive: chart.topFive.map((e, index) => ({
       rank: index + 1,
       trackTitle: e.trackTitle ?? '—',
@@ -25,7 +28,7 @@ export default async function ChartsOverviewPage() {
     /* ---------- SPOTLIGHTS ---------- */
     biggestGainer: chart.biggestGainer
       ? {
-          rank: 0, // rank not meaningful here, but required by type
+          rank: 0,
           trackTitle:
             chart.biggestGainer.trackTitle ?? '—',
           artist: chart.biggestGainer.artist ?? '—',
@@ -51,6 +54,14 @@ export default async function ChartsOverviewPage() {
 
   return (
     <main className={styles.page}>
+      {/* ===============================
+         PAGE IMPRESSION (Analytics)
+      =============================== */}
+      <ChartsOverviewImpression />
+
+      {/* ===============================
+         HERO
+      =============================== */}
       <EditorialHero
         variant="charts"
         eyebrow="Charts Overview"
@@ -64,6 +75,9 @@ export default async function ChartsOverviewPage() {
         lede="A curated view of WaveNation charts — one per lane, updated weekly, rooted in culture."
       />
 
+      {/* ===============================
+         CHART GRID (Client)
+      =============================== */}
       <ChartsClient charts={charts} />
     </main>
   )

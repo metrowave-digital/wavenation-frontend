@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './ChartPage.module.css'
 import { EditorialHero } from '@/components/editorial/EditorialHero'
 import type { Chart } from '../../../lib/types/chart'
+import { trackEvent } from '@/lib/analytics'
 
 type DerivedEntry = {
   rank: number
@@ -53,6 +54,22 @@ export default function ChartPageClient({
     useState<string>('')
 
   const currentWeekNumber = getWeekNumber(chart.slug)
+
+  /* ================= PAGE IMPRESSION ================= */
+
+  const pageImpressionFired = useRef(false)
+
+  useEffect(() => {
+    if (pageImpressionFired.current) return
+    pageImpressionFired.current = true
+
+    trackEvent('content_impression', {
+      content_type: 'chart_page',
+      chartKey: chart.chartKey,
+      week: chart.week,
+      slug: chart.slug,
+    })
+  }, [chart])
 
   /* ================= LOAD WEEKS ================= */
 
@@ -176,6 +193,8 @@ export default function ChartPageClient({
 
   return (
     <main className={styles.page}>
+      {/* ================= HERO ================= */}
+
       <EditorialHero
         variant="charts"
         eyebrow="WaveNation Charts"
@@ -212,9 +231,16 @@ export default function ChartPageClient({
         <label>Compare Week</label>
         <select
           value={manualCompareSlug}
-          onChange={(e) =>
+          onChange={(e) => {
             setManualCompareSlug(e.target.value)
-          }
+
+            trackEvent('navigation_click', {
+              action: 'compare_week',
+              chartKey: chart.chartKey,
+              week: chart.week,
+              compareSlug: e.target.value || 'auto',
+            })
+          }}
         >
           <option value="">Auto (Previous)</option>
           {comparableWeeks.map((w) => (
@@ -284,33 +310,37 @@ export default function ChartPageClient({
         </div>
 
         {entries.map((e) => (
-          <div
+          <ChartRowImpression
             key={`${chart.id}-${e.rank}-${e.trackTitle}`}
-            className={styles.chartRow}
+            chartKey={chart.chartKey}
+            week={chart.week}
+            entry={e}
           >
-            <span className={styles.rank}>#{e.rank}</span>
-            <span className={styles.track}>{e.trackTitle}</span>
-            <span className={styles.artist}>{e.artist}</span>
-            <span
-              className={`${styles.movement} ${
-                e.isDebut
-                  ? styles.new
-                  : e.delta && e.delta > 0
-                  ? styles.up
-                  : e.delta && e.delta < 0
-                  ? styles.down
-                  : ''
-              }`}
-            >
-              {e.isDebut
-                ? 'NEW'
-                : typeof e.delta === 'number'
-                ? e.delta > 0
-                  ? `▲ ${e.delta}`
-                  : `▼ ${Math.abs(e.delta)}`
-                : '—'}
-            </span>
-          </div>
+            <div className={styles.chartRow}>
+              <span className={styles.rank}>#{e.rank}</span>
+              <span className={styles.track}>{e.trackTitle}</span>
+              <span className={styles.artist}>{e.artist}</span>
+              <span
+                className={`${styles.movement} ${
+                  e.isDebut
+                    ? styles.new
+                    : e.delta && e.delta > 0
+                    ? styles.up
+                    : e.delta && e.delta < 0
+                    ? styles.down
+                    : ''
+                }`}
+              >
+                {e.isDebut
+                  ? 'NEW'
+                  : typeof e.delta === 'number'
+                  ? e.delta > 0
+                    ? `▲ ${e.delta}`
+                    : `▼ ${Math.abs(e.delta)}`
+                  : '—'}
+              </span>
+            </div>
+          </ChartRowImpression>
         ))}
       </section>
 
@@ -330,4 +360,52 @@ export default function ChartPageClient({
       )}
     </main>
   )
+}
+
+/* ======================================================
+   ROW IMPRESSION (CLIENT ONLY)
+====================================================== */
+
+function ChartRowImpression({
+  chartKey,
+  week,
+  entry,
+  children,
+}: {
+  chartKey: string
+  week: string
+  entry: DerivedEntry
+  children: React.ReactNode
+}) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const fired = useRef(false)
+
+  useEffect(() => {
+    if (!ref.current) return
+
+    const observer = new IntersectionObserver(
+      ([entryObs]) => {
+        if (entryObs.isIntersecting && !fired.current) {
+          fired.current = true
+
+          trackEvent('content_impression', {
+            content_type: 'chart_entry',
+            chartKey,
+            week,
+            rank: entry.rank,
+            trackTitle: entry.trackTitle,
+            artist: entry.artist,
+            isDebut: entry.isDebut,
+            delta: entry.delta,
+          })
+        }
+      },
+      { threshold: 0.5 },
+    )
+
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [chartKey, week, entry])
+
+  return <div ref={ref}>{children}</div>
 }
