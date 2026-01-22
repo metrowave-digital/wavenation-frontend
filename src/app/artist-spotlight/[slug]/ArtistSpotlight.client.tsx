@@ -12,6 +12,7 @@ import { ReadingProgressRail } from './components/ReadingProgressRail/ReadingPro
 import { MobileContents } from './components/MobileContents/MobileContents'
 import { SpotlightMeta } from './components/SpotlightMeta/SpotlightMeta'
 import { ArtistIdentityRail } from './components/ArtistIdentityRail/ArtistIdentityRail'
+import { AdSlot } from './components/AdSlot/AdSlot'
 
 import type {
   ArtistSpotlightArticle,
@@ -216,10 +217,15 @@ export default function ArtistSpotlightClient({
       <section className={styles.content}>
         {/* MAIN ARTICLE COLUMN */}
         <div className={styles.main}>
-          <ContentBlocksRenderer
-            blocks={article.contentBlocks ?? []}
-          />
-        </div>
+  <ContentBlocksRenderer
+    blocks={article.contentBlocks ?? []}
+  />
+
+  {/* ===============================
+     IN-ARTICLE AD
+  =============================== */}
+  <AdSlot slot="5783687323" />
+</div>
 
         {/* RIGHT IDENTITY / PROGRESS RAIL */}
         {(sections.length > 0 ||

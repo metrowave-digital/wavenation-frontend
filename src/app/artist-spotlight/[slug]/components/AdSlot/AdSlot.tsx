@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import styles from './AdSlot.module.css'
 
 /* ======================================================
-   Global Type Augmentation (NO any)
+   Global Type Augmentation
 ====================================================== */
 
 declare global {
@@ -20,14 +20,9 @@ declare global {
 interface Props {
   /**
    * Google AdSense slot ID
-   * Example: "1234567890"
+   * Example: "5783687323"
    */
   slot: string
-
-  /**
-   * Ad format (responsive recommended)
-   */
-  format?: 'auto' | 'fluid' | string
 
   /**
    * Disclosure label
@@ -46,28 +41,30 @@ interface Props {
 
 export function AdSlot({
   slot,
-  format = 'auto',
   label = 'Advertisement',
   className,
 }: Props) {
   const adRef = useRef<HTMLModElement | null>(null)
+  const hasRequested = useRef(false)
 
   /* --------------------------------------------------
-     Safely request AdSense render
+     Request AdSense render (safe + idempotent)
   -------------------------------------------------- */
   useEffect(() => {
     if (
       typeof window === 'undefined' ||
       !window.adsbygoogle ||
-      !adRef.current
+      !adRef.current ||
+      hasRequested.current
     ) {
       return
     }
 
     try {
       window.adsbygoogle.push({})
+      hasRequested.current = true
     } catch {
-      // AdSense may throw in dev or with ad blockers
+      // Ad blockers / dev mode can throw — safe to ignore
     }
   }, [])
 
@@ -76,19 +73,17 @@ export function AdSlot({
       className={`${styles.ad} ${className ?? ''}`}
       aria-label={label}
     >
-      <span className={styles.label}>
-        {label}
-      </span>
+      <span className={styles.label}>{label}</span>
 
       <div className={styles.container}>
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: 'block' }}
-          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          style={{ display: 'block', textAlign: 'center' }}
+          data-ad-layout="in-article"
+          data-ad-format="fluid"
+          data-ad-client="ca-pub-6631983121456407"
           data-ad-slot={slot}
-          data-ad-format={format}
-          data-full-width-responsive="true"
         />
       </div>
     </aside>
