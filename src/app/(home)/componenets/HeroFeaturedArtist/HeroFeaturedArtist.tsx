@@ -8,18 +8,22 @@ import { trackEvent } from '@/lib/analytics'
 import { HeroFeaturedArtistSkeleton } from './HeroFeaturedArtistSkeleton'
 
 /* ======================================================
-   Types
+   Types (API-aligned)
 ====================================================== */
 
-type SpotlightData = {
+type MediaImage = {
+  url: string
+  alt?: string
+}
+
+type ArtistSpotlight = {
+  artistName: string
+  image?: MediaImage
+}
+
+type FeaturedArtistResponse = {
   slug: string
-  artist: {
-    name: string
-    image?: {
-      url: string
-      alt?: string
-    }
-  }
+  artistSpotlight: ArtistSpotlight
 }
 
 /* ======================================================
@@ -27,122 +31,81 @@ type SpotlightData = {
 ====================================================== */
 
 export function HeroFeaturedArtist() {
-  const [data, setData] = useState<SpotlightData | null>(null)
+  const [data, setData] = useState<FeaturedArtistResponse | null>(null)
   const [loading, setLoading] = useState(true)
+  const tracked = useRef(false)
 
-  // Prevent double impression firing
-  const hasTrackedImpression = useRef(false)
-
-  /* ======================================================
-     FETCH FEATURED ARTIST
-  ===================================================== */
+  /* ----------------------------------
+     Fetch featured artist
+  ---------------------------------- */
 
   useEffect(() => {
-    let cancelled = false
-
-    async function load() {
-      try {
-        const res = await fetch('/api/featured-artist', {
-          cache: 'no-store',
-        })
-
-        if (!res.ok) return
-        const json = await res.json()
-
-        if (!cancelled) {
+    fetch('/api/featured-artist-hero', { cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : null))
+      .then((json: FeaturedArtistResponse | null) => {
+        if (json?.slug && json?.artistSpotlight?.artistName) {
           setData(json)
         }
-      } catch {
-        // silent fail
-      } finally {
-        if (!cancelled) {
-          setLoading(false)
-        }
-      }
-    }
-
-    load()
-
-    return () => {
-      cancelled = true
-    }
+      })
+      .finally(() => setLoading(false))
   }, [])
 
-  /* ======================================================
-     IMPRESSION ANALYTICS (ONCE)
-  ===================================================== */
+  /* ----------------------------------
+     Impression tracking
+  ---------------------------------- */
 
   useEffect(() => {
-    if (!data || hasTrackedImpression.current) return
+    if (!data || tracked.current) return
 
     trackEvent('content_impression', {
-      placement: 'hero_featured_artist',
+      placement: 'right_rail_featured_artist',
       page: 'home',
-      artist: data.artist.name,
+      artist: data.artistSpotlight.artistName,
       slug: data.slug,
     })
 
-    hasTrackedImpression.current = true
+    tracked.current = true
   }, [data])
 
-  /* ======================================================
-     RENDER GUARDS
-  ===================================================== */
+  if (loading) return <HeroFeaturedArtistSkeleton />
+  if (!data) return null
 
-  if (loading) {
-    return <HeroFeaturedArtistSkeleton />
-  }
-
-  if (!data) {
-    return null
-  }
-
-  /* ======================================================
-     RENDER
-  ===================================================== */
+  const { slug, artistSpotlight } = data
 
   return (
     <Link
-      href={`/artist-spotlight/${data.slug}`}
+      href={`/artist-spotlight/${slug}`}
       className={styles.billboard}
       onClick={() =>
         trackEvent('hero_click', {
-          placement: 'hero_featured_artist',
+          placement: 'right_rail_featured_artist',
           page: 'home',
-          target: 'artist_spotlight',
-          artist: data.artist.name,
-          slug: data.slug,
+          artist: artistSpotlight.artistName,
+          slug,
         })
       }
     >
-      {/* ================= IMAGE ================= */}
-      {data.artist.image?.url && (
+      {/* IMAGE */}
+      {artistSpotlight.image?.url && (
         <div className={styles.imageWrap}>
           <Image
-            src={data.artist.image.url}
-            alt={data.artist.image.alt ?? data.artist.name}
+            src={artistSpotlight.image.url}
+            alt={artistSpotlight.image.alt || artistSpotlight.artistName}
             fill
-            unoptimized
-            priority
             className={styles.image}
+            sizes="(max-width: 1024px) 100vw, 320px"
+            priority
+            unoptimized
           />
         </div>
       )}
 
-      {/* ================= OVERLAY ================= */}
+      {/* OVERLAY */}
       <div className={styles.overlay}>
         <div className={styles.content}>
-          <span className={styles.kicker}>
-            Artist Spotlight
-          </span>
-
-          <h3 className={styles.name}>
-            {data.artist.name}
-          </h3>
-
-          <span className={styles.explore}>
-            Explore →
-          </span>
+          <span className={styles.kicker}>Artist Spotlight</span>
+          <h3 className={styles.name}>{artistSpotlight.artistName}</h3>
+          <span className={styles.explore}>Explore →</span>
         </div>
       </div>
     </Link>

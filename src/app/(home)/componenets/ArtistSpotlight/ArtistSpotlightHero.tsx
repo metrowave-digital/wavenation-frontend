@@ -1,184 +1,127 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { headers } from 'next/headers'
 import styles from './ArtistSpotlightHero.module.css'
+import { trackEvent } from '@/lib/analytics'
 
-import {
-  ArtistSpotlightHeroImpression,
-  ArtistSpotlightHeroClick,
-} from './ArtistSpotlightHero.analytics'
+/* ======================================================
+   Types
+====================================================== */
 
-type FeaturedArtistHero = {
+type MediaImage = {
+  url: string
+  alt?: string
+}
+
+type ArtistSpotlight = {
+  artistName: string
+  image?: MediaImage
+}
+
+type FeaturedArtist = {
+  id: number
   slug: string
-  artist: {
-    name: string
-    image?: {
-      url: string
-      alt?: string
-    }
-  }
-  heroImage?: {
-    url: string
-    alt?: string
-  }
-  featuredAlbum?: {
-    slug: string
-    title: string
-    coverArt: {
-      url: string
-      alt?: string
-    }
-    primaryArtist: string
-  }
+  title: string
+  subtitle?: string
+  artistSpotlight: ArtistSpotlight
 }
 
-/* ================= SERVER FETCH ================= */
+/* ======================================================
+   Component
+====================================================== */
 
-async function getHeroData(): Promise<FeaturedArtistHero | null> {
-  try {
-    const h = await headers()
-    const host = h.get('host')
-    if (!host) return null
+export function ArtistSpotlightHero() {
+  const [artists, setArtists] = useState<FeaturedArtist[]>([])
+  const tracked = useRef(false)
 
-    const protocol =
-      process.env.NODE_ENV === 'development'
-        ? 'http'
-        : 'https'
+  /* ----------------------------------
+     Fetch featured artists (up to 3)
+  ---------------------------------- */
 
-    const res = await fetch(
-      `${protocol}://${host}/api/featured-artist`,
-      { next: { revalidate: 300 } }
-    )
+  useEffect(() => {
+    fetch('/api/featured-artists', { cache: 'no-store' })
+      .then(res => (res.ok ? res.json() : []))
+      .then((json: FeaturedArtist[]) => {
+        if (Array.isArray(json)) {
+          setArtists(json.slice(0, 3))
+        }
+      })
+  }, [])
 
-    if (!res.ok) return null
-    return res.json()
-  } catch {
-    return null
-  }
-}
+  /* ----------------------------------
+     Impression tracking
+  ---------------------------------- */
 
-/* ================= COMPONENT ================= */
+  useEffect(() => {
+    if (!artists.length || tracked.current) return
 
-export async function ArtistSpotlightHero() {
-  const data = await getHeroData()
-  if (!data) return null
+    trackEvent('content_impression', {
+      placement: 'artist_spotlight_hero',
+      page: 'home',
+      artists: artists.map(a => a.artistSpotlight.artistName),
+    })
+
+    tracked.current = true
+  }, [artists])
+
+  if (!artists.length) return null
 
   return (
-    <section className={styles.section}>
-      {/* ===== HERO IMPRESSION (client-only) ===== */}
-      <ArtistSpotlightHeroImpression
-        artist={data.artist.name}
-        slug={data.slug}
-      />
+    <section className={styles.hero}>
+      <div className={styles.grid}>
+        {artists.map((artist, index) => {
+          const spotlight = artist.artistSpotlight
 
-      <div className={styles.hero}>
-        {/* ===== BACKGROUND HERO IMAGE ===== */}
-        {data.heroImage?.url && (
-          <Image
-            src={data.heroImage.url}
-            alt={data.heroImage.alt ?? data.artist.name}
-            fill
-            unoptimized
-            priority
-            className={styles.bg}
-          />
-        )}
-
-        <div className={styles.overlay} />
-
-        {/* ===== CONTENT GRID ===== */}
-        <div className={styles.grid}>
-          {/* ===== ARTIST SPOTLIGHT ===== */}
-          <ArtistSpotlightHeroClick
-            payload={{
-              target: 'artist',
-              artist: data.artist.name,
-              slug: data.slug,
-            }}
-          >
+          return (
             <Link
-              href={`/artist-spotlight/${data.slug}`}
-              className={styles.artist}
+              key={artist.id}
+              href={`/artist-spotlight/${artist.slug}`}
+              className={`${styles.card} ${index === 0 ? styles.primary : ''}`}
+              onClick={() =>
+                trackEvent('hero_click', {
+                  placement: 'artist_spotlight_hero',
+                  page: 'home',
+                  artist: spotlight.artistName,
+                  slug: artist.slug,
+                  position: index + 1,
+                })
+              }
             >
-              {data.artist.image?.url && (
-                <div className={styles.portrait}>
+              {/* IMAGE */}
+              {spotlight.image?.url && (
+                <div className={styles.imageWrap}>
                   <Image
-                    src={data.artist.image.url}
-                    alt={
-                      data.artist.image.alt ??
-                      data.artist.name
-                    }
+                    src={spotlight.image.url}
+                    alt={spotlight.image.alt || spotlight.artistName}
                     fill
+                    priority={index === 0}
+                    className={styles.image}
+                    sizes="(max-width: 1024px) 100vw, 33vw"
                     unoptimized
                   />
                 </div>
               )}
 
-              <div className={styles.artistText}>
-                <span className={styles.kicker}>
-                  Artist Spotlight
-                </span>
-                <h1 className={styles.name}>
-                  {data.artist.name}
-                </h1>
-                <span className={styles.cta}>
-                  Explore →
-                </span>
+              {/* OVERLAY */}
+              <div className={styles.overlay}>
+                <div className={styles.content}>
+                  <span className={styles.kicker}>Artist Spotlight</span>
+                  <h2 className={styles.name}>
+                    {spotlight.artistName}
+                  </h2>
+
+                  {artist.subtitle && (
+                    <p className={styles.subtitle}>{artist.subtitle}</p>
+                  )}
+
+                  <span className={styles.cta}>Read Feature →</span>
+                </div>
               </div>
             </Link>
-          </ArtistSpotlightHeroClick>
-
-          {/* ===== FEATURED RELEASE ===== */}
-          {data.featuredAlbum && (
-            <ArtistSpotlightHeroClick
-              payload={{
-                target: 'featured_release',
-                album: data.featuredAlbum.title,
-                albumSlug: data.featuredAlbum.slug,
-                artist:
-                  data.featuredAlbum.primaryArtist,
-              }}
-            >
-              <Link
-                href={`/albums/${data.featuredAlbum.slug}`}
-                className={styles.release}
-              >
-                <span
-                  className={styles.releaseLabel}
-                >
-                  Featured Release
-                </span>
-
-                <div className={styles.albumArt}>
-                  <Image
-                    src={
-                      data.featuredAlbum.coverArt.url
-                    }
-                    alt={
-                      data.featuredAlbum.coverArt
-                        .alt ??
-                      data.featuredAlbum.title
-                    }
-                    fill
-                    unoptimized
-                  />
-                </div>
-
-                <div className={styles.albumText}>
-                  <strong>
-                    {data.featuredAlbum.title}
-                  </strong>
-                  <span>
-                    {
-                      data.featuredAlbum
-                        .primaryArtist
-                    }
-                  </span>
-                </div>
-              </Link>
-            </ArtistSpotlightHeroClick>
-          )}
-        </div>
+          )
+        })}
       </div>
     </section>
   )

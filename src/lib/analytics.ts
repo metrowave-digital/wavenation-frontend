@@ -42,6 +42,7 @@ export type AnalyticsEvent =
   | 'tag_show_all_click'
   | 'category_click'
   | 'content_interaction'
+  | 'artist_spotlight_view'
 
 /* ======================================================
    Core Dispatcher (GA4 + PostHog)
