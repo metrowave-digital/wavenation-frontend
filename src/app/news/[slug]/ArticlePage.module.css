@@ -1,93 +1,138 @@
+/* ======================================================
+   Page + Grid
+====================================================== */
+
 .page {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 3rem;
-  padding: 3rem;
-  max-width: 1440px;
-  margin: 0 auto;
+  background: linear-gradient(180deg, #0b0c10 0%, #0f1117 100%);
+  color: #f5f6f7;
 }
 
-@media (max-width: 1024px) {
-  .page {
-    grid-template-columns: 1fr;
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 3rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
+    align-items: start;
   }
 }
 
-/* ===============================
-   ARTICLE
-================================ */
+/* ======================================================
+   Article Content
+====================================================== */
 
 .article {
-  max-width: 720px;
+  max-width: 760px;
 }
 
-/* Header */
-
-.header {
-  margin-bottom: 2.5rem;
+.article > * + * {
+  margin-top: 1.75rem;
 }
 
-.category {
-  display: inline-block;
-  margin-bottom: 0.75rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--neon-green, #00ff9c);
+.article p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: rgba(245, 246, 247, 0.9);
 }
 
-.title {
-  font-size: 2.2rem;
-  line-height: 1.2;
-  margin: 0 0 0.75rem;
+/* ======================================================
+   Hero Image
+====================================================== */
+
+.heroFigure {
+  margin: 2rem 0 3rem;
 }
 
-.subtitle {
-  font-size: 1.1rem;
-  font-weight: 500;
-  opacity: 0.85;
-  margin: 0 0 1.25rem;
+.heroFigure img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
 }
+
+.heroCaption {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(245,246,247,0.6);
+}
+
+/* ======================================================
+   Meta
+====================================================== */
 
 .meta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  opacity: 0.7;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.85rem;
+  color: rgba(245,246,247,0.65);
 }
 
-/* ===============================
-   CONTENT
-================================ */
+/* ======================================================
+   Sidebar
+====================================================== */
 
-.content {
-  font-size: 1rem;
-  line-height: 1.7;
+.sidebar {
+  position: sticky;
+  top: 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.content p {
-  margin-bottom: 1.4rem;
+.sidebarCard {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.05),
+    0 10px 30px rgba(0,0,0,0.35);
 }
 
-.content h2 {
-  margin: 2.5rem 0 1rem;
-  font-size: 1.4rem;
+/* ======================================================
+   Newsletter CTA
+====================================================== */
+
+.newsletter {
+  margin-top: 4rem;
+  background: linear-gradient(
+    135deg,
+    rgba(127,124,175,0.15),
+    rgba(127,124,175,0.05)
+  );
+  border-radius: 18px;
+  padding: 2rem;
+  text-align: center;
 }
 
-.content h3 {
-  margin: 2rem 0 0.75rem;
-  font-size: 1.2rem;
-}
+/* ======================================================
+   Motion
+====================================================== */
 
-.content a {
-  color: var(--electric-blue, #4da3ff);
-  text-decoration: underline;
-}
+@media (prefers-reduced-motion: no-preference) {
+  .article,
+  .sidebarCard,
+  .heroFigure {
+    animation: fadeUp 0.6s ease both;
+  }
 
-.content blockquote {
-  border-left: 4px solid var(--neon-green, #00ff9c);
-  padding-left: 1rem;
-  margin: 2rem 0;
-  opacity: 0.9;
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

@@ -14,6 +14,9 @@ import { ArticleImpression } from '../ArticleImpression'
 import { TrendingArticles } from '@/components/articles/TrendingArticles'
 import { SidebarAd } from '@/components/ads/SidebarAd'
 
+// Styles
+import styles from '@/components/articles/ArticleLayout/ArticleLayout.module.css'
+
 /* ======================================================
    Types (article-level, read-only)
 ====================================================== */
@@ -160,7 +163,7 @@ export default async function NewsArticlePage({
          Hero Image
       =============================== */}
       {heroImage?.url && (
-        <figure>
+        <figure className={styles.heroFigure}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={
@@ -169,22 +172,10 @@ export default async function NewsArticlePage({
               heroImage.url
             }
             alt={heroImage.alt ?? article.title}
-            style={{
-              width: '100%',
-              height: 'auto',
-              borderRadius: 12,
-            }}
           />
 
-          {(heroImage.caption ||
-            heroImage.credit) && (
-            <figcaption
-              style={{
-                fontSize: 13,
-                opacity: 0.65,
-                marginTop: 8,
-              }}
-            >
+          {(heroImage.caption || heroImage.credit) && (
+            <figcaption className={styles.heroCaption}>
               {heroImage.caption}
               {heroImage.credit &&
                 ` · ${heroImage.credit}`}
@@ -197,9 +188,11 @@ export default async function NewsArticlePage({
          Content Blocks
       =============================== */}
       {article.contentBlocks?.length ? (
-        <ContentRenderer
-          blocks={article.contentBlocks}
-        />
+        <div className={styles.article}>
+          <ContentRenderer
+            blocks={article.contentBlocks}
+          />
+        </div>
       ) : null}
     </ArticleLayout>
   )

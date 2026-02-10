@@ -1,181 +1,171 @@
+/* ======================================================
+   Article Root
+====================================================== */
+
 .article {
-  position: relative;
-  background: #020617;
+  background: linear-gradient(
+    180deg,
+    #020617 0%,
+    #020617 45%,
+    #0b0c10 100%
+  );
+  color: #f5f6f7;
+  padding-bottom: 4rem;
 }
 
-/* ================= META BAR ================= */
+/* ======================================================
+   Meta Bar
+====================================================== */
 
 .metaBar {
-  max-width: 1140px;
-  margin: 1.25rem auto 0;
+  max-width: 760px;
+  margin: 0 auto 2.25rem;
   padding: 0 1.5rem;
+
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  align-items: center;
+
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 246, 247, 0.6);
 }
 
 .author a {
-  color: var(--text-primary);
-  font-weight: 800;
+  color: inherit;
   text-decoration: none;
+  font-weight: 700;
+}
+
+.author a:hover {
+  color: #ffffff;
+}
+
+.date,
+.readTime {
+  white-space: nowrap;
 }
 
 .metaDivider {
   opacity: 0.4;
 }
 
-/* ================= GRID ================= */
+/* ======================================================
+   Grid Layout
+====================================================== */
 
 .grid {
-  max-width: 1140px;
-  margin: 2.75rem auto 0;
-  padding: 0 1.5rem 5rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 3rem;
 }
 
-/* ================= CONTENT ================= */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: minmax(0, 3fr) minmax(300px, 1fr);
+    align-items: start;
+  }
+}
+
+/* ======================================================
+   Content Column
+====================================================== */
 
 .content {
-  max-width: 720px;
-  font-size: 1.05rem;
-  line-height: 1.75;
+  max-width: 760px;
 }
 
 .content > * + * {
-  margin-top: 1.5rem;
-}
-
-/* Typography defaults */
-.content h2 {
-  font-size: 1.9rem;
-  line-height: 1.25;
-  margin-top: 3rem;
-}
-
-.content h3 {
-  font-size: 1.45rem;
-  margin-top: 2.25rem;
+  margin-top: 1.75rem;
 }
 
 .content p {
-  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: rgba(245, 246, 247, 0.9);
 }
 
-.content a {
-  color: #38bdf8;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ================= NEWSLETTER CTA ================= */
+/* ======================================================
+   Newsletter CTA
+====================================================== */
 
 .newsletter {
   margin-top: 4rem;
   padding: 2.25rem;
-  border-radius: 1.25rem;
-  background:
-    radial-gradient(
-      500px 200px at 10% 0%,
-      rgba(0, 170, 255, 0.18),
-      transparent 60%
-    ),
-    radial-gradient(
-      400px 180px at 90% 10%,
-      rgba(168, 85, 247, 0.15),
-      transparent 60%
-    ),
-    rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(127, 124, 175, 0.18),
+    rgba(127, 124, 175, 0.06)
+  );
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 20px 40px rgba(0,0,0,0.35);
 }
 
-.newsletter h3 {
-  font-size: 1.6rem;
-  font-weight: 950;
-  margin-bottom: 0.5rem;
+/* ======================================================
+   Footer Ad
+====================================================== */
+
+.footerAd {
+  margin-top: 3rem;
+  padding-top: 2rem;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
-.newsletter p {
-  color: var(--text-muted);
-  max-width: 520px;
-  margin-bottom: 1.25rem;
+/* ======================================================
+   Sidebar
+====================================================== */
+
+.sidebar {
+  position: relative;
 }
 
-.newsletter form {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+@media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 5rem;
+  }
 }
-
-.newsletter input {
-  flex: 1;
-  min-width: 220px;
-  padding: 0.75rem 1rem;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #fff;
-}
-
-.newsletter input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.newsletter button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #00aaff, #0077cc);
-  color: #000;
-  font-weight: 900;
-  border: none;
-  cursor: pointer;
-}
-
-/* ================= SIDEBAR ================= */
 
 .sidebarInner {
-  position: sticky;
-  top: 5.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
-}
-
-.sidebarInner > * {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  padding: 1.25rem;
+  gap: 2.25rem;
 }
 
 .sidebarAd {
-  border-style: dashed;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
-/* ================= FOOTER AD ================= */
+/* ======================================================
+   Motion
+====================================================== */
 
-.footerAd {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    order: -1;
-  }
-
+@media (prefers-reduced-motion: no-preference) {
+  .content,
   .sidebarInner {
-    position: static;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
