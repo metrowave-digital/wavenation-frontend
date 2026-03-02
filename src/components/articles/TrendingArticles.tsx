@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import styles from './TrendingArticles.module.css'
 
 interface TrendingArticle {
   id: string
@@ -22,48 +23,32 @@ export async function TrendingArticles() {
   }
 
   const articles = data.docs ?? []
-
   if (!articles.length) return null
 
   return (
-    <div>
-      <h4
-        style={{
-          fontSize: 14,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          opacity: 0.7,
-          marginBottom: 12,
-        }}
-      >
-        Trending
-      </h4>
+    <section className={styles.module} aria-labelledby="trending-heading">
+      <header className={styles.header}>
+        <h4 id="trending-heading" className={styles.title}>
+          Trending
+        </h4>
+      </header>
 
-      <ul
-        style={{
-          listStyle: 'none',
-          padding: 0,
-          margin: 0,
-          display: 'grid',
-          gap: 10,
-        }}
-      >
-        {articles.map((article) => (
-          <li key={article.id}>
+      <ol className={styles.list}>
+        {articles.map((article, index) => (
+          <li key={article.id} className={styles.item}>
+            <span className={styles.rank}>
+              {String(index + 1).padStart(2, '0')}
+            </span>
+
             <Link
               href={`/articles/${article.slug}`}
-              style={{
-                fontSize: 14,
-                lineHeight: 1.4,
-                fontWeight: 600,
-                textDecoration: 'none',
-              }}
+              className={styles.link}
             >
               {article.title}
             </Link>
           </li>
         ))}
-      </ul>
-    </div>
+      </ol>
+    </section>
   )
 }

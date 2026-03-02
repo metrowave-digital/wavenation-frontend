@@ -3,7 +3,7 @@
 import styles from './ChartEditorial.module.css'
 import CountUpClient from './CountUpClient'
 import { getChartMetrics } from '../../lib/charts/getChartMetrics'
-import { EditorialHero } from '@/components/editorial/EditorialHero'
+import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
 
 // Analytics (client components)
 import {

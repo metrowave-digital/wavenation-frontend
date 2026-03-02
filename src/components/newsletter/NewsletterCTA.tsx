@@ -16,26 +16,15 @@ export function NewsletterCta() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  /* ===============================
-     VALIDATION (same as homepage)
-  =============================== */
-
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
   const firstNameError =
-    firstName && firstName.length < 2
-      ? 'First name is too short'
-      : null
+    firstName && firstName.length < 2 ? 'First name is too short' : null
 
   const lastNameError =
-    lastName && lastName.length < 2
-      ? 'Last name is too short'
-      : null
+    lastName && lastName.length < 2 ? 'Last name is too short' : null
 
-  const emailError =
-    email && !emailValid
-      ? 'Enter a valid email address'
-      : null
+  const emailError = email && !emailValid ? 'Enter a valid email address' : null
 
   const canSubmit =
     !loading &&
@@ -44,15 +33,9 @@ export function NewsletterCta() {
     emailValid &&
     options.length > 0
 
-  /* ===============================
-     HELPERS
-  =============================== */
-
   function toggleOption(option: FrequencyOption) {
-    setOptions(prev =>
-      prev.includes(option)
-        ? prev.filter(o => o !== option)
-        : [...prev, option],
+    setOptions((prev) =>
+      prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option]
     )
   }
 
@@ -75,9 +58,7 @@ export function NewsletterCta() {
         }),
       })
 
-      if (!res.ok) {
-        throw new Error('Subscription failed')
-      }
+      if (!res.ok) throw new Error('Subscription failed')
 
       trackEvent('newsletter_signup', {
         location: 'editorial_cta',
@@ -92,121 +73,160 @@ export function NewsletterCta() {
     }
   }
 
-  /* ===============================
-     SUCCESS STATE
-  =============================== */
-
   if (submitted) {
     return (
-      <section className={styles.root}>
-        <div className={styles.success}>
-          <span className={styles.emoji}>🌊</span>
-          <h3>You’re in.</h3>
-          <p>
-            Welcome to WaveNation.
-            <br />
-            Your first drop is on the way.
-          </p>
+      <section className={styles.root} aria-label="Newsletter signup success">
+        <div className={styles.card}>
+          <div className={styles.success}>
+            <span className={styles.badge} aria-hidden="true">
+              🌊
+            </span>
+            <h3 className={styles.successTitle}>You’re in.</h3>
+            <p className={styles.successText}>
+              Welcome to WaveNation. Your first drop is on the way.
+            </p>
+          </div>
         </div>
       </section>
     )
   }
 
-  /* ===============================
-     RENDER
-  =============================== */
-
   return (
-    <section className={styles.root}>
-      <div className={styles.inner}>
-        <div className={styles.copy}>
-          <span className={styles.eyebrow}>WaveNation</span>
-          <h2 className={styles.title}>
-            Stay connected to the culture
-          </h2>
-          <p className={styles.description}>
-            Artist spotlights, music drops, charts, and editorial — delivered
-            how you want.
-          </p>
-        </div>
+    <section className={styles.root} aria-label="Newsletter signup">
+      <div className={styles.card}>
+        <div className={styles.grid} aria-hidden="true" />
+        <div className={styles.glow} aria-hidden="true" />
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.nameRow}>
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={e => setFirstName(e.target.value)}
-            />
+        <div className={styles.inner}>
+          {/* Copy */}
+          <div className={styles.copy}>
+            <span className={styles.eyebrow}>WaveNation</span>
+            <h2 className={styles.title}>Stay connected to the culture</h2>
+            <p className={styles.description}>
+              Artist spotlights, music drops, charts, and editorial — delivered how you want.
+            </p>
 
-            <input
-              type="text"
-              placeholder="Last name"
-              value={lastName}
-              onChange={e => setLastName(e.target.value)}
-            />
+            <div className={styles.trustRow}>
+              <span className={styles.trustItem}>No spam.</span>
+              <span className={styles.trustDot} aria-hidden="true">
+                •
+              </span>
+              <span className={styles.trustItem}>Unsubscribe anytime.</span>
+            </div>
           </div>
 
-          {firstNameError && (
-            <p className={styles.inlineError}>{firstNameError}</p>
-          )}
-          {lastNameError && (
-            <p className={styles.inlineError}>{lastNameError}</p>
-          )}
+          {/* Form */}
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.fieldRow}>
+              <label className={styles.label}>
+                <span className={styles.labelText}>First name</span>
+                <input
+                  className={`${styles.input} ${firstNameError ? styles.inputError : ''}`}
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  autoComplete="given-name"
+                />
+              </label>
 
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
+              <label className={styles.label}>
+                <span className={styles.labelText}>Last name</span>
+                <input
+                  className={`${styles.input} ${lastNameError ? styles.inputError : ''}`}
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  autoComplete="family-name"
+                />
+              </label>
+            </div>
 
-          {emailError && (
-            <p className={styles.inlineError}>{emailError}</p>
-          )}
+            {(firstNameError || lastNameError) && (
+              <p className={styles.inlineError} role="status">
+                {firstNameError ?? lastNameError}
+              </p>
+            )}
 
-          <fieldset className={styles.options}>
-            <legend>What do you want?</legend>
-
-            <label>
+            <label className={styles.label}>
+              <span className={styles.labelText}>Email</span>
               <input
-                type="checkbox"
-                checked={options.includes('daily')}
-                onChange={() => toggleOption('daily')}
+                className={`${styles.input} ${emailError ? styles.inputError : ''}`}
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
               />
-              <span>Daily culture drops</span>
             </label>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={options.includes('weekly')}
-                onChange={() => toggleOption('weekly')}
-              />
-              <span>Weekly highlights</span>
-            </label>
+            {emailError && (
+              <p className={styles.inlineError} role="status">
+                {emailError}
+              </p>
+            )}
 
-            <label>
-              <input
-                type="checkbox"
-                checked={options.includes('events')}
-                onChange={() => toggleOption('events')}
-              />
-              <span>Events & exclusives</span>
-            </label>
-          </fieldset>
+            <fieldset className={styles.options}>
+              <legend className={styles.legend}>What do you want?</legend>
 
-          {error && (
-            <p className={styles.error}>{error}</p>
-          )}
+              <div className={styles.optionGrid}>
+                <label className={styles.option}>
+                  <input
+                    className={styles.optionInput}
+                    type="checkbox"
+                    checked={options.includes('daily')}
+                    onChange={() => toggleOption('daily')}
+                  />
+                  <span className={styles.optionPill}>Daily culture drops</span>
+                </label>
 
-          <button
-            type="submit"
-            disabled={!canSubmit}
-          >
-            {loading ? 'Joining…' : 'Join the Wave'}
-          </button>
-        </form>
+                <label className={styles.option}>
+                  <input
+                    className={styles.optionInput}
+                    type="checkbox"
+                    checked={options.includes('weekly')}
+                    onChange={() => toggleOption('weekly')}
+                  />
+                  <span className={styles.optionPill}>Weekly highlights</span>
+                </label>
+
+                <label className={styles.option}>
+                  <input
+                    className={styles.optionInput}
+                    type="checkbox"
+                    checked={options.includes('events')}
+                    onChange={() => toggleOption('events')}
+                  />
+                  <span className={styles.optionPill}>Events & exclusives</span>
+                </label>
+              </div>
+
+              {options.length === 0 && (
+                <p className={styles.inlineError} role="status">
+                  Choose at least one option.
+                </p>
+              )}
+            </fieldset>
+
+            {error && (
+              <p className={styles.error} role="alert">
+                {error}
+              </p>
+            )}
+
+            <button className={styles.submit} type="submit" disabled={!canSubmit}>
+              {loading ? 'Joining…' : 'Join the Wave'}
+              <span className={styles.submitArrow} aria-hidden="true">
+                →
+              </span>
+            </button>
+
+            <p className={styles.finePrint}>
+              By subscribing, you agree to receive emails from WaveNation.
+            </p>
+          </form>
+        </div>
       </div>
     </section>
   )

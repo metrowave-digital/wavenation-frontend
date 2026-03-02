@@ -1,4 +1,4 @@
-import { EditorialHero } from '@/components/editorial/EditorialHero'
+import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
 import styles from './ChartsOverview.module.css'
 import { getChartsOverviewEditorial } from '../../../lib/charts/getLatestChartsOverview'
 import ChartsClient from './ChartsClient'

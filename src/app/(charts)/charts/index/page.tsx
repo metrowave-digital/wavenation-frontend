@@ -1,6 +1,6 @@
 // app/charts/index/page.tsx
 
-import { EditorialHero } from '@/components/editorial/EditorialHero'
+import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
 import ChartsArchiveClient from './ChartsArchiveClient'
 import { getHomepageCharts } from '@/app/lib/charts/getHomepageCharts'
 import type { Chart } from '@/app/lib/types/chart'

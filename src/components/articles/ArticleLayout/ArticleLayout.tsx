@@ -31,75 +31,87 @@ export function ArticleLayout({
   newsletterCta,
   footerAd,
 }: ArticleLayoutProps) {
+  const hasMeta = Boolean(author || publishedAt || readTime)
+
   return (
     <article className={styles.article}>
       {/* ================= HERO ================= */}
       {hero}
 
-      {/* ================= META ================= */}
-      {(author || publishedAt || readTime) && (
-        <div className={styles.metaBar}>
-          {author && (
-            <span className={styles.author}>
-              By{' '}
-              {author.href ? (
-                <a href={author.href}>{author.name}</a>
-              ) : (
-                author.name
-              )}
-            </span>
-          )}
+      {/* ================= META (Sticky Glass) ================= */}
+      {hasMeta && (
+        <div className={styles.metaWrap}>
+          <div className={styles.metaBar} aria-label="Article metadata">
+            {author && (
+              <span className={styles.author}>
+                <span className={styles.by}>By</span>{' '}
+                {author.href ? (
+                  <a href={author.href} className={styles.authorLink}>
+                    {author.name}
+                  </a>
+                ) : (
+                  <span className={styles.authorName}>{author.name}</span>
+                )}
+              </span>
+            )}
 
-          {(publishedAt || readTime) && (
-            <span className={styles.metaDivider}>•</span>
-          )}
+            {(publishedAt || readTime) && (
+              <span className={styles.dot} aria-hidden="true">
+                •
+              </span>
+            )}
 
-          {publishedAt && (
-            <time className={styles.date}>{publishedAt}</time>
-          )}
+            {publishedAt && (
+              <time className={styles.date}>{publishedAt}</time>
+            )}
 
-          {readTime && (
-            <>
-              <span className={styles.metaDivider}>•</span>
-              <span className={styles.readTime}>{readTime}</span>
-            </>
-          )}
+            {readTime && (
+              <>
+                <span className={styles.dot} aria-hidden="true">
+                  •
+                </span>
+                <span className={styles.readTime}>{readTime}</span>
+              </>
+            )}
+          </div>
         </div>
       )}
 
       {/* ================= GRID ================= */}
-      <div className={styles.grid}>
-        {/* ===== CONTENT ===== */}
-        <div className={styles.content}>
-          {children}
+      <div className={styles.shell}>
+        <div className={styles.grid}>
+          {/* ===== CONTENT ===== */}
+          <main className={styles.content}>
+            <div className={styles.prose}>{children}</div>
 
-          {newsletterCta && (
-            <div className={styles.newsletter}>
-              {newsletterCta}
-            </div>
-          )}
+            {newsletterCta && (
+              <section className={styles.newsletter}>
+                {newsletterCta}
+              </section>
+            )}
 
-          {footerAd && (
-            <div className={styles.footerAd}>
-              {footerAd}
-            </div>
+            {footerAd && (
+              <section className={styles.footerAd}>
+                {footerAd}
+              </section>
+            )}
+          </main>
+
+          {/* ===== SIDEBAR ===== */}
+          {(sidebar || sidebarAd) && (
+            <aside className={styles.sidebar} aria-label="Sidebar">
+              <div className={styles.sidebarInner}>
+                {sidebar}
+
+                {sidebarAd && (
+                  <div className={styles.sidebarAd}>
+                    {sidebarAd}
+                  </div>
+                )}
+              </div>
+            </aside>
           )}
         </div>
-
-        {/* ===== SIDEBAR ===== */}
-        {(sidebar || sidebarAd) && (
-          <aside className={styles.sidebar}>
-            <div className={styles.sidebarInner}>
-              {sidebar}
-
-              {sidebarAd && (
-                <div className={styles.sidebarAd}>
-                  {sidebarAd}
-                </div>
-              )}
-            </div>
-          </aside>
-        )}
       </div>
     </article>
   )

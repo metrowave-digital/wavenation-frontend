@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './ChartPage.module.css'
-import { EditorialHero } from '@/components/editorial/EditorialHero'
+import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
 import type { Chart } from '../../../lib/types/chart'
 import { trackEvent } from '@/lib/analytics'
 

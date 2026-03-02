@@ -1,202 +1,397 @@
 /* ======================================================
-   EDITORIAL NEWSLETTER CTA
+   Newsletter CTA — Premium Editorial
 ====================================================== */
 
 .root {
   margin: 72px auto 64px;
-  padding: 0 1.5rem;
+  padding: 0 1.25rem;
 }
 
-.inner {
-  max-width: 960px;
+.card {
+  position: relative;
+  overflow: hidden;
+
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 48px 40px;
 
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.02)
-  );
+  border-radius: 22px;
 
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(900px 260px at 18% 0%, rgba(0, 170, 255, 0.14), transparent 62%),
+    radial-gradient(820px 260px at 82% 8%, rgba(168, 85, 247, 0.12), transparent 65%),
+    rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 24px 52px rgba(0, 0, 0, 0.45);
+}
+
+/* subtle grid texture */
+.grid {
+  position: absolute;
+  inset: -2px;
+  opacity: 0.22;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+
+  mask-image: radial-gradient(70% 60% at 50% 0%, black 20%, transparent 70%);
+}
+
+.glow {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.5;
+
+  background:
+    radial-gradient(520px 220px at 26% 8%, rgba(255, 255, 255, 0.10), transparent 62%),
+    radial-gradient(520px 240px at 74% 12%, rgba(255, 255, 255, 0.08), transparent 65%);
 }
 
 /* ======================================================
-   COPY
+   Layout
+====================================================== */
+
+.inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.2rem;
+
+  padding: 2.6rem 2.4rem;
+}
+
+@media (min-width: 900px) {
+  .inner {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: start;
+    gap: 2.6rem;
+  }
+}
+
+/* ======================================================
+   Copy
 ====================================================== */
 
 .copy {
-  max-width: 640px;
-  margin-bottom: 28px;
+  max-width: 46ch;
 }
 
 .eyebrow {
   display: inline-block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 
-  color: #4da3ff;
+  color: rgba(0, 170, 255, 0.95);
 }
 
 .title {
-  font-size: 28px;
-  line-height: 1.25;
-  margin-bottom: 10px;
-  color: #ededed;
+  margin: 0 0 10px;
+
+  font-size: clamp(1.55rem, 3.2vw, 2.05rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 950;
+
+  color: rgba(245, 246, 247, 0.96);
 }
 
 .description {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #bdbdbd;
+  margin: 0;
+
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: rgba(245, 246, 247, 0.72);
+}
+
+.trustRow {
+  margin-top: 1.25rem;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  font-size: 0.85rem;
+  color: rgba(245, 246, 247, 0.62);
+}
+
+.trustDot {
+  opacity: 0.5;
 }
 
 /* ======================================================
-   FORM
+   Form
 ====================================================== */
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-}
-
-.nameRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.form input {
-  height: 44px;
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 520px) {
+  .fieldRow {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labelText {
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(245, 246, 247, 0.55);
+}
+
+.input {
+  height: 46px;
   padding: 0 14px;
 
-  font-size: 14px;
-  color: #ededed;
+  font-size: 0.95rem;
+  color: rgba(245, 246, 247, 0.92);
 
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
 
   outline: none;
+
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 }
 
-.form input::placeholder {
-  color: #777;
+.input::placeholder {
+  color: rgba(245, 246, 247, 0.40);
 }
 
-.form input:focus {
-  border-color: #4da3ff;
+.input:focus-visible {
+  border-color: rgba(0, 170, 255, 0.70);
+  box-shadow:
+    0 0 0 4px rgba(0, 170, 255, 0.16),
+    0 0 0 1px rgba(0, 170, 255, 0.18) inset;
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.inputError {
+  border-color: rgba(255, 107, 107, 0.55);
+}
+
+.inlineError {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: rgba(255, 107, 107, 0.92);
+}
+
+.error {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: rgba(255, 107, 107, 0.95);
 }
 
 /* ======================================================
-   OPTIONS
+   Options — pill toggles
 ====================================================== */
 
 .options {
   border: none;
-  padding: 0;
-  margin-top: 4px;
+  padding: 6px 0 0;
+  margin: 0;
 }
 
-.options legend {
-  font-size: 12px;
-  margin-bottom: 6px;
-  color: #999;
+.legend {
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(245, 246, 247, 0.55);
+
+  margin-bottom: 10px;
 }
 
-.options label {
-  display: flex;
+.optionGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.option {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-
-  font-size: 14px;
-  color: #ddd;
+  gap: 10px;
 }
 
-.options input {
-  accent-color: #4da3ff;
+.optionInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.optionPill {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0.72rem 0.9rem;
+  border-radius: 14px;
+
+  font-size: 0.95rem;
+  font-weight: 800;
+
+  color: rgba(245, 246, 247, 0.88);
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.option:hover .optionPill {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.optionInput:focus-visible + .optionPill {
+  outline: 2px solid rgba(0, 170, 255, 0.85);
+  outline-offset: 3px;
+}
+
+/* checked state */
+.optionInput:checked + .optionPill {
+  color: #07111a;
+  background: linear-gradient(135deg, var(--accent, #00aaff), #5b7cfa);
+  border-color: transparent;
+  box-shadow: 0 14px 28px rgba(0, 170, 255, 0.20);
 }
 
 /* ======================================================
-   BUTTON + STATES
+   Submit
 ====================================================== */
 
-.form button {
-  height: 46px;
-  margin-top: 8px;
+.submit {
+  margin-top: 6px;
 
-  font-size: 14px;
-  font-weight: 600;
+  height: 48px;
+  border-radius: 14px;
+  border: 0;
 
-  color: #000;
-  background: #4da3ff;
+  font-size: 0.98rem;
+  font-weight: 950;
 
-  border: none;
-  border-radius: 8px;
+  color: #07111a;
+  background: linear-gradient(135deg, var(--accent, #00aaff), #5b7cfa);
 
   cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+  box-shadow: 0 18px 38px rgba(0, 170, 255, 0.18);
 }
 
-.form button:disabled {
-  opacity: 0.5;
+.submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 46px rgba(0, 170, 255, 0.24);
+}
+
+.submit:disabled {
+  opacity: 0.55;
   cursor: default;
+  transform: none;
+  box-shadow: none;
 }
 
-.inlineError {
-  font-size: 12px;
-  color: #ff6b6b;
+.submitArrow {
+  font-size: 1.05rem;
+  opacity: 0.9;
 }
 
-.error {
-  font-size: 13px;
-  color: #ff6b6b;
+.finePrint {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(245, 246, 247, 0.55);
 }
 
 /* ======================================================
-   SUCCESS
+   Success
 ====================================================== */
 
 .success {
+  position: relative;
+  padding: 2.6rem 2.4rem;
   text-align: center;
-  padding: 32px 0;
 }
 
-.success h3 {
-  font-size: 22px;
-  margin-bottom: 6px;
-  color: #ededed;
+.badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 0 auto 12px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+
+  font-size: 1.6rem;
 }
 
-.success p {
-  font-size: 14px;
-  color: #bdbdbd;
+.successTitle {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+  font-weight: 950;
+  color: rgba(245, 246, 247, 0.96);
 }
 
-.emoji {
-  font-size: 32px;
-  display: block;
-  margin-bottom: 8px;
+.successText {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(245, 246, 247, 0.70);
 }
 
 /* ======================================================
-   MOBILE
+   Mobile
 ====================================================== */
 
 @media (max-width: 768px) {
   .inner {
-    padding: 32px 20px;
-  }
-
-  .title {
-    font-size: 22px;
-  }
-
-  .nameRow {
-    grid-template-columns: 1fr;
+    padding: 2.1rem 1.25rem;
   }
 }
+
+.card { width: 100%; max-width: 100%; overflow: hidden; }

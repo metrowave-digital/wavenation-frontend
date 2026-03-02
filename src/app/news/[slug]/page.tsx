@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { EditorialHero } from '@/components/editorial/EditorialHero'
+import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
 import { ArticleLayout } from '@/components/articles/ArticleLayout/ArticleLayout'
 import { NewsletterCta } from '@/components/newsletter/NewsletterCTA'
 

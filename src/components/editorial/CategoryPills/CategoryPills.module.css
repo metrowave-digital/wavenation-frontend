@@ -1,0 +1,82 @@
+/* ======================================================
+   CATEGORY PILLS — Premium Editorial
+====================================================== */
+
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+
+  margin: 0.75rem 0 1.25rem;
+}
+
+/* ======================================================
+   PILL BASE
+====================================================== */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  padding: 0.42rem 0.75rem;
+  border-radius: 999px;
+
+  text-decoration: none;
+
+  color: rgba(245, 246, 247, 0.86);
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(8px);
+
+  transition:
+    transform 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+/* Hover */
+.pill:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Focus for accessibility */
+.pill:focus-visible {
+  outline: 2px solid rgba(0, 170, 255, 0.85);
+  outline-offset: 3px;
+}
+
+/* ======================================================
+   ACTIVE STATE
+====================================================== */
+
+.active {
+  color: #07111a;
+
+  background: linear-gradient(
+    135deg,
+    #00aaff,
+    #5b7cfa
+  );
+
+  border-color: transparent;
+
+  box-shadow:
+    0 10px 26px rgba(0, 170, 255, 0.25);
+}
+
+.active:hover {
+  transform: translateY(-1px);
+}
