@@ -5,7 +5,7 @@ import { NewsCard } from './components/NewsCard'
 import { NewsSidebarList } from './components/NewsSidebarList'
 import { NewsInterviewFeature } from './components/NewsInterviewFeature'
 import { MoreArticlesRail } from './components/MoreArticlesRail'
-import type { NewsPageData } from './components/types'
+import { getNewsPageData } from '@/lib/news/getNewsPageData'
 
 export const metadata = {
   title: 'News | WaveNation',
@@ -13,64 +13,32 @@ export const metadata = {
     'Top stories, trending culture, latest news, editor’s picks, and featured interviews from WaveNation.',
 }
 
-async function getNewsPageData(): Promise<NewsPageData> {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL?.startsWith('http')
-      ? process.env.VERCEL_URL
-      : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : 'http://localhost:3000')
-
-  const fallback: NewsPageData = {
-    topStories: [],
-    trending: [],
-    latestNews: [],
-    editorsPicks: [],
-    featuredInterviews: [],
-    moreArticles: [],
-    moreArticlesHasMore: false,
-  }
-
-  try {
-    const res = await fetch(`${baseUrl}/api/news/page-data`, {
-      next: { revalidate: 60 },
-    })
-
-    if (!res.ok) {
-      return fallback
-    }
-
-    return (await res.json()) as NewsPageData
-  } catch {
-    return fallback
-  }
-}
+export const revalidate = 60
 
 export default async function NewsPage() {
   const data = await getNewsPageData()
 
   const heroStories = data.topStories.slice(0, 3)
-const secondaryTopStories = data.topStories.slice(3)
+  const secondaryTopStories = data.topStories.slice(3)
 
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
         {heroStories.length ? (
-  <NewsHero
-    title="WaveNation News"
-    subtitle="Top stories, trending culture, latest reporting, editor’s picks, and featured interviews from across the WaveNation ecosystem."
-    featured={heroStories.map((story) => ({
-      id: story.id,
-      title: story.title,
-      href: story.href,
-      category: story.category,
-      excerpt: story.excerpt,
-      image: story.imageUrl ?? '/images/placeholders/news-fallback.jpg',
-      imageAlt: story.imageAlt ?? story.title,
-    }))}
-  />
-) : null}
+          <NewsHero
+            title="WaveNation News"
+            subtitle="Top stories, trending culture, latest reporting, editor’s picks, and featured interviews from across the WaveNation ecosystem."
+            featured={heroStories.map((story) => ({
+              id: story.id,
+              title: story.title,
+              href: story.href,
+              category: story.category,
+              excerpt: story.excerpt,
+              image: story.imageUrl ?? '/images/placeholders/news-fallback.jpg',
+              imageAlt: story.imageAlt ?? story.title,
+            }))}
+          />
+        ) : null}
 
         <section className={styles.mainGrid}>
           <div className={styles.primaryColumn}>
