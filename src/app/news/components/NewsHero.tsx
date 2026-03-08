@@ -22,6 +22,25 @@ interface NewsHeroProps {
   autoRotateMs?: number
 }
 
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    const updatePreference = () => {
+      setPrefersReducedMotion(mediaQuery.matches)
+    }
+
+    updatePreference()
+    mediaQuery.addEventListener('change', updatePreference)
+
+    return () => mediaQuery.removeEventListener('change', updatePreference)
+  }, [])
+
+  return prefersReducedMotion
+}
+
 export function NewsHero({
   title,
   subtitle,
@@ -29,20 +48,25 @@ export function NewsHero({
   autoRotateMs = 7000,
 }: NewsHeroProps) {
   const stories = useMemo(() => featured.slice(0, 3), [featured])
+  const prefersReducedMotion = usePrefersReducedMotion()
+
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   const safeIndex =
     stories.length === 0 ? 0 : Math.min(activeIndex, stories.length - 1)
 
   useEffect(() => {
     if (stories.length <= 1) return
+    if (prefersReducedMotion) return
+    if (isPaused) return
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % stories.length)
     }, autoRotateMs)
 
     return () => window.clearInterval(timer)
-  }, [stories.length, autoRotateMs])
+  }, [stories.length, autoRotateMs, prefersReducedMotion, isPaused])
 
   if (!stories.length) return null
 
@@ -63,7 +87,14 @@ export function NewsHero({
   }
 
   return (
-    <section className={styles.hero} aria-label="News hero">
+    <section
+      className={styles.hero}
+      aria-label="Top stories"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
+    >
       <div className={styles.copy}>
         <span className={styles.kicker}>WaveNation Pulse</span>
         <h1 className={styles.title}>{title}</h1>
@@ -78,14 +109,13 @@ export function NewsHero({
             aria-label={current.title}
           >
             <Image
-              key={current.href}
               className={styles.image}
               src={current.image}
               alt={current.imageAlt || current.title}
               width={1200}
               height={675}
               sizes="(max-width: 900px) 100vw, 58vw"
-              priority
+              priority={safeIndex === 0}
             />
             <div className={styles.imageOverlay} />
           </Link>
@@ -157,6 +187,7 @@ export function NewsHero({
                     index === safeIndex ? styles.storyTeaseActive : ''
                   }`}
                   onClick={() => goToSlide(index)}
+                  aria-pressed={index === safeIndex}
                 >
                   <span className={styles.storyTeaseCategory}>
                     {story.category}

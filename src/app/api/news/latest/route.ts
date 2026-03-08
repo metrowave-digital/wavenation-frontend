@@ -91,14 +91,21 @@ export async function GET() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: LATEST_NEWS_QUERY }),
       next: { revalidate: 60 },
+      cache: 'force-cache',
     })
 
     if (!res.ok) {
       console.error('[news/latest] bad response', res.status)
-      return NextResponse.json([])
+      return NextResponse.json([], { status: 200 })
     }
 
     const result = (await res.json()) as GraphQLResponse
+
+    if (result.errors) {
+      console.error('[news/latest] graphql errors', result.errors)
+      return NextResponse.json([], { status: 200 })
+    }
+
     const docs = result.data?.Articles?.docs ?? []
 
     const items = docs.map((article) => {
@@ -122,9 +129,9 @@ export async function GET() {
       }
     })
 
-    return NextResponse.json(items.slice(0, 8))
+    return NextResponse.json(items.slice(0, 8), { status: 200 })
   } catch (err) {
     console.error('[news/latest]', err)
-    return NextResponse.json([])
+    return NextResponse.json([], { status: 200 })
   }
 }
