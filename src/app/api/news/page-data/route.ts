@@ -44,6 +44,7 @@ const NEWS_PAGE_DATA_QUERY = `
               hero { url }
               card { url }
               thumb { url }
+              square { url }
             }
           }
         }
@@ -64,6 +65,7 @@ interface GraphQLImage {
     hero?: { url?: string | null } | null
     card?: { url?: string | null } | null
     thumb?: { url?: string | null } | null
+    square?: { url?: string | null } | null
   } | null
 }
 
@@ -125,6 +127,16 @@ type PageDataResponse = {
   moreArticlesHasMore: boolean
 }
 
+const EMPTY_RESPONSE: PageDataResponse = {
+  topStories: [],
+  latestNews: [],
+  editorsPicks: [],
+  featuredInterviews: [],
+  trending: [],
+  moreArticles: [],
+  moreArticlesHasMore: false,
+}
+
 function normalizeText(value?: string | null) {
   return (value ?? '').trim()
 }
@@ -150,9 +162,10 @@ function pickImage(article: GraphQLArticle) {
       img?.sizes?.hero?.url ??
       img?.sizes?.card?.url ??
       img?.sizes?.thumb?.url ??
+      img?.sizes?.square?.url ??
       img?.url ??
       null,
-    imageAlt: img?.alt ?? article.title,
+    imageAlt: normalizeText(img?.alt) || article.title,
   }
 }
 
@@ -176,8 +189,8 @@ function scoreArticle(article: GraphQLArticle) {
 }
 
 function mapArticle(article: GraphQLArticle): NewsCardItem {
-  const primaryCategory = article.categories?.[0]?.name ?? 'News'
-  const primarySubcategory = article.subcategories?.[0]?.name ?? ''
+  const primaryCategory = normalizeText(article.categories?.[0]?.name) || 'News'
+  const primarySubcategory = normalizeText(article.subcategories?.[0]?.name)
   const { imageUrl, imageAlt } = pickImage(article)
 
   return {
@@ -185,7 +198,7 @@ function mapArticle(article: GraphQLArticle): NewsCardItem {
     title: article.title,
     href: `/news/${article.slug}`,
     category: primaryCategory,
-    excerpt: article.excerpt ?? article.subtitle ?? '',
+    excerpt: normalizeText(article.excerpt) || normalizeText(article.subtitle),
     imageUrl,
     imageAlt,
     subcategory: primarySubcategory,
@@ -194,7 +207,9 @@ function mapArticle(article: GraphQLArticle): NewsCardItem {
   }
 }
 
-function sortByPublishDateDesc<T extends { publishDate: string | null }>(items: T[]) {
+function sortByPublishDateDesc<T extends { publishDate: string | null }>(
+  items: T[]
+) {
   return [...items].sort((a, b) => {
     const aTime = a.publishDate ? new Date(a.publishDate).getTime() : 0
     const bTime = b.publishDate ? new Date(b.publishDate).getTime() : 0
@@ -202,7 +217,9 @@ function sortByPublishDateDesc<T extends { publishDate: string | null }>(items: 
   })
 }
 
-function sortByScoreDesc<T extends { score: number; publishDate: string | null }>(items: T[]) {
+function sortByScoreDesc<T extends { score: number; publishDate: string | null }>(
+  items: T[]
+) {
   return [...items].sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score
 
@@ -212,14 +229,31 @@ function sortByScoreDesc<T extends { score: number; publishDate: string | null }
   })
 }
 
+function hasSubcategorySlug(article: GraphQLArticle, slug: string) {
+  return (article.subcategories ?? []).some(
+    (item) => lower(item.slug) === lower(slug)
+  )
+}
+
 function isInterviewArticle(article: GraphQLArticle) {
   const categoryNames = (article.categories ?? []).map((item) => lower(item.name))
-  const subcategoryNames = (article.subcategories ?? []).map((item) => lower(item.name))
+  const categorySlugs = (article.categories ?? []).map((item) => lower(item.slug))
+  const subcategoryNames = (article.subcategories ?? []).map((item) =>
+    lower(item.name)
+  )
+  const subcategorySlugs = (article.subcategories ?? []).map((item) =>
+    lower(item.slug)
+  )
   const notes = lower(article.aiRanking?.aiNotes)
 
   return (
-    categoryNames.some((name) => name.includes('interview')) ||
+    subcategorySlugs.includes('artist-profiles') ||
+    subcategorySlugs.includes('interviews') ||
+    subcategoryNames.some((name) => name.includes('artist profile')) ||
     subcategoryNames.some((name) => name.includes('interview')) ||
+    categorySlugs.includes('interviews') ||
+    categoryNames.some((name) => name.includes('interview')) ||
+    notes.includes('artist profile') ||
     notes.includes('interview') ||
     notes.includes('q&a') ||
     notes.includes('conversation')
@@ -228,20 +262,28 @@ function isInterviewArticle(article: GraphQLArticle) {
 
 function buildInterviewItem(article: GraphQLArticle): InterviewItem {
   const base = mapArticle(article)
-  const subcategory = normalizeText(article.subcategories?.[0]?.name)
-  const subtitle = normalizeText(article.subtitle)
+  const primaryCategory = normalizeText(article.categories?.[0]?.name) || 'Interview'
+  const primarySubcategory =
+    normalizeText(article.subcategories?.[0]?.name) || 'Featured Interview'
+
+  const eyebrow = hasSubcategorySlug(article, 'artist-profiles')
+    ? 'Artist Profile'
+    : primarySubcategory
 
   return {
     ...base,
-    eyebrow: subcategory || 'Featured Interview',
+    eyebrow,
     person: article.title,
-    role: subtitle || subcategory || 'Artist / Creative / Cultural Voice',
+    role: primaryCategory,
+    subcategory: primarySubcategory,
   }
 }
 
 function isEditorsPickArticle(article: GraphQLArticle) {
   const categoryNames = (article.categories ?? []).map((item) => lower(item.name))
-  const subcategoryNames = (article.subcategories ?? []).map((item) => lower(item.name))
+  const subcategoryNames = (article.subcategories ?? []).map((item) =>
+    lower(item.name)
+  )
   const notes = lower(article.aiRanking?.aiNotes)
 
   return (
@@ -255,7 +297,9 @@ function isEditorsPickArticle(article: GraphQLArticle) {
 
 function isTrendingArticle(article: GraphQLArticle) {
   const categoryNames = (article.categories ?? []).map((item) => lower(item.name))
-  const subcategoryNames = (article.subcategories ?? []).map((item) => lower(item.name))
+  const subcategoryNames = (article.subcategories ?? []).map((item) =>
+    lower(item.name)
+  )
   const notes = lower(article.aiRanking?.aiNotes)
 
   return (
@@ -279,36 +323,14 @@ export async function GET() {
 
     if (!res.ok) {
       console.error('[news/page-data] bad response', res.status)
-      return NextResponse.json(
-        {
-          topStories: [],
-          latestNews: [],
-          editorsPicks: [],
-          featuredInterviews: [],
-          trending: [],
-          moreArticles: [],
-          moreArticlesHasMore: false,
-        } satisfies PageDataResponse,
-        { status: 200 }
-      )
+      return NextResponse.json(EMPTY_RESPONSE, { status: 200 })
     }
 
     const result = (await res.json()) as GraphQLResponse
 
     if (result.errors) {
       console.error('[news/page-data] graphql errors', result.errors)
-      return NextResponse.json(
-        {
-          topStories: [],
-          latestNews: [],
-          editorsPicks: [],
-          featuredInterviews: [],
-          trending: [],
-          moreArticles: [],
-          moreArticlesHasMore: false,
-        } satisfies PageDataResponse,
-        { status: 200 }
-      )
+      return NextResponse.json(EMPTY_RESPONSE, { status: 200 })
     }
 
     const docs = result.data?.Articles?.docs ?? []
@@ -320,57 +342,50 @@ export async function GET() {
     const topStories = uniqueById(scored).slice(0, 6)
     const latestNews = uniqueById(latest).slice(0, 8)
 
-    const editorsPicksPool = docs
-      .filter(isEditorsPickArticle)
-      .map(mapArticle)
+    const editorsPicksPool = docs.filter(isEditorsPickArticle).map(mapArticle)
+    const editorsPicksFallbackPool = allMapped.filter(
+      (item) => !topStories.some((top) => top.id === item.id)
+    )
 
     const editorsPicks =
-      uniqueById(sortByScoreDesc(editorsPicksPool)).slice(0, 6).length > 0
+      editorsPicksPool.length > 0
         ? uniqueById(sortByScoreDesc(editorsPicksPool)).slice(0, 6)
-        : uniqueById(
-            sortByScoreDesc(
-              allMapped.filter(
-                (item) => !topStories.some((top) => top.id === item.id)
-              )
-            )
-          ).slice(0, 6)
+        : uniqueById(sortByScoreDesc(editorsPicksFallbackPool)).slice(0, 6)
 
-    const interviewPool = docs
-      .filter(isInterviewArticle)
-      .map(buildInterviewItem)
+    const interviewPool = docs.filter(isInterviewArticle).map(buildInterviewItem)
 
     const featuredInterviews =
-      uniqueById(sortByScoreDesc(interviewPool)).slice(0, 4).length > 0
+      interviewPool.length > 0
         ? uniqueById(sortByScoreDesc(interviewPool)).slice(0, 4)
         : uniqueById(
             sortByScoreDesc(
-              docs.slice(0, 12).map((article) => ({
-                ...buildInterviewItem(article),
-                eyebrow:
+              docs.slice(0, 12).map((article) => {
+                const primarySubcategory =
                   normalizeText(article.subcategories?.[0]?.name) ||
-                  'Featured Interview',
-                person: article.title,
-                role:
-                  normalizeText(article.subtitle) ||
-                  'Artist / Creative / Cultural Voice',
-              }))
+                  'Featured Interview'
+
+                return {
+                  ...buildInterviewItem(article),
+                  eyebrow: hasSubcategorySlug(article, 'artist-profiles')
+                    ? 'Artist Profile'
+                    : primarySubcategory,
+                  role:
+                    normalizeText(article.categories?.[0]?.name) || 'Interview',
+                  subcategory: primarySubcategory,
+                }
+              })
             )
           ).slice(0, 4)
 
-    const trendingPool = docs
-      .filter(isTrendingArticle)
-      .map(mapArticle)
+    const trendingPool = docs.filter(isTrendingArticle).map(mapArticle)
+    const trendingFallbackPool = allMapped.filter(
+      (item) => !topStories.some((top) => top.id === item.id)
+    )
 
     const trending =
-      uniqueById(sortByScoreDesc(trendingPool)).slice(0, 6).length > 0
+      trendingPool.length > 0
         ? uniqueById(sortByScoreDesc(trendingPool)).slice(0, 6)
-        : uniqueById(
-            sortByScoreDesc(
-              allMapped.filter(
-                (item) => !topStories.some((top) => top.id === item.id)
-              )
-            )
-          ).slice(0, 6)
+        : uniqueById(sortByScoreDesc(trendingFallbackPool)).slice(0, 6)
 
     const usedIds = new Set<number>([
       ...topStories.map((item) => item.id),
@@ -397,18 +412,6 @@ export async function GET() {
     return NextResponse.json(payload, { status: 200 })
   } catch (err) {
     console.error('[news/page-data]', err)
-
-    return NextResponse.json(
-      {
-        topStories: [],
-        latestNews: [],
-        editorsPicks: [],
-        featuredInterviews: [],
-        trending: [],
-        moreArticles: [],
-        moreArticlesHasMore: false,
-      } satisfies PageDataResponse,
-      { status: 200 }
-    )
+    return NextResponse.json(EMPTY_RESPONSE, { status: 200 })
   }
 }
