@@ -1,0 +1,48 @@
+.section {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(255 255 255 / 0.015)),
+    #101418;
+  border-radius: 1.35rem;
+  padding: 1.1rem;
+  box-shadow: 0 16px 42px rgb(0 0 0 / 0.16);
+}
+
+.header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+.description {
+  margin: 0.45rem 0 0;
+  color: rgb(255 255 255 / 0.68);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.link {
+  flex-shrink: 0;
+  color: #8fdcff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+.content {
+  display: block;
+}

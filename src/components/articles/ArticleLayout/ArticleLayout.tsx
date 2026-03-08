@@ -85,7 +85,7 @@ export function ArticleLayout({
             <div className={styles.prose}>{children}</div>
 
             {newsletterCta && (
-              <section className={styles.newsletter}>
+              <section className={styles.wideBlock}>
                 {newsletterCta}
               </section>
             )}

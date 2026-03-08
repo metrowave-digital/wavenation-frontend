@@ -1,0 +1,93 @@
+.card {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(255 255 255 / 0.02);
+  border-radius: 1.1rem;
+  overflow: hidden;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgb(0 179 255 / 0.28);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.stacked {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.horizontal {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.imageWrap {
+  display: block;
+  background: #151a21;
+}
+
+.stacked .imageWrap {
+  aspect-ratio: 16 / 10;
+}
+
+.horizontal .imageWrap {
+  height: 100%;
+  min-height: 100%;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.body {
+  padding: 1rem;
+}
+
+.category {
+  display: inline-block;
+  margin-bottom: 0.55rem;
+  color: #9ce4ff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.title a:hover {
+  color: #fff;
+}
+
+.excerpt {
+  margin: 0.7rem 0 0;
+  color: rgb(255 255 255 / 0.7);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 780px) {
+  .horizontal {
+    grid-template-columns: 1fr;
+  }
+
+  .horizontal .imageWrap {
+    aspect-ratio: 16 / 10;
+  }
+}
