@@ -33,14 +33,10 @@ type InterviewItem = NewsCardItem & {
   role: string
 }
 
-type NewsPageData = {
-  topStories: NewsCardItem[]
-  latestNews: NewsCardItem[]
-  editorsPicks: NewsCardItem[]
-  featuredInterviews: InterviewItem[]
-  trending: NewsCardItem[]
-  moreArticles: NewsCardItem[]
-  moreArticlesHasMore: boolean
+type SidebarItem = {
+  title: string
+  href: string
+  meta?: string
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL
@@ -51,39 +47,51 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL
       : `https://${process.env.VERCEL_URL}`
     : 'http://localhost:3000'
 
-async function getNewsPageData(): Promise<NewsPageData> {
-  const fallback: NewsPageData = {
-    topStories: [],
-    latestNews: [],
-    editorsPicks: [],
-    featuredInterviews: [],
-    trending: [],
-    moreArticles: [],
-    moreArticlesHasMore: false,
-  }
-
+async function safeFetch<T>(url: string, fallback: T): Promise<T> {
   try {
-    const res = await fetch(`${BASE_URL}/api/news/page-data`, {
+    const res = await fetch(url, {
       next: { revalidate: 60 },
     })
 
     if (!res.ok) {
-      console.error('[news/page] failed to load page data', res.status)
+      console.error('[news/page] fetch failed', res.status, url)
       return fallback
     }
 
-    return (await res.json()) as NewsPageData
+    return (await res.json()) as T
   } catch (error) {
-    console.error('[news/page] page data fetch error', error)
+    console.error('[news/page] fetch error', url, error)
     return fallback
   }
 }
 
 export default async function NewsPage() {
-  const data = await getNewsPageData()
+  const [
+    topStories,
+    latestNews,
+    editorsPicks,
+    featuredInterviews,
+    trending,
+    tags,
+    moreArticlesResponse,
+  ] = await Promise.all([
+    safeFetch<NewsCardItem[]>(`${BASE_URL}/api/news/top-stories`, []),
+    safeFetch<NewsCardItem[]>(`${BASE_URL}/api/news/latest`, []),
+    safeFetch<NewsCardItem[]>(`${BASE_URL}/api/news/editors-picks`, []),
+    safeFetch<InterviewItem[]>(
+      `${BASE_URL}/api/news/featured-interviews`,
+      []
+    ),
+    safeFetch<SidebarItem[]>(`${BASE_URL}/api/news/trending`, []),
+    safeFetch<SidebarItem[]>(`${BASE_URL}/api/news/tags`, []),
+    safeFetch<{ items: NewsCardItem[]; hasMore: boolean }>(
+      `${BASE_URL}/api/news/more-articles?limit=12&offset=0`,
+      { items: [], hasMore: false }
+    ),
+  ])
 
-  const heroStories = data.topStories.slice(0, 3)
-  const secondaryTopStories = data.topStories.slice(3)
+  const heroStories = topStories.slice(0, 3)
+  const secondaryTopStories = topStories.slice(3, 4)
 
   return (
     <main className={styles.page}>
@@ -131,13 +139,13 @@ export default async function NewsPage() {
               </NewsSection>
             ) : null}
 
-            {data.latestNews.length ? (
+            {latestNews.length ? (
               <NewsSection
                 title="Latest News"
                 description="Fresh reporting and recently published stories."
               >
                 <div className={styles.latestGrid}>
-                  {data.latestNews.map((story) => (
+                  {latestNews.map((story) => (
                     <NewsCard
                       key={story.id}
                       title={story.title}
@@ -156,13 +164,13 @@ export default async function NewsPage() {
               </NewsSection>
             ) : null}
 
-            {data.editorsPicks.length ? (
+            {editorsPicks.length ? (
               <NewsSection
                 title="Editor’s Picks"
                 description="Standout stories selected for depth, perspective, and relevance."
               >
                 <div className={styles.picksGrid}>
-                  {data.editorsPicks.map((story) => (
+                  {editorsPicks.map((story) => (
                     <NewsCard
                       key={story.id}
                       title={story.title}
@@ -181,13 +189,13 @@ export default async function NewsPage() {
               </NewsSection>
             ) : null}
 
-            {data.featuredInterviews.length ? (
+            {featuredInterviews.length ? (
               <NewsSection
                 title="Featured Interviews"
                 description="Conversations with creators, artists, and cultural voices shaping what’s next."
               >
                 <div className={styles.interviewsGrid}>
-                  {data.featuredInterviews.map((item) => (
+                  {featuredInterviews.map((item) => (
                     <NewsInterviewFeature
                       key={item.id}
                       eyebrow={item.eyebrow}
@@ -212,15 +220,24 @@ export default async function NewsPage() {
           <aside className={styles.sidebarColumn}>
             <NewsSidebarList
               title="Trending"
-              items={data.trending}
+              items={trending}
               description="Fast-moving topics and stories readers are watching."
             />
+
+            {tags.length ? (
+              <NewsSidebarList
+                title="Trending Tags"
+                description="Topics readers are exploring across WaveNation."
+                items={tags}
+                variant="tags"
+              />
+            ) : null}
           </aside>
         </section>
 
         <MoreArticlesRail
-          initialItems={data.moreArticles ?? []}
-          initialHasMore={data.moreArticlesHasMore ?? false}
+          initialItems={moreArticlesResponse.items ?? []}
+          initialHasMore={moreArticlesResponse.hasMore ?? false}
           archiveHref="/news/archive"
           apiEndpoint="/api/news/more-articles"
           autoLoadOnScroll
