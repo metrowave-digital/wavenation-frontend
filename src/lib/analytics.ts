@@ -43,6 +43,7 @@ export type AnalyticsEvent =
   | 'category_click'
   | 'content_interaction'
   | 'artist_spotlight_view'
+  | 'navigation_open'
 
 /* ======================================================
    Core Dispatcher (GA4 + PostHog)

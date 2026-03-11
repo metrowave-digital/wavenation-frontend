@@ -3,9 +3,19 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
+import clsx from 'clsx'
 
-import type { NavItem } from '../nav/nav.types'
-import styles from './MegaMenu.module.css'
+import type { MainNavItem, NavItem } from '../nav/nav.types'
+import {
+  countDestinations,
+  getDefaultSectionHref,
+  getFeaturedSeed,
+  getFirstHref,
+  getItemKey,
+  hasChildren,
+  hasHref,
+} from '../nav/nav.types'
+import styles from './MegaMenuPanel.module.css'
 import { trackEvent } from '@/lib/analytics'
 
 type FeaturedCard = {
@@ -20,122 +30,9 @@ type FeaturedCard = {
   } | null
 }
 
-type FeaturedMeta =
-  | boolean
-  | {
-      eyebrow?: string
-      title?: string
-      description?: string
-      accent?: string
-    }
-
 interface Props {
-  item: NavItem
+  item: MainNavItem
   onNavigate?: () => void
-}
-
-function hasChildren(item: NavItem): item is NavItem & { children: NavItem[] } {
-  return Array.isArray(item.children) && item.children.length > 0
-}
-
-function hasHref(item: NavItem): item is NavItem & { href: string } {
-  return typeof item.href === 'string' && item.href.length > 0
-}
-
-function isFeaturedObject(featured: FeaturedMeta | undefined): featured is {
-  eyebrow?: string
-  title?: string
-  description?: string
-  accent?: string
-} {
-  return typeof featured === 'object' && featured !== null
-}
-
-function getDefaultSectionHref(item: NavItem): string {
-  if (hasHref(item)) return item.href
-
-  switch (item.id) {
-    case 'news':
-      return '/news'
-    case 'watch':
-      return '/tv'
-    case 'onair':
-      return '/radio'
-    case 'shop':
-      return '/shop'
-    case 'connect':
-      return '/connect'
-    case 'discover':
-      return '/discover'
-    default:
-      return '/'
-  }
-}
-
-function getFirstHref(items?: NavItem[]): string | null {
-  if (!items?.length) return null
-
-  for (const item of items) {
-    if (hasHref(item)) return item.href
-
-    if (hasChildren(item)) {
-      const nested = getFirstHref(item.children)
-      if (nested) return nested
-    }
-  }
-
-  return null
-}
-
-function countDestinations(items?: NavItem[]): number {
-  if (!items?.length) return 0
-
-  return items.reduce((count, item) => {
-    const selfCount = hasHref(item) ? 1 : 0
-    const childCount = hasChildren(item) ? countDestinations(item.children) : 0
-    return count + selfCount + childCount
-  }, 0)
-}
-
-function getItemKey(item: NavItem, index: number): string {
-  if (item.id) return item.id
-  if (hasHref(item)) return item.href
-  return `${item.label}-${index}`
-}
-
-function getFeaturedSeed(item: NavItem): {
-  eyebrow: string
-  title: string
-  description: string
-  href: string
-} | null {
-  if (!hasChildren(item)) return null
-
-  const firstFeatured = item.children.find(child =>
-    Boolean(child.featured)
-  )
-
-  if (!firstFeatured) return null
-
-  if (isFeaturedObject(firstFeatured.featured)) {
-    return {
-      eyebrow: firstFeatured.featured.eyebrow ?? 'Featured',
-      title: firstFeatured.featured.title ?? firstFeatured.label,
-      description:
-        firstFeatured.featured.description ??
-        firstFeatured.description ??
-        `Explore ${firstFeatured.label}.`,
-      href: firstFeatured.href ?? getFirstHref(firstFeatured.children) ?? '#',
-    }
-  }
-
-  return {
-    eyebrow: 'Featured',
-    title: firstFeatured.label,
-    description:
-      firstFeatured.description ?? `Explore ${firstFeatured.label}.`,
-    href: firstFeatured.href ?? getFirstHref(firstFeatured.children) ?? '#',
-  }
 }
 
 function renderLeafLink({
@@ -157,11 +54,9 @@ function renderLeafLink({
 }) {
   if (!hasHref(item)) {
     return (
-      <div className={className} aria-disabled="true">
+      <div className={clsx(className, styles.disabledLink)} aria-disabled="true">
         <span className={labelClassName}>{item.label}</span>
-        {'badge' in item && item.badge ? (
-          <span className={badgeClassName}>{item.badge}</span>
-        ) : null}
+        {item.badge ? <span className={badgeClassName}>{item.badge}</span> : null}
       </div>
     )
   }
@@ -183,11 +78,14 @@ function renderLeafLink({
       }}
     >
       <span className={labelClassName}>{item.label}</span>
-      {'badge' in item && item.badge ? (
-        <span className={badgeClassName}>{item.badge}</span>
-      ) : null}
+      {item.badge ? <span className={badgeClassName}>{item.badge}</span> : null}
     </Link>
   )
+}
+
+function getGroupHref(group: NavItem): string {
+  if (hasHref(group)) return group.href
+  return getFirstHref(group.children) ?? '#'
 }
 
 export function MegaMenuPanel({ item, onNavigate }: Props) {
@@ -195,7 +93,7 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let alive = true
+    let mounted = true
 
     async function loadFeatured() {
       try {
@@ -212,15 +110,15 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
 
         const json = (await response.json()) as FeaturedCard[]
 
-        if (alive) {
+        if (mounted) {
           setFeatured(Array.isArray(json) ? json : [])
         }
       } catch {
-        if (alive) {
+        if (mounted) {
           setFeatured([])
         }
       } finally {
-        if (alive) {
+        if (mounted) {
           setLoading(false)
         }
       }
@@ -229,7 +127,7 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
     loadFeatured()
 
     return () => {
-      alive = false
+      mounted = false
     }
   }, [item.id])
 
@@ -243,44 +141,39 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
 
   const hero = featured[0] ?? null
   const supportingCards = featured.slice(1, 4)
+  const featureStripGroups = item.children?.slice(0, 3) ?? []
 
   return (
     <section className={styles.panel}>
-      <aside className={styles.intro}>
-        <div className={styles.kicker}>WaveNation Desk</div>
+      <aside className={styles.rail}>
+        <div className={styles.eyebrow}>WaveNation</div>
+
+        <div className={styles.sectionTop}>
+          {item.icon ? <item.icon size={18} className={styles.sectionIcon} aria-hidden /> : null}
+          <span className={styles.sectionId}>{item.id.toUpperCase()}</span>
+        </div>
 
         <h2 className={styles.title}>{item.label}</h2>
 
-        <p className={styles.desc}>
-          {item.description ?? 'A curated front page for what matters right now.'}
+        <p className={styles.description}>
+          {item.description ?? 'Explore featured destinations, stories, and category hubs.'}
         </p>
 
-        <div className={styles.rule} />
-
-        <div className={styles.introMeta}>
-          <div className={styles.metaCard}>
-            <span className={styles.metaLabel}>Section</span>
-            <span className={styles.metaValue}>{item.id.toUpperCase()}</span>
+        <div className={styles.statGrid}>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>Destinations</span>
+            <span className={styles.statValue}>{totalLinks}</span>
           </div>
 
-          <div className={styles.metaCard}>
-            <span className={styles.metaLabel}>Browse</span>
-            <span className={styles.metaValue}>
-              {totalLinks} destination{totalLinks === 1 ? '' : 's'}
-            </span>
-          </div>
-
-          <div className={styles.metaCard}>
-            <span className={styles.metaLabel}>Featured</span>
-            <span className={styles.metaValue}>
-              {loading ? 'Loading…' : `${featured.length} picks`}
-            </span>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>Featured</span>
+            <span className={styles.statValue}>{loading ? '…' : featured.length}</span>
           </div>
         </div>
 
         <Link
           href={sectionHref}
-          className={styles.introCta}
+          className={styles.primaryCta}
           data-megamenu-item
           onClick={() => {
             trackEvent('navigation_click', {
@@ -296,23 +189,17 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
         </Link>
 
         {featuredSeed ? (
-          <div className={styles.sectionFeatureCard}>
-            <span className={styles.sectionFeatureEyebrow}>
-              {featuredSeed.eyebrow}
-            </span>
+          <div className={styles.seedCard} data-accent={featuredSeed.accent ?? 'blue'}>
+            <span className={styles.seedEyebrow}>{featuredSeed.eyebrow}</span>
 
-            <div className={styles.sectionFeatureTitle}>
-              {featuredSeed.title}
-            </div>
+            <div className={styles.seedTitle}>{featuredSeed.title}</div>
 
-            <p className={styles.sectionFeatureDesc}>
-              {featuredSeed.description}
-            </p>
+            <p className={styles.seedDescription}>{featuredSeed.description}</p>
 
             {featuredSeed.href !== '#' ? (
               <Link
                 href={featuredSeed.href}
-                className={styles.sectionFeatureLink}
+                className={styles.seedLink}
                 data-megamenu-item
                 onClick={() => {
                   trackEvent('navigation_click', {
@@ -331,19 +218,62 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
         ) : null}
       </aside>
 
-      <nav className={styles.links} aria-label={`${item.label} links`}>
-        {item.children?.map((group, index) => {
-          const groupHref = hasHref(group)
-            ? group.href
-            : getFirstHref(group.children) ?? '#'
+      <nav className={styles.columns} aria-label={`${item.label} navigation`}>
+        {featureStripGroups.length > 0 ? (
+          <div className={styles.featureStrip}>
+            {featureStripGroups.map((group, index) => {
+              const href = getGroupHref(group)
 
-          return (
-            <div key={getItemKey(group, index)} className={styles.linkGroup}>
-              <div className={styles.linkGroupHeader}>
+              if (href !== '#') {
+                return (
+                  <Link
+                    key={`feature-${getItemKey(group, index)}`}
+                    href={href}
+                    className={styles.featureStripCard}
+                    data-megamenu-item
+                    onClick={() => {
+                      trackEvent('navigation_click', {
+                        component: 'mega_menu',
+                        section: item.id,
+                        label: group.label,
+                        href,
+                      })
+                      onNavigate?.()
+                    }}
+                  >
+                    <span className={styles.featureStripEyebrow}>Explore</span>
+                    <div className={styles.featureStripTitle}>{group.label}</div>
+                    {group.description ? (
+                      <p className={styles.featureStripDesc}>{group.description}</p>
+                    ) : null}
+                  </Link>
+                )
+              }
+
+              return (
+                <div
+                  key={`feature-${getItemKey(group, index)}`}
+                  className={styles.featureStripCard}
+                >
+                  <span className={styles.featureStripEyebrow}>Explore</span>
+                  <div className={styles.featureStripTitle}>{group.label}</div>
+                  {group.description ? (
+                    <p className={styles.featureStripDesc}>{group.description}</p>
+                  ) : null}
+                </div>
+              )
+            })}
+          </div>
+        ) : null}
+
+        <div className={styles.columnGrid}>
+          {item.children?.map((group, index) => (
+            <section key={getItemKey(group, index)} className={styles.column}>
+              <div className={styles.columnHeader}>
                 {hasHref(group) ? (
                   <Link
                     href={group.href}
-                    className={styles.link}
+                    className={styles.groupLink}
                     data-megamenu-item
                     onClick={() => {
                       trackEvent('navigation_click', {
@@ -355,129 +285,97 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
                       onNavigate?.()
                     }}
                   >
-                    <div className={styles.linkInner}>
-                      <div className={styles.linkTopline}>
-                        <strong className={styles.linkTitle}>{group.label}</strong>
-
-                        {'badge' in group && group.badge ? (
-                          <span className={styles.linkBadge}>{group.badge}</span>
+                    <div className={styles.groupText}>
+                      <div className={styles.groupTopline}>
+                        <h3 className={styles.groupTitle}>{group.label}</h3>
+                        {group.badge ? (
+                          <span className={styles.groupBadge}>{group.badge}</span>
                         ) : null}
                       </div>
 
-                      <span className={styles.linkDesc}>
-                        {group.description ?? 'Explore the latest updates.'}
-                      </span>
+                      {group.description ? (
+                        <p className={styles.groupDescription}>{group.description}</p>
+                      ) : null}
                     </div>
 
-                    <span className={styles.chev} aria-hidden>
+                    <span className={styles.arrow} aria-hidden>
                       ↗
                     </span>
                   </Link>
                 ) : (
-                  <div className={styles.link}>
-                    <div className={styles.linkInner}>
-                      <div className={styles.linkTopline}>
-                        <strong className={styles.linkTitle}>{group.label}</strong>
-
-                        {'badge' in group && group.badge ? (
-                          <span className={styles.linkBadge}>{group.badge}</span>
+                  <div className={styles.groupStatic}>
+                    <div className={styles.groupText}>
+                      <div className={styles.groupTopline}>
+                        <h3 className={styles.groupTitle}>{group.label}</h3>
+                        {group.badge ? (
+                          <span className={styles.groupBadge}>{group.badge}</span>
                         ) : null}
                       </div>
 
-                      <span className={styles.linkDesc}>
-                        {group.description ?? 'Explore the latest updates.'}
-                      </span>
+                      {group.description ? (
+                        <p className={styles.groupDescription}>{group.description}</p>
+                      ) : null}
                     </div>
-
-                    {groupHref !== '#' ? (
-                      <Link
-                        href={groupHref}
-                        className={styles.chev}
-                        data-megamenu-item
-                        aria-label={`Open ${group.label}`}
-                        onClick={() => {
-                          trackEvent('navigation_click', {
-                            component: 'mega_menu',
-                            section: item.id,
-                            label: group.label,
-                            href: groupHref,
-                          })
-                          onNavigate?.()
-                        }}
-                      >
-                        ↗
-                      </Link>
-                    ) : (
-                      <span className={styles.chev} aria-hidden>
-                        ↗
-                      </span>
-                    )}
                   </div>
                 )}
               </div>
 
               {hasChildren(group) ? (
-                <ul className={styles.sublinks}>
-                  {group.children.map((child, childIndex) => {
-                    const childHasChildren = hasChildren(child)
-
-                    return (
-                      <li key={getItemKey(child, childIndex)}>
-                        {childHasChildren ? (
-                          <div className={styles.subGroup}>
-                            {renderLeafLink({
-                              item: child,
-                              sectionId: item.id,
-                              parentLabel: group.label,
-                              className: styles.sublink,
-                              labelClassName: styles.sublinkLabel,
-                              badgeClassName: styles.sublinkBadge,
-                              onNavigate,
-                            })}
-
-                            <ul className={styles.subsublinks}>
-                              {child.children.map((grandchild, grandchildIndex) => (
-                                <li key={getItemKey(grandchild, grandchildIndex)}>
-                                  {renderLeafLink({
-                                    item: grandchild,
-                                    sectionId: item.id,
-                                    parentLabel: child.label,
-                                    className: styles.subsublink,
-                                    labelClassName: styles.subsublinkLabel,
-                                    badgeClassName: styles.subsublinkBadge,
-                                    onNavigate,
-                                  })}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ) : (
-                          renderLeafLink({
+                <ul className={styles.childList}>
+                  {group.children.map((child, childIndex) => (
+                    <li key={getItemKey(child, childIndex)} className={styles.childItem}>
+                      {hasChildren(child) ? (
+                        <div className={styles.nestedBlock}>
+                          {renderLeafLink({
                             item: child,
                             sectionId: item.id,
                             parentLabel: group.label,
-                            className: styles.sublink,
-                            labelClassName: styles.sublinkLabel,
-                            badgeClassName: styles.sublinkBadge,
+                            className: styles.childLink,
+                            labelClassName: styles.childLabel,
+                            badgeClassName: styles.childBadge,
                             onNavigate,
-                          })
-                        )}
-                      </li>
-                    )
-                  })}
+                          })}
+
+                          <ul className={styles.grandchildList}>
+                            {child.children.map((grandchild, grandchildIndex) => (
+                              <li key={getItemKey(grandchild, grandchildIndex)}>
+                                {renderLeafLink({
+                                  item: grandchild,
+                                  sectionId: item.id,
+                                  parentLabel: child.label,
+                                  className: styles.grandchildLink,
+                                  labelClassName: styles.grandchildLabel,
+                                  badgeClassName: styles.grandchildBadge,
+                                  onNavigate,
+                                })}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        renderLeafLink({
+                          item: child,
+                          sectionId: item.id,
+                          parentLabel: group.label,
+                          className: styles.childLink,
+                          labelClassName: styles.childLabel,
+                          badgeClassName: styles.childBadge,
+                          onNavigate,
+                        })
+                      )}
+                    </li>
+                  ))}
                 </ul>
               ) : null}
-            </div>
-          )
-        })}
+            </section>
+          ))}
+        </div>
       </nav>
 
-      <aside className={styles.featured} aria-label="Featured stories">
+      <aside className={styles.featuredPane} aria-label="Featured stories">
         <div className={styles.featuredHeader}>
-          <span className={styles.featuredLabel}>Featured stories</span>
-          <span className={styles.featuredPill}>
-            {loading ? '…' : featured.length}
-          </span>
+          <span className={styles.featuredHeading}>Featured stories</span>
+          <span className={styles.featuredCount}>{loading ? '…' : featured.length}</span>
         </div>
 
         {hero ? (
@@ -500,45 +398,41 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
                   src={hero.image.url}
                   alt={hero.image.alt ?? hero.title}
                   fill
-                  sizes="(max-width: 1024px) 92vw, 420px"
-                  className={styles.heroImg}
+                  sizes="(max-width: 1200px) 100vw, 380px"
+                  className={styles.heroImage}
                 />
               ) : (
                 <div className={styles.heroFallback} />
               )}
 
-              <div className={styles.heroShade} />
+              <div className={styles.heroOverlay} />
             </div>
 
             <div className={styles.heroBody}>
-              <span className={styles.eyebrow}>
-                {hero.eyebrow ?? 'Editor’s Pick'}
-              </span>
+              <span className={styles.heroEyebrow}>{hero.eyebrow ?? 'Editor’s pick'}</span>
 
               <h3 className={styles.heroTitle}>{hero.title}</h3>
 
               {hero.description ? (
-                <p className={styles.heroDesc}>{hero.description}</p>
+                <p className={styles.heroDescription}>{hero.description}</p>
               ) : null}
 
-              <div className={styles.heroCta}>Read story</div>
+              <span className={styles.heroCta}>Read story</span>
             </div>
           </Link>
-        ) : !loading ? (
-          <div className={styles.empty}>
-            No featured articles available yet for {item.label}.
-          </div>
         ) : (
-          <div className={styles.empty}>Loading featured coverage…</div>
+          <div className={styles.emptyCard}>
+            {loading ? 'Loading featured coverage…' : `No featured stories yet for ${item.label}.`}
+          </div>
         )}
 
         {supportingCards.length > 0 ? (
-          <div className={styles.cardList}>
+          <div className={styles.supportingList}>
             {supportingCards.map((card, index) => (
               <Link
                 key={card.id?.toString() ?? `${card.href}-${index}`}
                 href={card.href}
-                className={styles.card}
+                className={styles.supportingCard}
                 data-megamenu-item
                 onClick={() => {
                   trackEvent('content_click', {
@@ -555,23 +449,23 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
                       src={card.image.url}
                       alt={card.image.alt ?? card.title}
                       fill
-                      sizes="96px"
-                      className={styles.thumbImg}
+                      sizes="86px"
+                      className={styles.thumbImage}
                     />
                   ) : (
                     <div className={styles.thumbFallback} />
                   )}
                 </div>
 
-                <div className={styles.cardBody}>
+                <div className={styles.supportingBody}>
                   {card.eyebrow ? (
-                    <span className={styles.cardEyebrow}>{card.eyebrow}</span>
+                    <div className={styles.supportingEyebrow}>{card.eyebrow}</div>
                   ) : null}
 
-                  <div className={styles.cardTitle}>{card.title}</div>
+                  <div className={styles.supportingTitle}>{card.title}</div>
 
                   {card.description ? (
-                    <div className={styles.cardDesc}>{card.description}</div>
+                    <div className={styles.supportingDescription}>{card.description}</div>
                   ) : null}
                 </div>
               </Link>

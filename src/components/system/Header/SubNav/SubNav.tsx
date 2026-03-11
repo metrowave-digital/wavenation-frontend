@@ -2,219 +2,131 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { usePathname } from 'next/navigation'
+import clsx from 'clsx'
 
-import { MAIN_NAV } from '../nav/nav.config'
 import type { MainNavItem, NavItem } from '../nav/nav.types'
+import { getItemKey, hasChildren, hasHref } from '../nav/nav.types'
 import styles from './SubNav.module.css'
 import { trackEvent } from '@/lib/analytics'
 
-function hasHref(item: NavItem): item is NavItem & { href: string } {
-  return typeof item.href === 'string' && item.href.length > 0
+interface Props {
+  items: MainNavItem[]
+  pathname: string
+  className?: string
 }
 
-function hasChildren(item: NavItem): item is NavItem & { children: NavItem[] } {
-  return Array.isArray(item.children) && item.children.length > 0
-}
-
-function normalizePath(pathname: string): string {
-  if (!pathname) return '/'
-  if (pathname === '/') return '/'
-  return pathname.replace(/\/+$/, '')
-}
-
-function isPathMatch(pathname: string, href?: string): boolean {
+function isPathMatch(pathname: string, href?: string) {
   if (!href) return false
-
-  const current = normalizePath(pathname)
-  const target = normalizePath(href)
-
-  if (target === '/') return current === '/'
-  return current === target || current.startsWith(`${target}/`)
+  if (href === '/') return pathname === '/'
+  return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-function sortBySpecificity(items: NavItem[]): NavItem[] {
-  return [...items].sort((a, b) => {
-    const aLen = a.href?.length ?? 0
-    const bLen = b.href?.length ?? 0
-    return bLen - aLen
-  })
-}
-
-function findActiveRoot(pathname: string): MainNavItem | null {
-  const roots = MAIN_NAV as MainNavItem[]
-  const matches = roots.filter(item => {
-    const rootHref = getDefaultRootHref(item)
-    return isPathMatch(pathname, rootHref)
-  })
-
-  if (!matches.length) return null
-
-  return sortBySpecificity(matches)[0] as MainNavItem
-}
-
-function findDeepestMatch(items: NavItem[], pathname: string): NavItem | null {
-  const sorted = sortBySpecificity(items)
-
-  for (const item of sorted) {
-    if (hasHref(item) && isPathMatch(pathname, item.href)) {
-      const nestedMatch = hasChildren(item)
-        ? findDeepestMatch(item.children, pathname)
-        : null
-
-      return nestedMatch ?? item
-    }
+function findActiveRoot(items: MainNavItem[], pathname: string): MainNavItem | null {
+  for (const item of items) {
+    if (isPathMatch(pathname, item.href)) return item
 
     if (hasChildren(item)) {
-      const nestedMatch = findDeepestMatch(item.children, pathname)
-      if (nestedMatch) return nestedMatch
+      const found = findMatchingInChildren(item.children, pathname)
+      if (found) return item
     }
   }
 
   return null
 }
 
-function findDirectChildForPath(root: MainNavItem, pathname: string): NavItem | null {
-  const children = root.children ?? []
-  const sorted = sortBySpecificity(children)
+function findMatchingInChildren(items: NavItem[], pathname: string): NavItem | null {
+  for (const item of items) {
+    if (isPathMatch(pathname, item.href)) return item
 
-  for (const child of sorted) {
-    if (hasHref(child) && isPathMatch(pathname, child.href)) {
-      return child
+    if (hasChildren(item)) {
+      const nested = findMatchingInChildren(item.children, pathname)
+      if (nested) return nested
     }
+  }
+
+  return null
+}
+
+function findDirectBranch(root: MainNavItem | null, pathname: string): NavItem | null {
+  if (!root?.children?.length) return null
+
+  for (const child of root.children) {
+    if (isPathMatch(pathname, child.href)) return child
 
     if (hasChildren(child)) {
-      const nestedMatch = findDeepestMatch(child.children, pathname)
-      if (nestedMatch) return child
+      const nested = findMatchingInChildren(child.children, pathname)
+      if (nested) return child
     }
   }
 
   return null
 }
 
-function getDefaultRootHref(item: MainNavItem): string {
-  const explicit = item.href
-  if (explicit) return explicit
+export function SubNav({ items, pathname, className }: Props) {
+  const activeRoot = useMemo(() => findActiveRoot(items, pathname), [items, pathname])
+  const activeBranch = useMemo(
+    () => findDirectBranch(activeRoot, pathname),
+    [activeRoot, pathname]
+  )
 
-  switch (item.id) {
-    case 'discover':
-      return '/discover'
-    case 'onair':
-      return '/radio'
-    case 'news':
-      return '/news'
-    case 'watch':
-      return '/tv'
-    case 'shop':
-      return '/shop'
-    case 'connect':
-      return '/connect'
-    default:
-      return '/'
-  }
-}
+  const links = useMemo(() => {
+    if (!activeRoot) return []
 
-function getSubNavItems(root: MainNavItem, pathname: string): NavItem[] {
-  const activeChild = findDirectChildForPath(root, pathname)
-
-  if (activeChild && hasChildren(activeChild) && activeChild.children.length > 0) {
-    return activeChild.children
-  }
-
-  return root.children ?? []
-}
-
-function getSubNavTitle(root: MainNavItem, pathname: string): string {
-  const activeChild = findDirectChildForPath(root, pathname)
-  return activeChild?.label ?? root.label
-}
-
-function getItemKey(item: NavItem, index: number): string {
-  if (item.id) return item.id
-  if (item.href) return item.href
-  return `${item.label}-${index}`
-}
-
-export function SubNav() {
-  const pathname = usePathname()
-
-  const model = useMemo(() => {
-    const currentPath = normalizePath(pathname ?? '/')
-    const root = findActiveRoot(currentPath)
-
-    if (!root) return null
-
-    const items = getSubNavItems(root, currentPath)
-    if (!items.length) return null
-
-    return {
-      root,
-      title: getSubNavTitle(root, currentPath),
-      items,
-      pathname: currentPath,
+    if (activeBranch && hasChildren(activeBranch)) {
+      return activeBranch.children
     }
-  }, [pathname])
 
-  if (!model) return null
+    return activeRoot.children ?? []
+  }, [activeRoot, activeBranch])
+
+  if (!activeRoot || links.length === 0) return null
 
   return (
-    <nav className={styles.subnav} aria-label={`${model.title} sub navigation`}>
-      <div className={styles.inner}>
-        <div className={styles.rail}>
-          {model.items.map((item, index) => {
-            const href =
-              item.href ??
-              (hasChildren(item)
-                ? item.children.find(hasHref)?.href
-                : undefined)
-
-            const isActive =
-              Boolean(href) && isPathMatch(model.pathname, href)
-
-            if (!href) {
-              return (
-                <div
-                  key={getItemKey(item, index)}
-                  className={[styles.link, styles.linkDisabled].join(' ')}
-                  aria-disabled="true"
-                >
-                  <span className={styles.label}>{item.label}</span>
-
-                  {item.description ? (
-                    <span className={styles.description}>{item.description}</span>
-                  ) : null}
-                </div>
-              )
-            }
-
-            return (
-              <Link
-                key={getItemKey(item, index)}
-                href={href}
-                className={[
-                  styles.link,
-                  isActive ? styles.linkActive : '',
-                ].join(' ')}
-                aria-current={isActive ? 'page' : undefined}
-                onClick={() => {
-                  trackEvent('navigation_click', {
-                    component: 'sub_nav',
-                    section: model.root.id,
-                    label: item.label,
-                    href,
-                  })
-                }}
-              >
-                <span className={styles.label}>{item.label}</span>
-
-                {item.description ? (
-                  <span className={styles.description}>{item.description}</span>
-                ) : null}
-              </Link>
-            )
-          })}
+    <div className={clsx(styles.subNavWrap, className)}>
+      <div className={styles.subNavInner}>
+        <div className={styles.contextBlock}>
+          <span className={styles.contextEyebrow}>Section</span>
+          <span className={styles.contextTitle}>
+            {activeBranch?.label ?? activeRoot.label}
+          </span>
         </div>
+
+        <nav className={styles.nav} aria-label="Section navigation">
+          <ul className={styles.list}>
+            {links.map((link, index) => {
+              const active = isPathMatch(pathname, link.href)
+              const href = hasHref(link) ? link.href : '#'
+
+              return (
+                <li key={getItemKey(link, index)} className={styles.item}>
+                  {hasHref(link) ? (
+                    <Link
+                      href={href}
+                      className={clsx(styles.link, active && styles.linkActive)}
+                      aria-current={active ? 'page' : undefined}
+                      onClick={() => {
+                        trackEvent('navigation_click', {
+                          component: 'sub_nav',
+                          section: activeRoot.id,
+                          label: link.label,
+                          href,
+                        })
+                      }}
+                    >
+                      <span className={styles.linkLabel}>{link.label}</span>
+                      {link.badge ? <span className={styles.badge}>{link.badge}</span> : null}
+                    </Link>
+                  ) : (
+                    <span className={styles.linkStatic}>
+                      <span className={styles.linkLabel}>{link.label}</span>
+                    </span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
       </div>
-    </nav>
+    </div>
   )
 }

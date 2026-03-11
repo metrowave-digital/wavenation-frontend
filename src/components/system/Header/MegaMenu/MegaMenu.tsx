@@ -1,187 +1,287 @@
 'use client'
 
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
-import { X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import clsx from 'clsx'
 
-import { HeaderContext } from '../Header.context'
-import { MAIN_NAV } from '../nav/nav.config'
-import type { NavItem } from '../nav/nav.types'
-import { MegaMenuPanel } from './MegaMenuPanel'
+import type { MainNavItem } from '../nav/nav.types'
 import styles from './MegaMenu.module.css'
+import { MegaMenuPanel } from './MegaMenuPanel'
 import { trackEvent } from '@/lib/analytics'
 
-const EXIT_MS = 260
-
-function lockScroll() {
-  const html = document.documentElement
-  const body = document.body
-
-  const prevHtmlOverflow = html.style.overflow
-  const prevBodyOverflow = body.style.overflow
-  const prevBodyPaddingRight = body.style.paddingRight
-
-  const scrollbarWidth = window.innerWidth - html.clientWidth
-
-  if (scrollbarWidth > 0) {
-    body.style.paddingRight = `${scrollbarWidth}px`
-  }
-
-  html.style.overflow = 'hidden'
-  body.style.overflow = 'hidden'
-
-  return () => {
-    html.style.overflow = prevHtmlOverflow
-    body.style.overflow = prevBodyOverflow
-    body.style.paddingRight = prevBodyPaddingRight
-  }
+interface Props {
+  items: MainNavItem[]
+  className?: string
+  onNavigate?: () => void
 }
 
-export function MegaMenu() {
-  const { activeMenu, setActiveMenu } = useContext(HeaderContext)
+const OPEN_DELAY_MS = 40
+const CLOSE_DELAY_MS = 140
 
-  const [closing, setClosing] = useState(false)
-  const closeTimerRef = useRef<number | null>(null)
+export function MegaMenu({ items, className, onNavigate }: Props) {
+  const [activeId, setActiveId] = useState<MainNavItem['id'] | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const topbarRef = useRef<HTMLDivElement | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
 
-  const item = useMemo<NavItem | null>(() => {
-    if (!activeMenu) return null
-    return MAIN_NAV.find(nav => nav.id === activeMenu) ?? null
-  }, [activeMenu])
+  const openTimerRef = useRef<number | null>(null)
+  const closeTimerRef = useRef<number | null>(null)
 
-  const isMounted = Boolean(activeMenu && item)
-  const isVisible = Boolean(activeMenu && item) && !closing
+  const activeItem = useMemo(
+    () => items.find(item => item.id === activeId) ?? null,
+    [activeId, items]
+  )
 
-  const clearCloseTimer = useCallback(() => {
+  function clearOpenTimer() {
+    if (openTimerRef.current !== null) {
+      window.clearTimeout(openTimerRef.current)
+      openTimerRef.current = null
+    }
+  }
+
+  function clearCloseTimer() {
     if (closeTimerRef.current !== null) {
       window.clearTimeout(closeTimerRef.current)
       closeTimerRef.current = null
     }
-  }, [])
+  }
 
-  const finishClose = useCallback(() => {
+  function clearAllTimers() {
+    clearOpenTimer()
     clearCloseTimer()
-    setActiveMenu(null)
-    setClosing(false)
-  }, [clearCloseTimer, setActiveMenu])
+  }
 
-  const requestClose = useCallback(
-    (reason: string) => {
-      if (!activeMenu || closing) return
+  function openMenu(id: MainNavItem['id']) {
+    clearCloseTimer()
+    setActiveId(prev => {
+      if (prev !== id) {
+        trackEvent('navigation_open', {
+          component: 'mega_menu',
+          section: id,
+        })
+      }
+      return id
+    })
+    setIsOpen(true)
+  }
 
-      trackEvent('navigation_click', {
-        component: 'mega_menu',
-        action: 'close',
-        reason,
-        section: activeMenu,
-      })
+  function scheduleOpen(id: MainNavItem['id']) {
+    clearOpenTimer()
+    clearCloseTimer()
 
-      setClosing(true)
+    openTimerRef.current = window.setTimeout(() => {
+      openMenu(id)
+    }, OPEN_DELAY_MS)
+  }
 
-      clearCloseTimer()
-      closeTimerRef.current = window.setTimeout(() => {
-        finishClose()
-      }, EXIT_MS)
-    },
-    [activeMenu, clearCloseTimer, closing, finishClose]
-  )
+  function closeMenu() {
+    clearAllTimers()
+    setIsOpen(false)
+    setActiveId(null)
+  }
+
+  function scheduleClose() {
+    clearOpenTimer()
+    clearCloseTimer()
+
+    closeTimerRef.current = window.setTimeout(() => {
+      setIsOpen(false)
+      setActiveId(null)
+    }, CLOSE_DELAY_MS)
+  }
+
+  function keepOpen() {
+    clearAllTimers()
+  }
 
   useEffect(() => {
-    return () => clearCloseTimer()
-  }, [clearCloseTimer])
+    function handlePointerDown(event: MouseEvent) {
+      const target = event.target as Node | null
+      if (!target) return
 
-  useEffect(() => {
-    if (!isVisible) return
-    const unlock = lockScroll()
-    return unlock
-  }, [isVisible])
-
-  useEffect(() => {
-    if (!isVisible) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        requestClose('escape')
+      if (!rootRef.current?.contains(target)) {
+        closeMenu()
       }
     }
 
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [isVisible, requestClose])
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return
 
-  useEffect(() => {
-    if (!isVisible || !item) return
+      closeMenu()
 
-    trackEvent('content_impression', {
-      component: 'mega_menu',
-      section: item.id,
-      label: item.label,
-    })
-  }, [isVisible, item])
+      const activeTrigger = topbarRef.current?.querySelector<HTMLElement>(
+        '[data-nav-trigger="true"][data-active="true"]'
+      )
 
-  useEffect(() => {
-    if (!isVisible) return
-    panelRef.current?.focus()
-  }, [isVisible, item?.id])
+      activeTrigger?.focus()
+    }
 
-  if (!isMounted || !item) return null
+    function handleFocusIn(event: FocusEvent) {
+      const target = event.target as Node | null
+      if (!target) return
+
+      if (!rootRef.current?.contains(target)) {
+        closeMenu()
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('keydown', handleEscape)
+    document.addEventListener('focusin', handleFocusIn)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('focusin', handleFocusIn)
+      clearAllTimers()
+    }
+  }, [])
+
+  function handleTriggerKeyDown(
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+    id: MainNavItem['id']
+  ) {
+    const triggers = Array.from(
+      topbarRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[data-nav-trigger="true"]'
+      ) ?? []
+    )
+
+    switch (event.key) {
+      case 'Enter':
+      case ' ':
+      case 'ArrowDown': {
+        event.preventDefault()
+        openMenu(id)
+
+        const firstPanelLink = panelRef.current?.querySelector<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+
+        window.setTimeout(() => {
+          firstPanelLink?.focus()
+        }, 0)
+        break
+      }
+
+      case 'ArrowRight': {
+        event.preventDefault()
+        const nextIndex = (index + 1) % triggers.length
+        triggers[nextIndex]?.focus()
+        scheduleOpen(items[nextIndex].id)
+        break
+      }
+
+      case 'ArrowLeft': {
+        event.preventDefault()
+        const prevIndex = (index - 1 + triggers.length) % triggers.length
+        triggers[prevIndex]?.focus()
+        scheduleOpen(items[prevIndex].id)
+        break
+      }
+
+      case 'Escape': {
+        event.preventDefault()
+        closeMenu()
+        break
+      }
+
+      default:
+        break
+    }
+  }
 
   return (
     <div
-      className={[
-        styles.overlay,
-        isVisible ? styles.overlayOpen : styles.overlayExit,
-      ].join(' ')}
-      aria-hidden={!isVisible}
+      ref={rootRef}
+      className={clsx(styles.megaMenu, className)}
+      onMouseEnter={keepOpen}
+      onMouseLeave={scheduleClose}
     >
-      <button
-        type="button"
-        className={styles.backdrop}
-        onClick={() => requestClose('backdrop')}
-        aria-label="Close mega menu"
-        tabIndex={-1}
-      />
+      <div ref={topbarRef} className={styles.topbar}>
+        <nav aria-label="Primary navigation">
+          <ul className={styles.rootList} role="menubar">
+            {items.map((item, index) => {
+              const Icon = item.icon
+              const isActive = isOpen && activeId === item.id
+
+              return (
+                <li
+                  key={item.id}
+                  className={styles.rootItem}
+                  role="none"
+                  onMouseEnter={() => scheduleOpen(item.id)}
+                >
+                  <button
+                    type="button"
+                    role="menuitem"
+                    aria-haspopup="true"
+                    aria-expanded={isActive}
+                    aria-controls={`mega-panel-${item.id}`}
+                    data-nav-trigger="true"
+                    data-active={isActive ? 'true' : 'false'}
+                    className={clsx(
+                      styles.rootTrigger,
+                      isActive && styles.rootTriggerActive
+                    )}
+                    onFocus={() => openMenu(item.id)}
+                    onClick={() => {
+                      if (isActive) {
+                        closeMenu()
+                        return
+                      }
+
+                      openMenu(item.id)
+                    }}
+                    onKeyDown={event =>
+                      handleTriggerKeyDown(event, index, item.id)
+                    }
+                  >
+                    {Icon ? (
+                      <Icon size={16} className={styles.rootIcon} aria-hidden />
+                    ) : null}
+
+                    <span className={styles.rootLabel}>{item.label}</span>
+
+                    <span className={styles.rootCaret} aria-hidden>
+                      ▾
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+      </div>
+
+      {isOpen ? <div className={styles.backdrop} aria-hidden /> : null}
 
       <div
-        ref={panelRef}
-        className={[
-          styles.container,
-          isVisible ? styles.containerOpen : styles.containerExit,
-        ].join(' ')}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`${item.label} menu`}
-        tabIndex={-1}
+        className={clsx(
+          styles.panelWrap,
+          isOpen && activeItem && styles.panelWrapOpen
+        )}
+        role="presentation"
+        onMouseEnter={keepOpen}
+        onMouseLeave={scheduleClose}
       >
-        <div className={styles.sheet}>
-          <div className={styles.topbar}>
-            <div className={styles.topbarMeta}>
-              <span className={styles.topbarEyebrow}>Explore</span>
-              <span className={styles.topbarSlash}>/</span>
-              <span className={styles.topbarSection}>{item.label}</span>
-            </div>
-
-            <button
-              type="button"
-              className={styles.close}
-              onClick={() => requestClose('x')}
-              aria-label="Close menu"
-            >
-              <X size={18} />
-            </button>
+        {activeItem ? (
+          <div
+            ref={panelRef}
+            id={`mega-panel-${activeItem.id}`}
+            className={styles.panelSurface}
+          >
+            <MegaMenuPanel
+              item={activeItem}
+              onNavigate={() => {
+                onNavigate?.()
+                closeMenu()
+              }}
+            />
           </div>
-
-          <MegaMenuPanel
-            item={item}
-            onNavigate={() => requestClose('navigate')}
-          />
-        </div>
+        ) : null}
       </div>
     </div>
   )
