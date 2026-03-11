@@ -1,0 +1,71 @@
+.page {
+  min-height: 100vh;
+  background: #0a0f14;
+  color: #ededed;
+}
+
+.container {
+  width: min(1280px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.25rem 0 4rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.pathGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.pathCard {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1.1rem;
+  text-decoration: none;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+    #10161c;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.pathCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.pathEyebrow {
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.pathTitle {
+  font-size: 1.12rem;
+  color: #fff;
+}
+
+.pathText {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .pathGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    width: min(1280px, calc(100% - 1.25rem));
+  }
+}

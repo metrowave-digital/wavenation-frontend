@@ -1,0 +1,101 @@
+.page {
+  min-height: 100vh;
+  background: #0a0f14;
+  color: #ededed;
+}
+
+.container {
+  width: min(1280px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.25rem 0 4rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.pathGrid,
+.yearGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.pathGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.yearGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pathCard,
+.yearCard {
+  text-decoration: none;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+    #10161c;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+}
+
+.pathCard {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1.1rem;
+}
+
+.pathCard:hover,
+.yearCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.pathEyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.pathTitle {
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.pathText {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.6;
+}
+
+.yearCard {
+  display: grid;
+  place-items: center;
+  min-height: 110px;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+@media (max-width: 980px) {
+  .pathGrid,
+  .yearGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .pathGrid,
+  .yearGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    width: min(1280px, calc(100% - 1.25rem));
+  }
+}

@@ -1,425 +1,234 @@
-// app/(charts)/charts/[slug]/page.tsx
-
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import styles from './ChartDetailPage.module.css'
 
-import styles from './ChartGenreEditorial.module.css'
-import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
-import {
-  getChartsByGenre,
-  type ChartDoc,
-  type ChartEntry,
-} from '../../../lib/charts/getChartsByGenre'
+import { getChartBySlug } from '../../../lib/charts/getChartBySlug'
+import { formatPublishDate } from '../genres/components/genre.utils'
 
-// ✅ analytics (client helpers – no hooks here)
-import {
-  ChartGenreImpression,
-  ChartSectionImpression,
-} from './ChartGenreAnalytics'
+type ChartEntry = {
+  rank: number
+  trackTitle: string
+  artist: string
+}
 
-/* ======================================================
-   GENRE CONFIG
-====================================================== */
+type ChartDoc = {
+  id: string
+  slug: string
+  chartKey: string
+  week: string
+  publishDate: string
+  entries: ChartEntry[]
+}
 
-type GenreConfig = {
+type Props = {
+  params: Promise<{ slug: string }>
+}
+
+type ChartRouteMeta = {
+  chartLabel: string
+  parentHref: string
+  parentLabel: string
+  currentHref: string
+  archiveHref: string
   title: string
-  lede: string
-  tone: string
+  description: string
 }
 
-const GENRES: Record<string, GenreConfig> = {
-  hitlist: {
-    title: 'The Hit List',
-    lede:
-      'WaveNation’s flagship chart — tracking the records driving culture right now across radio, streets, and digital.',
-    tone: 'Authoritative. Cultural. Definitive.',
-  },
-  'rnb-soul': {
-    title: 'R&B & Soul',
-    lede:
-      'Smooth rotations, grown-folk anthems, and the records defining modern soul culture.',
-    tone: 'Smooth. Emotional. Timeless.',
-  },
-  'hip-hop': {
-    title: 'Hip-Hop',
-    lede:
-      'Bars, momentum, and movement — from mainstream heat to culture-shifting records.',
-    tone: 'Raw. Competitive. Culture-driven.',
-  },
-  'southern-soul': {
-    title: 'Southern Soul',
-    lede:
-      'Juke-joint favorites, dance-floor staples, and Southern records moving communities.',
-    tone: 'Roots-forward. Regional. Powerful.',
-  },
-  gospel: {
-    title: 'Gospel',
-    lede:
-      'Faith-centered records uplifting communities through praise, worship, and testimony.',
-    tone: 'Spiritual. Uplifting. Purpose-driven.',
-  },
-}
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params
+  const chart = (await getChartBySlug(slug)) as ChartDoc | null
 
-/* ======================================================
-   TYPES
-====================================================== */
-
-type ChartEntryWithMovement = ChartEntry & {
-  delta: number | null
-  isNew: boolean
-}
-
-/* ======================================================
-   HELPERS
-====================================================== */
-
-function updatedLabel(date: string): string {
-  const diffDays = Math.floor(
-    (Date.now() - new Date(date).getTime()) / 86_400_000,
-  )
-
-  if (diffDays === 0) return 'Updated today'
-  if (diffDays === 1) return 'Updated yesterday'
-  return `Updated ${diffDays} days ago`
-}
-
-function withMovement(
-  current: ChartEntry[],
-  previous?: ChartEntry[],
-): ChartEntryWithMovement[] {
-  if (!previous) {
-    return current.map((e) => ({
-      ...e,
-      delta: null,
-      isNew: true,
-    }))
+  if (!chart) {
+    return {
+      title: 'Chart Not Found | WaveNation',
+    }
   }
 
-  const prevIndex = new Map<string, number>(
-    previous.map((e) => [`${e.trackTitle}|${e.artist}`, e.rank]),
-  )
+  const routeMeta = getChartRouteMeta(chart)
 
-  return current.map((e) => {
-    const key = `${e.trackTitle}|${e.artist}`
-    const prevRank = prevIndex.get(key)
-
-    return {
-      ...e,
-      delta: prevRank !== undefined ? prevRank - e.rank : null,
-      isNew: prevRank === undefined,
-    }
-  })
+  return {
+    title: `${routeMeta.title} | WaveNation`,
+    description: routeMeta.description,
+  }
 }
 
-function getDroppedTracks(
-  current: ChartEntry[],
-  previous?: ChartEntry[],
-): ChartEntry[] {
-  if (!previous) return []
+export const revalidate = 300
 
-  const currentKeys = new Set(
-    current.map((e) => `${e.trackTitle}|${e.artist}`),
-  )
-
-  return previous.filter(
-    (e) => !currentKeys.has(`${e.trackTitle}|${e.artist}`),
-  )
-}
-
-function getTopFive(entries: ChartEntry[]): ChartEntry[] {
-  return entries.slice(0, 5)
-}
-
-/* ======================================================
-   PAGE
-====================================================== */
-
-export default async function ChartGenreEditorialPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
+export default async function ChartDetailPage({ params }: Props) {
   const { slug } = await params
+  const chart = (await getChartBySlug(slug)) as ChartDoc | null
 
-  const genre = GENRES[slug]
-  if (!genre) notFound()
+  if (!chart) notFound()
 
-  const charts: ChartDoc[] = await getChartsByGenre(slug)
-  if (!charts.length) notFound()
-
-  const currentChart = charts[0]
-  const previousChart = charts[1]
-
-  const entriesWithMovement = withMovement(
-    currentChart.entries,
-    previousChart?.entries,
-  )
-
-  const biggestGainers = entriesWithMovement
-    .filter((e) => e.delta !== null && e.delta > 0)
-    .sort((a, b) => (b.delta ?? 0) - (a.delta ?? 0))
-    .slice(0, 5)
-
-  const biggestDebuts = entriesWithMovement
-    .filter((e) => e.isNew)
-    .slice(0, 5)
-
-  const droppedTracks = getDroppedTracks(
-    currentChart.entries,
-    previousChart?.entries,
-  )
-
-  const fiveWeekCharts = charts.slice(0, 5)
-  const lastThreeWeeks = charts.slice(1, 4)
+  const routeMeta = getChartRouteMeta(chart)
 
   return (
     <main className={styles.page}>
-      {/* ================= ANALYTICS ================= */}
-      <ChartGenreImpression
-        genre={slug}
-        title={genre.title}
-        week={currentChart.week}
-      />
+      <div className={styles.container}>
+        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+          <Link href="/charts" className={styles.breadcrumbLink}>
+            Charts
+          </Link>
+          <span className={styles.breadcrumbSeparator}>/</span>
+          <Link href={routeMeta.parentHref} className={styles.breadcrumbLink}>
+            {routeMeta.parentLabel}
+          </Link>
+          <span className={styles.breadcrumbSeparator}>/</span>
+          <span className={styles.breadcrumbCurrent}>{chart.slug}</span>
+        </nav>
 
-      {/* ================= HERO META ================= */}
-      <div className={styles.heroMeta}>
-        <span className={styles.heroMetaLabel}>Powered by</span>
-        <a
-          href="https://urbaninfluencer.media"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.heroMetaLink}
-        >
-          Urban Influencer
-        </a>
+        <header className={styles.hero}>
+          <div className={styles.heroCopy}>
+            <span className={styles.eyebrow}>{routeMeta.chartLabel}</span>
+            <h1 className={styles.title}>{routeMeta.title}</h1>
+            <p className={styles.description}>{routeMeta.description}</p>
+
+            <div className={styles.actions}>
+              <Link href={routeMeta.currentHref} className={styles.primaryCta}>
+                View current
+              </Link>
+              <Link href={routeMeta.archiveHref} className={styles.secondaryCta}>
+                Browse archive
+              </Link>
+            </div>
+          </div>
+
+          <aside className={styles.metaPanel}>
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Chart key</span>
+              <strong className={styles.metaValue}>{chart.chartKey}</strong>
+            </div>
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Week</span>
+              <strong className={styles.metaValue}>{chart.week}</strong>
+            </div>
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Published</span>
+              <strong className={styles.metaValue}>
+                {formatPublishDate(chart.publishDate)}
+              </strong>
+            </div>
+            <div className={styles.metaItem}>
+              <span className={styles.metaLabel}>Entries</span>
+              <strong className={styles.metaValue}>{chart.entries.length}</strong>
+            </div>
+          </aside>
+        </header>
+
+        <section className={styles.tableSection}>
+          <div className={styles.tableHeader}>
+            <span className={styles.tableEyebrow}>Weekly ranking</span>
+            <h2 className={styles.tableTitle}>Chart entries</h2>
+            <p className={styles.tableDescription}>
+              The full published chart for {chart.week}.
+            </p>
+          </div>
+
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <caption className={styles.caption}>{chart.slug}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Track</th>
+                  <th scope="col">Artist</th>
+                </tr>
+              </thead>
+              <tbody>
+                {chart.entries.map((entry) => (
+                  <tr
+                    key={`${chart.slug}-${entry.rank}-${entry.trackTitle}-${entry.artist}`}
+                  >
+                    <td className={styles.rank}>#{entry.rank}</td>
+                    <td className={styles.track}>{entry.trackTitle}</td>
+                    <td className={styles.artist}>{entry.artist}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
-
-      {/* ================= HERO ================= */}
-      <EditorialHero
-        variant="charts"
-        eyebrow="Charts · Genre"
-        title={
-          <>
-            {genre.title}
-            <br />
-            <span>{genre.tone}</span>
-          </>
-        }
-        lede={genre.lede}
-      />
-
-      {/* ================= CURRENT ================= */}
-      <section className={styles.current}>
-        <ChartSectionImpression
-          section="current_chart"
-          genre={slug}
-          week={currentChart.week}
-        />
-
-        <header className={styles.currentHeader}>
-          <div className={styles.currentTitleRow}>
-            <h2>Current Chart</h2>
-            <div className={styles.currentMeta}>
-              <span className={styles.week}>{currentChart.week}</span>
-              <span className={styles.updatedPill}>
-                {updatedLabel(currentChart.publishDate)}
-              </span>
-            </div>
-          </div>
-        </header>
-
-        {/* ===== TOP 3 CARDS ===== */}
-        <div className={styles.topThree}>
-          {currentChart.entries.slice(0, 3).map((e) => (
-            <div
-              key={`top3-${currentChart.week}-${e.rank}`}
-              className={styles.previewCard}
-            >
-              <div className={styles.previewRank}>#{e.rank}</div>
-              <div className={styles.previewBody}>
-                <div className={styles.track}>{e.trackTitle}</div>
-                <div className={styles.artist}>{e.artist}</div>
-              </div>
-              <div className={styles.previewAccent} />
-            </div>
-          ))}
-        </div>
-
-        {/* ===== FULL CHART ===== */}
-        <div className={styles.fullChartWrap}>
-          <div className={styles.chartHeaderRow}>
-            <span>Rank</span>
-            <span>Move</span>
-            <span>Track</span>
-            <span>Artist</span>
-          </div>
-
-          {entriesWithMovement.map((e) => (
-            <div
-              key={`${currentChart.week}-${e.rank}`}
-              className={styles.chartRow}
-            >
-              <span className={styles.rank}>#{e.rank}</span>
-              <span className={styles.movement}>
-                {e.isNew ? 'NEW' : e.delta ?? '—'}
-              </span>
-              <span className={styles.track}>{e.trackTitle}</span>
-              <span className={styles.artist}>{e.artist}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* ===== AD SLOT ===== */}
-        <div className={styles.adSlot} data-ad-slot="billboard">
-          <span className={styles.adLabel}>Advertisement</span>
-        </div>
-      </section>
-
-      {/* ================= MOVEMENT ================= */}
-      <section className={styles.history}>
-        <ChartSectionImpression
-          section="movement_panels"
-          genre={slug}
-          week={currentChart.week}
-        />
-
-        <div className={styles.movementGrid}>
-          {biggestGainers.length > 0 && (
-            <MovementPanel
-              title="Biggest Gainers"
-              items={biggestGainers}
-            />
-          )}
-
-          {biggestDebuts.length > 0 && (
-            <MovementPanel
-              title="Biggest Debuts"
-              items={biggestDebuts}
-            />
-          )}
-
-          {droppedTracks.length > 0 && (
-            <MovementPanel
-              title="Dropped This Week"
-              items={droppedTracks}
-            />
-          )}
-        </div>
-      </section>
-
-      {/* ================= 5 WEEK SNAPSHOT ================= */}
-      <section className={styles.snapshot}>
-        <ChartSectionImpression
-          section="five_week_snapshot"
-          genre={slug}
-          week={currentChart.week}
-        />
-
-        <header className={styles.snapshotHeader}>
-          <h3>5-Week Snapshot</h3>
-        </header>
-
-        <div className={styles.snapshotGrid}>
-          {fiveWeekCharts.map((chart) => (
-            <div key={chart.week} className={styles.snapshotWeek}>
-              <h4>{chart.week}</h4>
-              {getTopFive(chart.entries).map((e) => (
-                <div
-                  key={`snapshot-${chart.week}-${e.rank}`}
-                  className={styles.snapshotItem}
-                >
-                  #{e.rank} {e.trackTitle}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================= TOP 5 · LAST 3 WEEKS ================= */}
-      <section className={styles.topWeeks}>
-        <ChartSectionImpression
-          section="top_five_last_three"
-          genre={slug}
-          week={currentChart.week}
-        />
-
-        <header className={styles.topWeeksHeader}>
-          <h3>Top 5 · Last 3 Weeks</h3>
-        </header>
-
-        <div className={styles.topWeeksGrid}>
-          {lastThreeWeeks.map((chart) => (
-            <div key={chart.week} className={styles.topWeekColumn}>
-              <h4>{chart.week}</h4>
-              {getTopFive(chart.entries).map((e) => (
-                <div
-                  key={`topweeks-${chart.week}-${e.rank}`}
-                  className={styles.topWeekItem}
-                >
-                  <span className={styles.topWeekRank}>
-                    #{e.rank}
-                  </span>
-                  <span>{e.trackTitle}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================= ARCHIVE ================= */}
-      <section className={styles.archive}>
-        <h3>Chart Archive</h3>
-        <p>Explore previous weeks and long-term movement.</p>
-
-        <div
-          className={styles.adSlotInline}
-          data-ad-slot="sponsored-inline"
-        >
-          <span className={styles.adLabel}>Sponsored</span>
-        </div>
-
-        <Link
-          href={`/charts/index?genre=${slug}`}
-          className={styles.archiveLink}
-        >
-          Browse {genre.title} archive →
-        </Link>
-      </section>
     </main>
   )
 }
 
-/* ======================================================
-   MOVEMENT PANEL
-====================================================== */
+function getChartRouteMeta(chart: ChartDoc): ChartRouteMeta {
+  if (chart.chartKey === 'hitlist') {
+    return {
+      chartLabel: 'Flagship chart',
+      parentHref: '/charts/hitlist',
+      parentLabel: 'Hitlist',
+      currentHref: '/charts/hitlist/current',
+      archiveHref: '/charts/hitlist/archive',
+      title: `The Hitlist — ${chart.week}`,
+      description:
+        'WaveNation’s flagship weekly ranking tracking the songs making the strongest audience, editorial, and cultural impact right now.',
+    }
+  }
 
-function MovementPanel({
-  title,
-  items,
-}: {
-  title: string
-  items: ChartEntry[]
-}) {
-  return (
-    <section className={styles.movementPanel}>
-      <header className={styles.movementPanelHeader}>
-        <h4>{title}</h4>
-      </header>
+  const genreMap: Record<
+    string,
+    { title: string; label: string; slug: string; description: string }
+  > = {
+    'rnb-soul': {
+      title: 'R&B / Soul',
+      label: 'Genre chart',
+      slug: 'rnb-soul',
+      description:
+        'A weekly chart spotlighting the songs shaping R&B and soul momentum across WaveNation.',
+    },
+    'hip-hop': {
+      title: 'Hip-Hop',
+      label: 'Genre chart',
+      slug: 'hip-hop',
+      description:
+        'A weekly chart focused on the records driving hip-hop conversation and movement right now.',
+    },
+    'southern-soul': {
+      title: 'Southern Soul',
+      label: 'Genre chart',
+      slug: 'southern-soul',
+      description:
+        'A weekly chart dedicated to the records powering Southern Soul culture and audience loyalty.',
+    },
+    gospel: {
+      title: 'Gospel',
+      label: 'Genre chart',
+      slug: 'gospel',
+      description:
+        'A weekly chart tracking the songs and artists moving gospel listeners and praise-centered culture.',
+    },
+    house: {
+      title: 'House',
+      label: 'Genre chart',
+      slug: 'house',
+      description:
+        'A weekly chart tracking the records creating movement, discovery, and energy in house culture.',
+    },
+  }
 
-      <ul className={styles.list}>
-        {items.map((e) => (
-          <li
-            key={`${e.trackTitle}-${e.artist}`}
-            className={styles.li}
-          >
-            <span className={styles.liTrack}>{e.trackTitle}</span>
-            <span className={styles.liSep}>—</span>
-            <span className={styles.liArtist}>{e.artist}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
+  const genre = genreMap[chart.chartKey]
+
+  if (genre) {
+    return {
+      chartLabel: genre.label,
+      parentHref: `/charts/genres/${genre.slug}`,
+      parentLabel: genre.title,
+      currentHref: `/charts/genres/${genre.slug}/current`,
+      archiveHref: `/charts/genres/${genre.slug}/archive`,
+      title: `${genre.title} — ${chart.week}`,
+      description: genre.description,
+    }
+  }
+
+  return {
+    chartLabel: 'Chart issue',
+    parentHref: '/charts',
+    parentLabel: 'Charts',
+    currentHref: '/charts',
+    archiveHref: '/charts',
+    title: `${chart.chartKey} — ${chart.week}`,
+    description: 'Explore this published WaveNation chart issue.',
+  }
 }

@@ -1,0 +1,132 @@
+.page {
+  padding: 0 0 4.5rem;
+  background:
+    radial-gradient(circle at top center, rgb(71 85 105 / 0.14), transparent 30%),
+    linear-gradient(180deg, #080b10 0%, #0b1016 45%, #090d13 100%);
+}
+
+.shell {
+  width: min(1440px, calc(100% - 32px));
+  margin: 0 auto;
+  padding-top: 1.5rem;
+}
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) 340px;
+  gap: 28px;
+  align-items: start;
+  margin-top: 2rem;
+}
+
+.primaryColumn {
+  min-width: 0;
+  display: grid;
+  gap: 2rem;
+}
+
+.sidebarColumn {
+  position: sticky;
+  top: calc(var(--header-height, 72px) + 20px);
+  display: grid;
+  gap: 18px;
+}
+
+.spotlightGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.latestGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.releaseGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.interviewsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.featureBands {
+  display: grid;
+  gap: 2rem;
+}
+
+.bandGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .mainGrid {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 24px;
+  }
+
+  .releaseGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .shell {
+    width: min(100%, calc(100% - 24px));
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebarColumn {
+    position: static;
+    order: -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .spotlightGrid,
+  .interviewsGrid,
+  .bandGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .releaseGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding-bottom: 3rem;
+  }
+
+  .shell {
+    width: min(100%, calc(100% - 20px));
+    padding-top: 1rem;
+  }
+
+  .primaryColumn {
+    gap: 1.5rem;
+  }
+
+  .sidebarColumn {
+    grid-template-columns: 1fr;
+  }
+
+  .spotlightGrid,
+  .releaseGrid,
+  .interviewsGrid,
+  .bandGrid {
+    grid-template-columns: 1fr;
+  }
+}

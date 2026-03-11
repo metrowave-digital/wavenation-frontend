@@ -1,0 +1,55 @@
+.wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+    #0f1419;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.caption {
+  padding: 1rem 1rem 0;
+  text-align: left;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.table thead th {
+  padding: 0.95rem 1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table tbody td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rank {
+  width: 92px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.track {
+  font-weight: 700;
+}
+
+.artist {
+  color: rgba(255, 255, 255, 0.72);
+}

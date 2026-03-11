@@ -1,0 +1,133 @@
+.page {
+  min-height: 100vh;
+  width: 100%;
+  background: #0a0d11;
+  color: #fff;
+}
+
+.container {
+  width: 100%;
+  padding-bottom: 4rem;
+}
+
+.metaBar {
+  margin-top: 1rem;
+}
+
+.section {
+  margin-top: 2rem;
+}
+
+.bottomCta {
+  width: 100%;
+  padding: 0 1.5rem;
+  margin-top: 2rem;
+}
+
+.bottomCtaInner {
+  width: 100%;
+  max-width: 1220px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.35rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background:
+    radial-gradient(circle at top right, rgb(91 141 239 / 0.12), transparent 32%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.02)),
+    #11161c;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.16);
+}
+
+.bottomCopy {
+  min-width: 0;
+}
+
+.bottomEyebrow {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.58);
+}
+
+.bottomTitle {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.bottomText {
+  margin: 0.7rem 0 0;
+  max-width: 58ch;
+  font-size: 0.98rem;
+  line-height: 1.72;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.bottomActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.primaryCta,
+.secondaryCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  padding: 0.82rem 1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.primaryCta {
+  border: 1px solid rgb(91 141 239 / 0.22);
+  background: rgb(91 141 239 / 0.14);
+  color: rgb(230 238 255);
+}
+
+.secondaryCta {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.04);
+  color: #fff;
+}
+
+.primaryCta:hover,
+.secondaryCta:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 639px) {
+  .bottomCta {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 760px) {
+  .bottomCtaInner {
+    grid-template-columns: minmax(0, 1.2fr) auto;
+    align-items: center;
+  }
+
+  .section {
+    margin-top: 2.25rem;
+  }
+}

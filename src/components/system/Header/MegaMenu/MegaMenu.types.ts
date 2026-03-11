@@ -1,47 +1,78 @@
+// src/components/system/Header/MegaMenu/MegaMenu.types.ts
+
 import type { ComponentType } from 'react'
 
-/* ======================================================
-   CORE NAV TYPES
-====================================================== */
+export type MenuAccent = 'blue' | 'magenta' | 'green' | 'neutral'
 
-export type MegaMenuLink = {
-  label: string
+export type NavIcon = ComponentType<{ size?: number }>
+
+export type FeaturedCard = {
+  id?: string | number
   href: string
-  description?: string
-
-  /** Optional nested links (e.g. Discover → Charts) */
-  children?: MegaMenuLink[]
-}
-
-export type MegaMenuItem = {
-  id: string
-  label: string
-  icon?: ComponentType<{ size?: number }>
-  description?: string
-
-  /** Top-level links for this section */
-  children?: MegaMenuLink[]
-
-  /** Editorial cards shown in the right rail */
-  editorial?: {
-    eyebrow?: string
-    title: string
-    description?: string
-    href: string
-  }[]
-}
-
-/* ======================================================
-   FEATURED EDITORIAL
-====================================================== */
-
-export interface FeaturedCard {
   title: string
   description?: string
   eyebrow?: string
-  href: string
   image?: {
     url: string
     alt: string
   } | null
+}
+
+export type MegaMenuFeatured =
+  | boolean
+  | {
+      eyebrow?: string
+      title: string
+      description: string
+      accent?: MenuAccent
+    }
+
+type MegaMenuBase = {
+  id?: string
+  label: string
+  description?: string
+  badge?: string
+  featured?: MegaMenuFeatured
+  children?: MegaMenuItem[]
+}
+
+export type MegaMenuLink = MegaMenuBase & {
+  href: string
+}
+
+export type MegaMenuGroup = MegaMenuBase & {
+  href?: string
+  children: MegaMenuItem[]
+}
+
+export type MegaMenuRoot = {
+  id: string
+  label: string
+  icon?: NavIcon
+  href?: string
+  description?: string
+  badge?: string
+  featured?: MegaMenuFeatured
+  children: MegaMenuItem[]
+}
+
+export type MegaMenuItem = MegaMenuLink | MegaMenuGroup
+export type MainNavItem = MegaMenuRoot
+
+export function hasChildren(
+  item: MegaMenuRoot | MegaMenuItem
+): item is (MegaMenuRoot | MegaMenuItem) & { children: MegaMenuItem[] } {
+  return Array.isArray(item.children) && item.children.length > 0
+}
+
+export function hasHref(
+  item: MegaMenuRoot | MegaMenuItem
+): item is (MegaMenuRoot | MegaMenuItem) & { href: string } {
+  return typeof item.href === 'string' && item.href.length > 0
+}
+
+export function isFeaturedObject(
+  featured: MegaMenuFeatured | undefined
+): featured is Exclude<MegaMenuFeatured, boolean> {
+  return typeof featured === 'object' && featured !== null
 }
