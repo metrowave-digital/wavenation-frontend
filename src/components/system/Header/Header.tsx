@@ -9,6 +9,7 @@ import { HeaderProvider } from './Header.context'
 import { BrandBar } from './BrandBar/BrandBar'
 import { MainNav } from './MainNav/MainNav'
 import { SubNav } from './SubNav/SubNav'
+import { MobileSubNav } from './MobileSubNav/MobileSubNav'
 import { HeaderActions } from './HeaderActions/HeaderActions'
 import { MobileMenu } from './MobileMenu/MobileMenu'
 import { SearchPopup } from './Popups/SearchPopup'
@@ -26,11 +27,16 @@ export function Header() {
       <header className={styles.root} role="banner">
         <div className={styles.bar}>
           <BrandBar />
-          <MainNav />
+
+          <div className={styles.desktopNav}>
+            <MainNav />
+          </div>
+
           <HeaderActions />
         </div>
 
-        <SubNav items={navItems} pathname={pathname} />
+        <SubNav items={navItems} pathname={pathname} className={styles.desktopSubNav} />
+        <MobileSubNav items={navItems} pathname={pathname} className={styles.mobileSubNav} />
       </header>
 
       <MobileMenu />
