@@ -1,0 +1,52 @@
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.item {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.time {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.content {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.itemTitle {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.description {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.55;
+}
+
+@media (min-width: 768px) {
+  .item {
+    grid-template-columns: 170px 1fr;
+    align-items: start;
+  }
+}

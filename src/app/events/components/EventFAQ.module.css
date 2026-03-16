@@ -1,0 +1,31 @@
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.item {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.question {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.answer {
+  margin-top: 0.85rem;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.6;
+}
