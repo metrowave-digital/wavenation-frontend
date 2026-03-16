@@ -74,11 +74,19 @@ type PayloadDocsResponse<T> = {
 }
 
 function getPayloadBaseUrl() {
-  return (
+  const baseUrl =
     process.env.PAYLOAD_PUBLIC_SERVER_URL ||
-    process.env.NEXT_PUBLIC_SERVER_URL ||
-    'http://localhost:3000'
-  )
+    process.env.NEXT_PUBLIC_CMS_URL ||
+    process.env.PAYLOAD_URL ||
+    process.env.NEXT_PUBLIC_SERVER_URL
+
+  if (!baseUrl) {
+    throw new Error(
+      'Missing Payload base URL. Set PAYLOAD_PUBLIC_SERVER_URL, NEXT_PUBLIC_CMS_URL, PAYLOAD_URL, or NEXT_PUBLIC_SERVER_URL.',
+    )
+  }
+
+  return baseUrl.replace(/\/$/, '')
 }
 
 export function getMediaUrl(media?: PayloadMedia): string | null {
@@ -124,7 +132,10 @@ export async function getEvents(params?: {
   )
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch events: ${response.status}`)
+    const errorText = await response.text()
+    throw new Error(
+      `Failed to fetch events: ${response.status} ${response.statusText} - ${errorText}`,
+    )
   }
 
   return response.json()
@@ -148,7 +159,10 @@ export async function getEventBySlug(
   )
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch event by slug: ${response.status}`)
+    const errorText = await response.text()
+    throw new Error(
+      `Failed to fetch event by slug: ${response.status} ${response.statusText} - ${errorText}`,
+    )
   }
 
   const data = (await response.json()) as PayloadDocsResponse<PayloadEvent>
