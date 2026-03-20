@@ -1,0 +1,44 @@
+.card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 1rem;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.copy {
+  margin: 0;
+  color: rgba(255,255,255,0.76);
+  line-height: 1.65;
+}
+
+.metaStack {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+}
+
+.value {
+  color: #ffffff;
+  font-weight: 700;
+  text-align: right;
+}

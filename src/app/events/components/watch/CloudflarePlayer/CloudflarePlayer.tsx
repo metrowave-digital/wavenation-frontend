@@ -1,3 +1,5 @@
+import styles from './CloudflarePlayer.module.css'
+
 type CloudflarePlayerProps = {
   playbackId?: string | null
   embedUrl?: string | null
@@ -36,30 +38,16 @@ export function CloudflarePlayer({
   if (!src) return null
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        paddingTop: '56.25%',
-        overflow: 'hidden',
-        borderRadius: '24px',
-        background: '#000',
-        border: '1px solid rgba(255,255,255,0.08)',
-      }}
-    >
-      <iframe
-        src={src}
-        title={title}
-        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-        allowFullScreen
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          border: 0,
-        }}
-      />
-    </div>
+    <section className={styles.shell} aria-label="Live video player">
+      <div className={styles.frame}>
+        <iframe
+          src={src}
+          title={title}
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+          className={styles.iframe}
+        />
+      </div>
+    </section>
   )
 }

@@ -1,0 +1,18 @@
+.panel {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 26px;
+  padding: 1.25rem;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+}
+
+.title {
+  margin: 0 0 0.7rem;
+  font-size: 1.2rem;
+}
+
+.copy {
+  margin: 0;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.75;
+}

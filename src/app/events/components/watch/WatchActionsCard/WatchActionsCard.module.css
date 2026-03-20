@@ -1,0 +1,49 @@
+.card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 1rem;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+}
+
+.title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.actions {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.primaryButton,
+.secondaryButton,
+.ghostButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.95rem;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid transparent;
+}
+
+.primaryButton {
+  color: #05070b;
+  background: #ffffff;
+}
+
+.secondaryButton {
+  color: #ffffff;
+  background: transparent;
+  border-color: rgba(255,255,255,0.14);
+}
+
+.ghostButton {
+  color: rgba(255,255,255,0.86);
+  background: rgba(255,255,255,0.045);
+  border-color: rgba(255,255,255,0.09);
+}

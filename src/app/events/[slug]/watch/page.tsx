@@ -1,7 +1,14 @@
 import { notFound, redirect } from 'next/navigation'
 import styles from './WatchPage.module.css'
-import { CloudflarePlayer } from '../../components/CloudflarePlayer'
-import { EventSidebar } from '../../components/EventSidebar'
+
+import { CloudflarePlayer } from '../../components/watch/CloudflarePlayer/CloudflarePlayer'
+import { WatchHero } from '../../components/watch/WatchHero/WatchHero'
+import { WatchStateCard } from '../../components/watch/WatchStateCard/WatchStateCard'
+import { WatchAccessGate } from '../../components/watch/WatchAccessGate/WatchAccessGate'
+import { WatchAboutPanel } from '../../components/watch/WatchAboutPanel/WatchAboutPanel'
+import { WatchAgendaPanel } from '../../components/watch/WatchAgendaPanel/WatchAgendaPanel'
+import { WatchGuidelinesPanel } from '../../components/watch/WatchGuidelinesPanel/WatchGuidelinesPanel'
+import { WatchSidebar } from '../../components/watch/WatchSidebar/WatchSidebar'
 
 type EventStatus =
   | 'scheduled'
@@ -142,28 +149,31 @@ export async function generateMetadata({ params }: PageProps) {
     }
   }
 
+  const description =
+    event.excerpt || `Watch ${event.title} on WaveNation.`
+
+  const image =
+    event.heroImage?.sizes.hero ||
+    event.heroImage?.url ||
+    undefined
+
   return {
     title: `${event.title} | Watch | WaveNation`,
-    description:
-      event.excerpt || `Watch ${event.title} on WaveNation.`,
+    description,
     openGraph: {
       title: `${event.title} | Watch | WaveNation`,
-      description:
-        event.excerpt || `Watch ${event.title} on WaveNation.`,
-      images: event.heroImage?.sizes.hero
-        ? [event.heroImage.sizes.hero]
-        : event.heroImage?.url
-          ? [event.heroImage.url]
-          : [],
+      description,
+      images: image ? [image] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${event.title} | Watch | WaveNation`,
+      description,
+      images: image ? [image] : [],
     },
   }
 }
 
-/**
- * Replace this with your real Auth0 / Eventbrite / membership check.
- * This is intentionally permissive for public/open setup while
- * still supporting the new collection fields.
- */
 async function canUserWatchEvent(
   event: WatchEvent,
 ): Promise<boolean> {
@@ -178,13 +188,6 @@ async function canUserWatchEvent(
     return true
   }
 
-  /**
-   * TODO:
-   * - read Auth0 session
-   * - verify Eventbrite registration
-   * - verify membership tier
-   * - verify invite-only access
-   */
   return false
 }
 
@@ -215,6 +218,25 @@ function getPlaybackSource(event: WatchEvent) {
   }
 }
 
+function getAccessMessage(event: WatchEvent) {
+  if (event.accessDeniedMessage) return event.accessDeniedMessage
+  if (event.loginRequired) {
+    return 'You must sign in to watch this event.'
+  }
+  if (event.ticketVerificationRequired) {
+    return 'A verified ticket is required to watch this event.'
+  }
+  if (event.accessType === 'members-only') {
+    return event.memberTierRequired
+      ? `This event requires the ${event.memberTierRequired} membership tier.`
+      : 'This event is available to members only.'
+  }
+  if (event.accessType === 'invite-only') {
+    return 'This event is available by invitation only.'
+  }
+  return 'You do not currently have access to this watch page.'
+}
+
 export default async function WatchPage({ params }: PageProps) {
   const { slug } = await params
   const event = await getEventBySlug(slug)
@@ -227,10 +249,6 @@ export default async function WatchPage({ params }: PageProps) {
 
   const allowed = await canUserWatchEvent(event)
 
-  if (!allowed) {
-    redirect(`/events/${event.slug}`)
-  }
-
   const isScheduled =
     event.status === 'scheduled' || event.status === 'prelive'
   const isLive = event.status === 'live'
@@ -238,7 +256,10 @@ export default async function WatchPage({ params }: PageProps) {
   const isEnded = event.status === 'ended'
 
   const source = getPlaybackSource(event)
-  const showPlayer = Boolean((isLive || isReplay) && (source.playbackId || source.embedUrl))
+  const showPlayer = Boolean(
+    (isLive || isReplay) &&
+      (source.playbackId || source.embedUrl),
+  )
 
   const heroImage =
     event.heroImage?.sizes.hero || event.heroImage?.url || null
@@ -253,187 +274,146 @@ export default async function WatchPage({ params }: PageProps) {
         />
       ) : null}
 
-      <section className={styles.hero}>
-        <div className={styles.heroMedia}>
-          {event.heroImage?.sizes.card || event.heroImage?.url ? (
-            <img
-              src={event.heroImage.sizes.card || event.heroImage.url || ''}
-              alt={event.heroImage.alt || event.title}
-              className={styles.heroImage}
-            />
-          ) : (
-            <div className={styles.heroImageFallback} />
-          )}
-        </div>
+      <div className={styles.shell}>
+        <a href="#watch-player" className={styles.skipLink}>
+          Skip to player
+        </a>
 
-        <div className={styles.heroText}>
-          <div className={styles.badges}>
-            {isLive && <span className={styles.liveBadge}>LIVE</span>}
-            {isReplay && (
-              <span className={styles.replayBadge}>
-                {event.replayLabel || 'REPLAY'}
-              </span>
-            )}
-            {isScheduled && (
-              <span className={styles.soonBadge}>STARTS SOON</span>
-            )}
-            {event.streamProviderLabel ? (
-              <span className={styles.metaBadge}>
-                {event.streamProviderLabel}
-              </span>
-            ) : null}
-            {event.contentVertical ? (
-              <span className={styles.metaBadge}>
-                {event.contentVertical.toUpperCase()}
-              </span>
-            ) : null}
-          </div>
+        <WatchHero
+          title={event.title}
+          excerpt={event.excerpt}
+          startAt={event.startAt}
+          timezone={event.timezone}
+          hostName={event.hostName}
+          guestName={event.guestName}
+          accessType={event.accessType}
+          viewerNotice={event.viewerNotice}
+          isLive={isLive}
+          isReplay={isReplay}
+          isScheduled={isScheduled}
+          streamProviderLabel={event.streamProviderLabel}
+          contentVertical={event.contentVertical}
+          replayLabel={event.replayLabel}
+          heroImage={event.heroImage}
+        />
 
-          <h1 className={styles.title}>{event.title}</h1>
-
-          {event.excerpt ? (
-            <p className={styles.description}>{event.excerpt}</p>
-          ) : null}
-
-          <div className={styles.meta}>
-            {event.startAt ? (
-              <span>
-                Starts:{' '}
-                {formatEventTime(event.startAt, event.timezone)}
-              </span>
-            ) : null}
-            {event.hostName ? <span>Host: {event.hostName}</span> : null}
-            {event.guestName.length ? (
-              <span>Guest: {event.guestName.join(', ')}</span>
-            ) : null}
-            {event.accessType ? (
-              <span>Access: {event.accessType}</span>
-            ) : null}
-          </div>
-
-          {event.viewerNotice ? (
-            <div className={styles.notice}>{event.viewerNotice}</div>
-          ) : null}
-        </div>
-      </section>
-
-      <section className={styles.content}>
-        <div className={styles.playerColumn}>
-          {isScheduled && (
-            <div className={styles.stateCard}>
-              <h2>We’re getting ready</h2>
-              <p>
-                {event.preLiveMessage ||
-                  'This event has not started yet. Please stay on this page.'}
-              </p>
-
-              {event.startAt ? (
-                <p className={styles.subtle}>
-                  Scheduled start:{' '}
-                  {formatEventTime(event.startAt, event.timezone)}
-                </p>
+        <section className={styles.mainGrid}>
+          <div className={styles.primaryColumn}>
+            <div id="watch-player" className={styles.playerStack}>
+              {!allowed ? (
+                <WatchAccessGate
+                  title={event.title}
+                  message={getAccessMessage(event)}
+                  accessType={event.accessType}
+                  eventUrl={`/events/${event.slug}`}
+                  loginRequired={event.loginRequired}
+                  ticketVerificationRequired={
+                    event.ticketVerificationRequired
+                  }
+                  memberTierRequired={event.memberTierRequired}
+                  accessCodeLabel={event.accessCodeLabel}
+                  eventbriteUrl={event.eventbriteUrl}
+                />
               ) : null}
 
-              {event.livestreamAccessInstructions ? (
-                <p className={styles.subtle}>
-                  {event.livestreamAccessInstructions}
-                </p>
+              {allowed && isScheduled ? (
+                <WatchStateCard
+                  heading="We’re getting ready"
+                  body={
+                    event.preLiveMessage ||
+                    'This event has not started yet. Stay on this page for the live stream.'
+                  }
+                  tone="scheduled"
+                  eventTime={formatEventTime(
+                    event.startAt,
+                    event.timezone,
+                  )}
+                  subcopy={event.livestreamAccessInstructions}
+                />
+              ) : null}
+
+              {allowed && showPlayer ? (
+                <CloudflarePlayer
+                  playbackId={source.playbackId}
+                  embedUrl={source.embedUrl}
+                  title={event.title}
+                  autoplay={isLive}
+                />
+              ) : null}
+
+              {allowed && isEnded && !isReplay ? (
+                <WatchStateCard
+                  heading="This live event has ended"
+                  body={
+                    event.postEventMessage ||
+                    'Thanks for watching. Replay access may be available soon.'
+                  }
+                  tone="ended"
+                  eventTime={
+                    event.replayAvailableAt
+                      ? `Replay available: ${formatEventTime(
+                          event.replayAvailableAt,
+                          event.timezone,
+                        )}`
+                      : null
+                  }
+                />
+              ) : null}
+
+              {allowed && !showPlayer && (isLive || isReplay) ? (
+                <WatchStateCard
+                  heading="Player not available"
+                  body="This event is active, but no playback source is currently configured."
+                  tone="issue"
+                  subcopy="Please check back shortly or visit the main event page for updates."
+                />
               ) : null}
             </div>
-          )}
 
-          {showPlayer ? (
-            <CloudflarePlayer
-              playbackId={source.playbackId}
-              embedUrl={source.embedUrl}
+            <div className={styles.contentStack}>
+              <WatchAboutPanel
+                title="About this event"
+                excerpt={event.excerpt}
+              />
+
+              {event.agenda.length ? (
+                <WatchAgendaPanel
+                  items={event.agenda}
+                  isLive={isLive}
+                />
+              ) : null}
+
+              {event.audienceGuidelines ? (
+                <WatchGuidelinesPanel
+                  guidelines={event.audienceGuidelines}
+                />
+              ) : null}
+            </div>
+          </div>
+
+          <aside className={styles.sidebarColumn}>
+            <WatchSidebar
+              slug={event.slug}
               title={event.title}
-              autoplay={isLive}
+              isLive={isLive}
+              chatEnabled={event.chatEnabled}
+              qaEnabled={event.qaEnabled}
+              chatMode={event.chatMode}
+              chatEmbedUrl={event.chatEmbedUrl}
+              qaPrompt={event.qaPrompt}
+              ctaLabel={event.ctaLabel}
+              ctaUrl={event.ctaUrl}
+              eventbriteUrl={event.eventbriteUrl}
+              streamHealthStatus={event.streamHealthStatus}
+              producerName={event.producerName}
+              moderatorName={event.moderatorName}
+              technicalDirectorName={event.technicalDirectorName}
+              startAt={event.startAt}
+              timezone={event.timezone}
             />
-          ) : null}
-
-          {isEnded && !isReplay && (
-            <div className={styles.stateCard}>
-              <h2>This live event has ended</h2>
-              <p>
-                {event.postEventMessage ||
-                  'Thanks for watching. Replay access may be available soon.'}
-              </p>
-            </div>
-          )}
-
-          {!showPlayer && (isLive || isReplay) && (
-            <div className={styles.stateCard}>
-              <h2>Player not available</h2>
-              <p>
-                This event is active, but no playback source is currently configured.
-              </p>
-            </div>
-          )}
-
-          <div className={styles.panel}>
-            <h2>About this event</h2>
-            {event.excerpt ? (
-              <p>{event.excerpt}</p>
-            ) : (
-              <p>
-                Stay tuned for more coverage, updates, and replay information on WaveNation.
-              </p>
-            )}
-          </div>
-
-          {event.agenda.length ? (
-            <div className={styles.panel}>
-              <h2>Agenda</h2>
-              <div className={styles.stack}>
-                {event.agenda.map((item, index) => (
-                  <div key={`${item.title}-${index}`} className={styles.agendaItem}>
-                    {item.time ? (
-                      <div className={styles.agendaTime}>{item.time}</div>
-                    ) : null}
-                    <div>
-                      {item.title ? (
-                        <h3 className={styles.agendaTitle}>{item.title}</h3>
-                      ) : null}
-                      {item.description ? (
-                        <p className={styles.agendaDescription}>
-                          {item.description}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {event.audienceGuidelines ? (
-            <div className={styles.panel}>
-              <h2>Audience Guidelines</h2>
-              <p>{event.audienceGuidelines}</p>
-            </div>
-          ) : null}
-        </div>
-
-        <aside className={styles.sidebarColumn}>
-          <EventSidebar
-  slug={event.slug}
-  title={event.title}
-  isLive={isLive}
-  chatEnabled={event.chatEnabled}
-  qaEnabled={event.qaEnabled}
-  chatMode={event.chatMode}
-  chatEmbedUrl={event.chatEmbedUrl}
-  qaPrompt={event.qaPrompt}
-  ctaLabel={event.ctaLabel}
-  ctaUrl={event.ctaUrl}
-  eventbriteUrl={event.eventbriteUrl}
-  streamHealthStatus={event.streamHealthStatus}
-  producerName={event.producerName}
-  moderatorName={event.moderatorName}
-  technicalDirectorName={event.technicalDirectorName}
-/>
-        </aside>
-      </section>
+          </aside>
+        </section>
+      </div>
     </main>
   )
 }

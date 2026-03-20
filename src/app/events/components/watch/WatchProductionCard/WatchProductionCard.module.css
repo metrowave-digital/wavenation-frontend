@@ -1,0 +1,40 @@
+.card {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 1rem;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+}
+
+.title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.stack {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.row {
+  display: grid;
+  gap: 0.15rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.label {
+  color: rgba(255,255,255,0.58);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.value {
+  color: rgba(255,255,255,0.9);
+  line-height: 1.5;
+}

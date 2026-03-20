@@ -1,0 +1,48 @@
+.card {
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.25);
+}
+
+.inner {
+  padding: 1.35rem;
+}
+
+.heading {
+  margin: 0 0 0.65rem;
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.body {
+  margin: 0;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.7;
+}
+
+.meta {
+  margin: 1rem 0 0;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.subcopy {
+  margin: 0.6rem 0 0;
+  color: rgba(255,255,255,0.68);
+  line-height: 1.65;
+}
+
+.scheduled {
+  border-color: rgba(251,191,36,0.18);
+}
+
+.ended {
+  border-color: rgba(255,255,255,0.09);
+}
+
+.issue {
+  border-color: rgba(248,113,113,0.24);
+}
