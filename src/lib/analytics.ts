@@ -49,6 +49,9 @@ export type AnalyticsEvent =
   | 'navigation_click'
   | 'subnav_click'
   | 'footer_cta_click'
+  | 'now_playing_updated'
+  | 'player_previous_click'
+  | 'player_next_click'
 
 /* ======================================================
    Core Dispatcher (GA4 + PostHog)

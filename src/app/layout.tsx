@@ -11,7 +11,7 @@ import { TapToUnmuteToast } from '@/components/system/Player/TapToUnmuteToast/Ta
 
 import { PostHogProvider } from './providers/PostHogProvider'
 import { AnalyticsListener } from './providers/AnalyticsListener'
-import { AudioProvider } from '@/components/system/Player/audio/AudioContext'
+import { AudioProvider } from '@/components/system/Player/audio/AudioProvider'
 
 /* ======================================================
    Metadata

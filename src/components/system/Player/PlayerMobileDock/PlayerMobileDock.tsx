@@ -12,9 +12,11 @@ import {
   ChevronUp,
   User,
   MoreHorizontal,
+  LoaderCircle,
 } from 'lucide-react'
 import clsx from 'clsx'
 import styles from './PlayerMobileDock.module.css'
+import { useAudio } from '@/components/system/Player/audio/AudioContext'
 
 type PlayerMobileDockProps = {
   onOpenPlayer: () => void
@@ -28,32 +30,6 @@ type DockItemProps = {
   icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
   active?: boolean
   onClick?: () => void
-}
-
-type PlaybackState = {
-  isPlaying: boolean
-  title: string
-  subtitle: string
-  isLive: boolean
-  artworkUrl?: string | null
-  togglePlayback: () => void
-}
-
-function useMockPlaybackState(): PlaybackState {
-  const isPlaying = false
-
-  function togglePlayback() {
-    console.log('toggle playback')
-  }
-
-  return {
-    isPlaying,
-    title: 'WaveNation FM Live',
-    subtitle: 'Urban hits, culture, and live programming',
-    isLive: true,
-    artworkUrl: null,
-    togglePlayback,
-  }
 }
 
 function DockItem({
@@ -103,14 +79,17 @@ export function PlayerMobileDock({
   onOpenMore,
 }: PlayerMobileDockProps) {
   const pathname = usePathname()
+
   const {
-    isPlaying,
-    title,
-    subtitle,
+    playing,
+    nowPlaying,
+    play,
+    pause,
     isLive,
-    artworkUrl,
-    togglePlayback,
-  } = useMockPlaybackState()
+    isBuffering,
+    isReconnecting,
+    streamHealthy,
+  } = useAudio()
 
   const isHomeActive = pathname === '/'
   const isNewsActive = pathname === '/news' || pathname.startsWith('/news/')
@@ -120,6 +99,27 @@ export function PlayerMobileDock({
     pathname.startsWith('/profile/') ||
     pathname === '/account' ||
     pathname.startsWith('/account/')
+
+  const title = nowPlaying.track || 'WaveNation FM Live'
+  const subtitle = nowPlaying.artist || 'Urban hits, culture, and live programming'
+  const artworkUrl = nowPlaying.artwork
+
+  async function togglePlayback() {
+    if (playing) {
+      pause()
+      return
+    }
+
+    await play()
+  }
+
+  const statusLabel = isReconnecting
+    ? 'Reconnecting'
+    : isBuffering
+      ? 'Buffering'
+      : playing
+        ? 'Playing'
+        : 'Paused'
 
   return (
     <nav className={styles.dock} aria-label="Mobile player dock">
@@ -147,6 +147,9 @@ export function PlayerMobileDock({
               <span className={styles.metaTopline}>
                 {isLive && <span className={styles.liveBadge}>Live</span>}
                 <span className={styles.nowPlayingLabel}>Now Playing</span>
+                {!streamHealthy && (
+                  <span className={styles.healthBadge}>Signal</span>
+                )}
               </span>
 
               <span className={styles.trackTitle}>{title}</span>
@@ -157,10 +160,11 @@ export function PlayerMobileDock({
               <span
                 className={clsx(
                   styles.inlinePlaybackState,
-                  isPlaying && styles.inlinePlaybackStateActive
+                  playing && styles.inlinePlaybackStateActive,
+                  (isBuffering || isReconnecting) && styles.inlinePlaybackStateBusy
                 )}
               >
-                {isPlaying ? 'Playing' : 'Paused'}
+                {statusLabel}
               </span>
               <ChevronUp className={styles.expandIcon} aria-hidden />
             </span>
@@ -199,13 +203,15 @@ export function PlayerMobileDock({
           <button
             type="button"
             className={styles.playerButton}
-            onClick={togglePlayback}
-            aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
-            aria-pressed={isPlaying}
+            onClick={() => void togglePlayback()}
+            aria-label={playing ? 'Pause audio' : 'Play audio'}
+            aria-pressed={playing}
           >
             <span className={styles.playerButtonGlow} aria-hidden />
             <span className={styles.playerButtonCore}>
-              {isPlaying ? (
+              {isBuffering || isReconnecting ? (
+                <LoaderCircle className={clsx(styles.playerButtonIcon, styles.spinning)} aria-hidden />
+              ) : playing ? (
                 <Pause className={styles.playerButtonIcon} aria-hidden />
               ) : (
                 <Play className={styles.playerButtonIcon} aria-hidden />
@@ -214,7 +220,7 @@ export function PlayerMobileDock({
           </button>
 
           <span className={styles.playerButtonLabel}>
-            {isPlaying ? 'Pause' : 'Play'}
+            {isReconnecting ? 'Reconnect' : isBuffering ? 'Loading' : playing ? 'Pause' : 'Play'}
           </span>
         </div>
 

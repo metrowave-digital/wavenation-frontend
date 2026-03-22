@@ -3,31 +3,30 @@
 import { useEffect, useState } from 'react'
 import { MobilePlayerPopup } from './MobilePlayerPopup'
 import { DesktopPlayerPopup } from './DesktopPlayerPopup'
-
-import { useAudio } from '@/components/system/Player/audio/AudioContext'
-
-/* ======================================================
-   MEDIA QUERY
-====================================================== */
+import { usePlayerPopupData, type RecentTrack } from './usePlayerPopupData'
 
 function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false)
+  const [matches, setMatches] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const mql = window.matchMedia(query)
-    const onChange = () => setMatches(mql.matches)
+    if (typeof window === 'undefined') return
 
-    onChange()
-    mql.addEventListener('change', onChange)
-    return () => mql.removeEventListener('change', onChange)
+    const mediaQuery = window.matchMedia(query)
+    const updateMatch = () => setMatches(mediaQuery.matches)
+
+    updateMatch()
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateMatch)
+      return () => mediaQuery.removeEventListener('change', updateMatch)
+    }
+
+    mediaQuery.addListener(updateMatch)
+    return () => mediaQuery.removeListener(updateMatch)
   }, [query])
 
   return matches
 }
-
-/* ======================================================
-   COMPONENT
-====================================================== */
 
 interface PlayerPopupProps {
   open: boolean
@@ -35,31 +34,28 @@ interface PlayerPopupProps {
 }
 
 export function PlayerPopup({ open, onClose }: PlayerPopupProps) {
-  const audio = useAudio()
-
-  const isPlaying =
-    typeof audio.currentTime === 'number' &&
-    typeof audio.duration === 'number' &&
-    audio.currentTime > 0 &&
-    audio.currentTime < audio.duration
-
   const isDesktop = useMediaQuery('(min-width: 900px)')
 
+  const recent: RecentTrack[] = [] // TODO: replace with Redis-backed API
+
+  const { normalizedNow, showData, recentFive, isPlaying } =
+    usePlayerPopupData(recent)
+
   if (!open) return null
+  if (isDesktop === null) return null
+
+  const sharedProps = {
+    open,
+    onClose,
+    normalizedNow,
+    showData,
+    recent: recentFive,
+    isPlaying,
+  }
 
   return isDesktop ? (
-    <DesktopPlayerPopup
-      open={open}
-      onClose={onClose}
-      isPlaying={isPlaying}
-      recent={[]} // TODO: replace with Redis-backed API
-    />
+    <DesktopPlayerPopup {...sharedProps} />
   ) : (
-    <MobilePlayerPopup
-      open={open}
-      onClose={onClose}
-      isPlaying={isPlaying}
-      recent={[]} // TODO: replace with Redis-backed API
-    />
+    <MobilePlayerPopup {...sharedProps} />
   )
 }

@@ -226,14 +226,12 @@ export function Player() {
                 <PlayerInfo expanded={showExpandedInfo} />
               </div>
 
-              <div className={styles.centerColumn}>
-                <div className={styles.controlsRow}>
-                  <PlayerControls placement="sticky_player" />
-                </div>
+              <div className={styles.progressColumn}>
+                <PlayerProgress />
+              </div>
 
-                <div className={styles.progressRow}>
-                  <PlayerProgress />
-                </div>
+              <div className={styles.controlsColumn}>
+                <PlayerControls placement="sticky_player" />
               </div>
 
               <div className={styles.actionsColumn}>

@@ -1,45 +1,72 @@
 'use client'
 
 import Image from 'next/image'
-import React, { useEffect, useMemo } from 'react'
-import { AnimatePresence, motion, type Variants } from 'framer-motion'
+import React, { useEffect } from 'react'
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Variants,
+} from 'framer-motion'
 import styles from './DesktopPlayerPopup.module.css'
-
-import { useAudio } from '@/components/system/Player/audio/AudioContext'
-import { useRadioUpNext } from '@/app/lib/shows/useRadioUpNext'
-import { formatHHmm } from '@/lib/time'
-
-/* ======================================================
-   MOTION
-====================================================== */
-
-const fadeSwap: Variants = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -6 },
-}
-
-const listItem: Variants = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-}
-
-/* ======================================================
-   COMPONENT
-====================================================== */
-
-interface RecentTrack {
-  key: string
-  track: string
-  artist: string
-  artwork?: string | null
-}
+import type { RecentTrack } from './usePlayerPopupData'
 
 interface DesktopPlayerPopupProps {
   open: boolean
   onClose: () => void
   recent: RecentTrack[]
   isPlaying: boolean
+  normalizedNow: {
+    track: string
+    artist: string
+    artwork: string | null
+  }
+  showData: {
+    isLive: boolean
+    title: string
+    hosts: string | null
+    artwork: string | null
+    timeLabel: string | null
+  }
+}
+
+function lockBodyScroll(locked: boolean) {
+  if (!locked) return () => {}
+
+  const previousOverflow = document.body.style.overflow
+  document.body.style.overflow = 'hidden'
+
+  return () => {
+    document.body.style.overflow = previousOverflow
+  }
+}
+
+const fadeSwap: Variants = {
+  initial: { opacity: 0, y: 8 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.22, ease: 'easeOut' },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: { duration: 0.16, ease: 'easeIn' },
+  },
+}
+
+const listItem: Variants = {
+  initial: { opacity: 0, y: 8 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.22, ease: 'easeOut' },
+  },
+  exit: {
+    opacity: 0,
+    y: 8,
+    transition: { duration: 0.16, ease: 'easeIn' },
+  },
 }
 
 export function DesktopPlayerPopup({
@@ -47,199 +74,201 @@ export function DesktopPlayerPopup({
   onClose,
   recent,
   isPlaying,
+  normalizedNow,
+  showData,
 }: DesktopPlayerPopupProps) {
-  /* ================= AUDIO (SAME SOURCE AS PlayerInfo) ================= */
-  const audio = useAudio()
-  const now = audio.nowPlaying
+  const shouldReduceMotion = useReducedMotion()
 
-  /* ================= SHOW STATE ================= */
-  const { live, upNext } = useRadioUpNext()
-  const show = live ?? upNext
-
-  const showTitle =
-    show?.radioShow?.title ?? 'WaveNation Radio'
-
-  const showTimeLabel = live
-    ? 'Live now'
-    : show
-    ? `Starts ${formatHHmm(show._start)}`
-    : null
-
-  /* ================= STABLE NORMALIZATION ================= */
-  const normalized = useMemo(() => {
-    return {
-      track: now.track || 'Live Radio',
-      artist: now.artist || 'WaveNation',
-      artwork: now.artwork || null,
-    }
-  }, [now.track, now.artist, now.artwork])
-
-  /* ================= SCROLL LOCK ================= */
   useEffect(() => {
     if (!open) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = prev
-    }
+    return lockBodyScroll(true)
   }, [open])
 
-  const recentFive = recent.slice(0, 5)
+  useEffect(() => {
+    if (!open) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open, onClose])
+
+  if (!open) return null
 
   return (
     <AnimatePresence>
-      {open && (
-        <motion.div
-          className={styles.overlay}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
+      <motion.div
+        className={styles.overlay}
+        initial={shouldReduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+        onClick={onClose}
+      >
+        <motion.section
+          className={styles.panel}
+          initial={
+            shouldReduceMotion
+              ? false
+              : { opacity: 0, scale: 0.985, y: 8 }
+          }
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={
+            shouldReduceMotion
+              ? { opacity: 0 }
+              : { opacity: 0, scale: 0.985, y: 8 }
+          }
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.24,
+            ease: 'easeOut',
+          }}
+          onClick={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="desktop-player-popup-title"
+          aria-describedby="desktop-player-popup-description"
         >
-          <motion.section
-            className={styles.panel}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            onClick={e => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-          >
-            {/* ================= HEADER ================= */}
-            <header className={styles.header}>
-              <div className={styles.headerTitle}>
-                Now Playing
-              </div>
-              <button
-                className={styles.close}
-                onClick={onClose}
-                aria-label="Close player"
-              >
-                ✕
-              </button>
-            </header>
+          <header className={styles.header}>
+            <div
+              id="desktop-player-popup-title"
+              className={styles.headerTitle}
+            >
+              Now Playing
+            </div>
 
-            <div className={styles.grid}>
-              {/* ================= LEFT ================= */}
-              <div className={styles.left}>
-                <div className={styles.artwork}>
-                  {!normalized.artwork && (
-                    <div className={styles.artworkSkeleton} />
-                  )}
+            <button
+              type="button"
+              className={styles.close}
+              onClick={onClose}
+              aria-label="Close player"
+            >
+              ✕
+            </button>
+          </header>
 
-                  {normalized.artwork && (
-                    <Image
-                      src={normalized.artwork}
-                      alt={`${normalized.track} by ${normalized.artist}`}
-                      fill
-                      priority
-                      className={styles.image}
-                    />
-                  )}
-                </div>
+          <p id="desktop-player-popup-description" className={styles.srOnly}>
+            Now playing details, current show information, and the last five
+            tracks.
+          </p>
 
-                {/* Track (animate only on real change) */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`${normalized.track}-${normalized.artist}`}
-                    variants={fadeSwap}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className={styles.track}
-                  >
-                    {normalized.track}
-                  </motion.div>
-                </AnimatePresence>
+          <div className={styles.grid}>
+            <div className={styles.left}>
+              <div className={styles.artwork}>
+                {!normalizedNow.artwork && (
+                  <div className={styles.artworkSkeleton} />
+                )}
 
-                <div className={styles.artist}>
-                  {normalized.artist}
-                </div>
-
-                <div
-                  className={`${styles.soundBars} ${
-                    isPlaying ? styles.playing : ''
-                  }`}
-                  aria-hidden
-                >
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              </div>
-
-              {/* ================= RIGHT ================= */}
-              <div className={styles.right}>
-                <div className={styles.sectionTitle}>
-                  {live ? 'On Air' : 'Up Next'}
-                </div>
-
-                <div className={styles.showCard}>
-                  <div className={styles.showMeta}>
-                    <div className={styles.showTitle}>
-                      {showTitle}
-                    </div>
-                    {showTimeLabel && (
-                      <div className={styles.showTime}>
-                        {showTimeLabel}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className={styles.sectionTitle}>
-                  Last 5 tracks
-                </div>
-
-                {recentFive.length ? (
-                  <ul className={styles.recent}>
-                    <AnimatePresence>
-                      {recentFive.map(t => {
-                        const art =
-                          t.artwork ||
-                          '/images/player/default-artwork.jpg'
-
-                        return (
-                          <motion.li
-                            key={t.key}
-                            variants={listItem}
-                            initial="initial"
-                            animate="animate"
-                            exit="initial"
-                            className={styles.recentItem}
-                          >
-                            <div className={styles.recentArt}>
-                              <Image
-                                src={art}
-                                alt={t.track}
-                                width={36}
-                                height={36}
-                                className={styles.recentImage}
-                              />
-                            </div>
-                            <div>
-                              <div className={styles.recentTrack}>
-                                {t.track}
-                              </div>
-                              <div className={styles.recentArtist}>
-                                {t.artist}
-                              </div>
-                            </div>
-                          </motion.li>
-                        )
-                      })}
-                    </AnimatePresence>
-                  </ul>
-                ) : (
-                  <div className={styles.empty}>
-                    No recent tracks yet.
-                  </div>
+                {normalizedNow.artwork && (
+                  <Image
+                    src={normalizedNow.artwork}
+                    alt={`${normalizedNow.track} by ${normalizedNow.artist}`}
+                    fill
+                    priority
+                    sizes="(min-width: 900px) 320px, 100vw"
+                    className={styles.image}
+                  />
                 )}
               </div>
+
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={`${normalizedNow.track}-${normalizedNow.artist}`}
+                  variants={fadeSwap}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  className={styles.track}
+                >
+                  {normalizedNow.track}
+                </motion.div>
+              </AnimatePresence>
+
+              <div className={styles.artist}>{normalizedNow.artist}</div>
+
+              <div
+                className={`${styles.soundBars} ${
+                  isPlaying ? styles.playing : ''
+                }`}
+                aria-hidden="true"
+              >
+                <span />
+                <span />
+                <span />
+              </div>
             </div>
-          </motion.section>
-        </motion.div>
-      )}
+
+            <div className={styles.right}>
+              <div className={styles.sectionTitle}>
+                {showData.isLive ? 'On Air' : 'Up Next'}
+              </div>
+
+              <div className={styles.showCard}>
+                <div className={styles.showMeta}>
+                  <div className={styles.showTitle}>{showData.title}</div>
+
+                  {showData.hosts && (
+                    <div className={styles.showHosts}>{showData.hosts}</div>
+                  )}
+
+                  {showData.timeLabel && (
+                    <div className={styles.showTime}>{showData.timeLabel}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.sectionTitle}>Last 5 tracks</div>
+
+              {recent.length ? (
+                <ul className={styles.recent}>
+                  <AnimatePresence initial={false}>
+                    {recent.map((track, index) => {
+                      const art =
+                        track.artwork || '/images/player/default-artwork.jpg'
+
+                      return (
+                        <motion.li
+                          key={track.key}
+                          variants={listItem}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                          transition={{
+                            delay: shouldReduceMotion ? 0 : index * 0.03,
+                          }}
+                          className={styles.recentItem}
+                        >
+                          <div className={styles.recentArt}>
+                            <Image
+                              src={art}
+                              alt={track.track}
+                              width={42}
+                              height={42}
+                              className={styles.recentImage}
+                            />
+                          </div>
+
+                          <div className={styles.recentMeta}>
+                            <div className={styles.recentTrack}>
+                              {track.track}
+                            </div>
+                            <div className={styles.recentArtist}>
+                              {track.artist}
+                            </div>
+                          </div>
+                        </motion.li>
+                      )
+                    })}
+                  </AnimatePresence>
+                </ul>
+              ) : (
+                <div className={styles.empty}>No recent tracks yet.</div>
+              )}
+            </div>
+          </div>
+        </motion.section>
+      </motion.div>
     </AnimatePresence>
   )
 }
