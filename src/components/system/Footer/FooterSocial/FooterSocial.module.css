@@ -1,61 +1,61 @@
 .social {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  min-width: 0;
 }
-
-/* ======================================================
-   Heading
-====================================================== */
 
 .heading {
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  margin: 0 0 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.46);
 }
 
-/* ======================================================
-   Social Links
-====================================================== */
-
-.socialLinks {
+.links {
   display: flex;
-  gap: 14px;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
 }
-
-/* ======================================================
-   Icon Links
-====================================================== */
 
 .link {
-  color: var(--color-text-secondary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease, transform 0.2s ease;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
-.link:hover,
-.link:focus-visible {
-  color: var(--color-accent);
+.link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
 }
 
 .link:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+  outline: none;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
-/* ======================================================
-   Reduced Motion
-====================================================== */
+.link:active {
+  transform: translateY(0);
+}
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 768px) {
   .link {
-    transition: color 0.2s ease;
-    transform: none;
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }

@@ -15,31 +15,80 @@ interface Props {
   className?: string
 }
 
+type ActiveTrailResult = {
+  root: MainNavItem | null
+  trail: NavItem[]
+}
+
+function normalizePath(pathname: string): string {
+  if (!pathname) return '/'
+  if (pathname !== '/' && pathname.endsWith('/')) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
+
 function isPathMatch(pathname: string, href?: string) {
   if (!href) return false
-  if (href === '/') return pathname === '/'
-  return pathname === href || pathname.startsWith(`${href}/`)
+
+  const current = normalizePath(pathname)
+  const target = normalizePath(href)
+
+  if (target === '/') return current === '/'
+  return current === target || current.startsWith(`${target}/`)
 }
 
-function findActiveRoot(items: MainNavItem[], pathname: string): MainNavItem | null {
-  for (const item of items) {
-    if (isPathMatch(pathname, item.href)) return item
+function isExactPath(pathname: string, href?: string) {
+  if (!href) return false
+  return normalizePath(pathname) === normalizePath(href)
+}
 
-    if (hasChildren(item)) {
-      const found = findMatchingInChildren(item.children, pathname)
-      if (found) return item
-    }
+function isHomeLikeItem(item: NavItem) {
+  const label = item.label.trim().toLowerCase()
+  return label === 'home' || label.endsWith(' home')
+}
+
+function dedupeItems(items: NavItem[]) {
+  const seen = new Set<string>()
+  const result: NavItem[] = []
+
+  for (const [index, item] of items.entries()) {
+    const key = getItemKey(item, index)
+    if (seen.has(key)) continue
+    seen.add(key)
+    result.push(item)
   }
 
-  return null
+  return result
 }
 
-function findMatchingInChildren(items: NavItem[], pathname: string): NavItem | null {
+function filterVisibleItems(items: NavItem[], pathname: string) {
+  return dedupeItems(items).filter(item => {
+    if (!hasHref(item)) return false
+    if (!isHomeLikeItem(item)) return true
+    return isExactPath(pathname, item.href)
+  })
+}
+
+function findActiveTrailInChildren(
+  items: NavItem[],
+  pathname: string,
+  ancestors: NavItem[] = []
+): NavItem[] | null {
   for (const item of items) {
-    if (isPathMatch(pathname, item.href)) return item
+    const trail = [...ancestors, item]
+
+    if (hasHref(item) && isPathMatch(pathname, item.href)) {
+      if (hasChildren(item)) {
+        const deeper = findActiveTrailInChildren(item.children, pathname, trail)
+        return deeper ?? trail
+      }
+
+      return trail
+    }
 
     if (hasChildren(item)) {
-      const nested = findMatchingInChildren(item.children, pathname)
+      const nested = findActiveTrailInChildren(item.children, pathname, trail)
       if (nested) return nested
     }
   }
@@ -47,86 +96,150 @@ function findMatchingInChildren(items: NavItem[], pathname: string): NavItem | n
   return null
 }
 
-function findDirectBranch(root: MainNavItem | null, pathname: string): NavItem | null {
-  if (!root?.children?.length) return null
+function findActiveTrail(items: MainNavItem[], pathname: string): ActiveTrailResult {
+  for (const item of items) {
+    const rootTrail: NavItem[] = [item]
 
-  for (const child of root.children) {
-    if (isPathMatch(pathname, child.href)) return child
+    if (item.href && isPathMatch(pathname, item.href)) {
+      if (hasChildren(item)) {
+        const deeper = findActiveTrailInChildren(item.children, pathname, rootTrail)
+        return { root: item, trail: deeper ?? rootTrail }
+      }
 
-    if (hasChildren(child)) {
-      const nested = findMatchingInChildren(child.children, pathname)
-      if (nested) return child
+      return { root: item, trail: rootTrail }
+    }
+
+    if (hasChildren(item)) {
+      const found = findActiveTrailInChildren(item.children, pathname, rootTrail)
+      if (found) return { root: item, trail: found }
     }
   }
 
-  return null
+  return { root: null, trail: [] }
+}
+
+function getVisibleChildren(
+  item: NavItem | MainNavItem | null,
+  pathname: string
+): NavItem[] {
+  if (!item || !hasChildren(item)) return []
+  return filterVisibleItems(item.children, pathname)
+}
+
+function resolveSubNavLevel(
+  root: MainNavItem | null,
+  trail: NavItem[],
+  pathname: string
+) {
+  if (!root || trail.length === 0) {
+    return {
+      railLabel: '',
+      items: [] as NavItem[],
+    }
+  }
+
+  const current = trail[trail.length - 1] ?? null
+  const parent = trail.length > 1 ? trail[trail.length - 2] : null
+  const grandParent = trail.length > 2 ? trail[trail.length - 3] : root
+
+  if (current && hasChildren(current)) {
+    const currentChildren = getVisibleChildren(current, pathname)
+
+    if (current.subnavMode === 'hidden') {
+      return {
+        railLabel: parent?.label ?? root.label,
+        items: currentChildren.slice(0, 12),
+      }
+    }
+
+    if (currentChildren.length > 0) {
+      return {
+        railLabel: current.label,
+        items: currentChildren.slice(0, 12),
+      }
+    }
+  }
+
+  if (parent && hasChildren(parent)) {
+    const parentChildren = getVisibleChildren(parent, pathname)
+
+    if (parent.subnavMode === 'hidden') {
+      return {
+        railLabel: grandParent?.label ?? root.label,
+        items: parentChildren.slice(0, 12),
+      }
+    }
+
+    if (parentChildren.length > 0) {
+      return {
+        railLabel: parent.label,
+        items: parentChildren.slice(0, 12),
+      }
+    }
+  }
+
+  const rootChildren = getVisibleChildren(root, pathname)
+
+  return {
+    railLabel: root.label,
+    items: rootChildren.slice(0, 12),
+  }
 }
 
 export function SubNav({ items, pathname, className }: Props) {
-  const activeRoot = useMemo(() => findActiveRoot(items, pathname), [items, pathname])
-  const activeBranch = useMemo(
-    () => findDirectBranch(activeRoot, pathname),
-    [activeRoot, pathname]
+  const { root, trail } = useMemo(
+    () => findActiveTrail(items, pathname),
+    [items, pathname]
   )
 
-  const links = useMemo(() => {
-    if (!activeRoot) return []
+  const { railLabel, items: subNavItems } = useMemo(
+    () => resolveSubNavLevel(root, trail, pathname),
+    [root, trail, pathname]
+  )
 
-    if (activeBranch && hasChildren(activeBranch)) {
-      return activeBranch.children
-    }
-
-    return activeRoot.children ?? []
-  }, [activeRoot, activeBranch])
-
-  if (!activeRoot || links.length === 0) return null
+  if (!root || subNavItems.length === 0) return null
 
   return (
-    <div className={clsx(styles.subNavWrap, className)}>
-      <div className={styles.subNavInner}>
-        <div className={styles.contextBlock}>
-          <span className={styles.contextEyebrow}>Section</span>
-          <span className={styles.contextTitle}>
-            {activeBranch?.label ?? activeRoot.label}
-          </span>
+    <nav
+      className={clsx(styles.root, className)}
+      aria-label={`${railLabel || root.label} section navigation`}
+    >
+      <div className={styles.inner}>
+        <div className={styles.railLabel} aria-hidden="true">
+          <span className={styles.railLabelText}>{railLabel || root.label}</span>
+          <span className={styles.railDivider} />
         </div>
 
-        <nav className={styles.nav} aria-label="Section navigation">
-          <ul className={styles.list}>
-            {links.map((link, index) => {
-              const active = isPathMatch(pathname, link.href)
-              const href = hasHref(link) ? link.href : '#'
+        <div className={styles.scroller}>
+          <div className={styles.track}>
+            {subNavItems.map((item, index) => {
+              if (!hasHref(item)) return null
+
+              const isActive = isPathMatch(pathname, item.href)
 
               return (
-                <li key={getItemKey(link, index)} className={styles.item}>
-                  {hasHref(link) ? (
-                    <Link
-                      href={href}
-                      className={clsx(styles.link, active && styles.linkActive)}
-                      aria-current={active ? 'page' : undefined}
-                      onClick={() => {
-                        trackEvent('navigation_click', {
-                          component: 'sub_nav',
-                          section: activeRoot.id,
-                          label: link.label,
-                          href,
-                        })
-                      }}
-                    >
-                      <span className={styles.linkLabel}>{link.label}</span>
-                      {link.badge ? <span className={styles.badge}>{link.badge}</span> : null}
-                    </Link>
-                  ) : (
-                    <span className={styles.linkStatic}>
-                      <span className={styles.linkLabel}>{link.label}</span>
-                    </span>
-                  )}
-                </li>
+                <Link
+                  key={getItemKey(item, index)}
+                  href={item.href}
+                  className={styles.item}
+                  data-active={isActive ? 'true' : 'false'}
+                  aria-current={isActive ? 'page' : undefined}
+                  onClick={() => {
+                    trackEvent('subnav_click', {
+                      location: 'header',
+                      section: root.id,
+                      label: item.label,
+                      href: item.href,
+                    })
+                  }}
+                >
+                  <span className={styles.itemLabel}>{item.label}</span>
+                </Link>
               )
             })}
-          </ul>
-        </nav>
+          </div>
+        </div>
       </div>
-    </div>
+    </nav>
   )
 }

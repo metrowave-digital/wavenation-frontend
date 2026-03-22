@@ -1,8 +1,9 @@
 .ticker {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto 1px minmax(0, 1fr);
+  grid-template-areas: 'label divider1 viewport';
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   width: 100%;
   background:
     linear-gradient(
@@ -14,36 +15,60 @@
   color: #ededed;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
+  column-gap: 10px;
 }
 
 /* Label */
 
 .label {
-  padding: 0 14px;
-  font-size: 12px;
+  grid-area: label;
+  padding-left: 10px;
+  font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: #4da3ff;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 96px;
 }
 
 /* Dividers */
 
 .sectionDivider {
   width: 1px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.25);
-  margin: 0 12px;
-  flex-shrink: 0;
+  height: 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.32),
+    rgba(255, 255, 255, 0.08)
+  );
+  justify-self: center;
+}
+
+.sectionDivider:first-of-type {
+  grid-area: divider1;
+}
+
+.sectionDivider:last-of-type {
+  display: none;
 }
 
 /* Viewport */
 
 .viewport {
+  grid-area: viewport;
   min-width: 0;
   overflow: hidden;
   position: relative;
+  padding-right: 10px;
+}
+
+/* Hide mini menu on mobile */
+.ticker > :last-child {
+  display: none;
 }
 
 /* Breaking flash */
@@ -53,7 +78,8 @@
 }
 
 @keyframes flash-bg {
-  0%, 100% {
+  0%,
+  100% {
     background:
       linear-gradient(
         90deg,
@@ -66,41 +92,62 @@
     background:
       linear-gradient(
         90deg,
-        rgba(229, 57, 53, 0.12),
+        rgba(229, 57, 53, 0.14),
         rgba(255, 255, 255, 0)
       ),
-      rgba(229, 57, 53, 0.18);
+      rgba(229, 57, 53, 0.16);
   }
 }
 
-/* Layout responsiveness */
+/* Tablet and up */
 
-@media (max-width: 1024px) {
+@media (min-width: 769px) {
   .ticker {
-    grid-template-columns: auto auto minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .ticker {
-    min-height: 44px;
+    grid-template-columns: auto 1px minmax(0, 1fr) 1px auto;
+    grid-template-areas: 'label divider1 viewport divider2 menu';
+    min-height: 40px;
+    column-gap: 12px;
   }
 
   .label {
-    padding: 0 10px;
-    font-size: 11px;
+    padding-left: 14px;
+    font-size: 12px;
+    max-width: none;
+  }
+
+  .viewport {
+    padding-right: 0;
   }
 
   .sectionDivider {
-    margin: 0 8px;
-    height: 16px;
+    height: 18px;
+  }
+
+  .sectionDivider:last-of-type {
+    display: block;
+    grid-area: divider2;
+  }
+
+  .ticker > :last-child {
+    grid-area: menu;
+    display: flex;
+    align-items: center;
+    padding-right: 12px;
   }
 }
 
-@media (max-width: 520px) {
+/* Large desktop */
+
+@media (min-width: 1200px) {
+  .ticker {
+    column-gap: 14px;
+  }
+
   .label {
-    max-width: 92px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding-left: 16px;
+  }
+
+  .ticker > :last-child {
+    padding-right: 14px;
   }
 }

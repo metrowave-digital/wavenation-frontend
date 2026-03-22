@@ -1,99 +1,90 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
+import type { CSSProperties } from 'react'
 import clsx from 'clsx'
 
-import type { MainNavItem, NavItem } from '../nav/nav.types'
+import type { MainNavItem } from '../nav/nav.types'
 import {
-  countDestinations,
   getDefaultSectionHref,
   getFeaturedSeed,
   getFirstHref,
-  getItemKey,
-  hasChildren,
-  hasHref,
 } from '../nav/nav.types'
-import styles from './MegaMenuPanel.module.css'
-import { trackEvent } from '@/lib/analytics'
 
-type FeaturedCard = {
-  id?: string | number
-  href: string
-  title: string
-  description?: string | null
-  eyebrow?: string | null
-  image?: {
-    url?: string | null
-    alt?: string | null
-  } | null
-}
+import styles from './MegaMenuPanel.module.css'
+import type { FeaturedCard } from './MegaMenuFeatured'
+import { MegaMenuPanelHeader } from './MegaMenuPanelHeader'
+import { MegaMenuPanelBody } from './MegaMenuPanelBody'
+import {
+  getBadgeLabel,
+  getItemIcon,
+  isChildActive,
+  isHrefActive,
+  type MainNavItemWithEnhancements,
+} from './megaMenu.helpers'
+import { MEGA_MENU_TOKENS } from './megaMenu.tokens'
 
 interface Props {
   item: MainNavItem
   onNavigate?: () => void
+  className?: string
 }
 
-function renderLeafLink({
-  item,
-  sectionId,
-  parentLabel,
-  className,
-  labelClassName,
-  badgeClassName,
-  onNavigate,
-}: {
-  item: NavItem
-  sectionId: string
-  parentLabel?: string
-  className: string
-  labelClassName: string
-  badgeClassName: string
-  onNavigate?: () => void
-}) {
-  if (!hasHref(item)) {
-    return (
-      <div className={clsx(className, styles.disabledLink)} aria-disabled="true">
-        <span className={labelClassName}>{item.label}</span>
-        {item.badge ? <span className={badgeClassName}>{item.badge}</span> : null}
-      </div>
-    )
-  }
-
-  return (
-    <Link
-      href={item.href}
-      className={className}
-      data-megamenu-item
-      onClick={() => {
-        trackEvent('navigation_click', {
-          component: 'mega_menu',
-          section: sectionId,
-          parent: parentLabel,
-          label: item.label,
-          href: item.href,
-        })
-        onNavigate?.()
-      }}
-    >
-      <span className={labelClassName}>{item.label}</span>
-      {item.badge ? <span className={badgeClassName}>{item.badge}</span> : null}
-    </Link>
-  )
+const panelVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+    scale: 0.985,
+    filter: 'blur(6px)',
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.38,
+      ease: MEGA_MENU_TOKENS.motion.easeStandard,
+      when: 'beforeChildren',
+      staggerChildren: 0.06,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: 8,
+    scale: 0.99,
+    filter: 'blur(4px)',
+    transition: {
+      duration: 0.22,
+      ease: MEGA_MENU_TOKENS.motion.easeExit,
+    },
+  },
 }
 
-function getGroupHref(group: NavItem): string {
-  if (hasHref(group)) return group.href
-  return getFirstHref(group.children) ?? '#'
+export const childVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.32,
+      ease: MEGA_MENU_TOKENS.motion.easeStandard,
+    },
+  },
 }
 
-export function MegaMenuPanel({ item, onNavigate }: Props) {
+export function MegaMenuPanel({ item, onNavigate, className }: Props) {
+  const pathname = usePathname()
+  const enhancedItem = item as MainNavItemWithEnhancements
+
   const [featured, setFeatured] = useState<FeaturedCard[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let mounted = true
+    let isMounted = true
+    const controller = new AbortController()
 
     async function loadFeatured() {
       try {
@@ -101,378 +92,110 @@ export function MegaMenuPanel({ item, onNavigate }: Props) {
 
         const response = await fetch(
           `/api/menu-featured?context=${encodeURIComponent(item.id)}`,
-          { cache: 'no-store' }
+          {
+            cache: 'no-store',
+            signal: controller.signal,
+          }
         )
 
         if (!response.ok) {
-          throw new Error('Failed to load featured stories')
+          throw new Error('Failed to load featured content')
         }
 
         const json = (await response.json()) as FeaturedCard[]
 
-        if (mounted) {
-          setFeatured(Array.isArray(json) ? json : [])
-        }
+        if (!isMounted) return
+        setFeatured(Array.isArray(json) ? json.slice(0, 2) : [])
       } catch {
-        if (mounted) {
-          setFeatured([])
-        }
+        if (!isMounted) return
+        setFeatured([])
       } finally {
-        if (mounted) {
-          setLoading(false)
-        }
+        if (isMounted) setLoading(false)
       }
     }
 
     loadFeatured()
 
     return () => {
-      mounted = false
+      isMounted = false
+      controller.abort()
     }
   }, [item.id])
-
-  const totalLinks = useMemo(() => countDestinations(item.children), [item.children])
 
   const sectionHref = useMemo(() => {
     return getFirstHref(item.children) ?? getDefaultSectionHref(item)
   }, [item])
 
   const featuredSeed = useMemo(() => getFeaturedSeed(item), [item])
+  const primaryFeatured = featured[0] ?? null
+  const secondaryFeatured = featured[1] ?? null
 
-  const hero = featured[0] ?? null
-  const supportingCards = featured.slice(1, 4)
-  const featureStripGroups = item.children?.slice(0, 3) ?? []
+  const SectionIcon = getItemIcon(enhancedItem)
+  const sectionBadge = getBadgeLabel(enhancedItem.badge)
+
+  const isActive = useMemo(() => {
+    return (
+      isHrefActive(pathname, sectionHref) ||
+      isChildActive(pathname, item.children)
+    )
+  }, [item.children, pathname, sectionHref])
+
+  const panelVars: CSSProperties = {
+    ['--mega-radius' as string]: MEGA_MENU_TOKENS.radius.panel,
+    ['--mega-radius-card' as string]: MEGA_MENU_TOKENS.radius.card,
+    ['--mega-space-panel' as string]: MEGA_MENU_TOKENS.spacing.panel,
+    ['--mega-space-gap' as string]: MEGA_MENU_TOKENS.spacing.gap,
+    ['--mega-space-header-gap' as string]: MEGA_MENU_TOKENS.spacing.headerGap,
+    ['--mega-ease-standard' as string]:
+      MEGA_MENU_TOKENS.motion.cssEaseStandard,
+    ['--mega-ease-emphasis' as string]:
+      MEGA_MENU_TOKENS.motion.cssEaseEmphasis,
+    ['--mega-shadow-panel' as string]: MEGA_MENU_TOKENS.shadow.panel,
+  }
 
   return (
-    <section className={styles.panel}>
-      <aside className={styles.rail}>
-        <div className={styles.eyebrow}>WaveNation</div>
-
-        <div className={styles.sectionTop}>
-          {item.icon ? <item.icon size={18} className={styles.sectionIcon} aria-hidden /> : null}
-          <span className={styles.sectionId}>{item.id.toUpperCase()}</span>
-        </div>
-
-        <h2 className={styles.title}>{item.label}</h2>
-
-        <p className={styles.description}>
-          {item.description ?? 'Explore featured destinations, stories, and category hubs.'}
-        </p>
-
-        <div className={styles.statGrid}>
-          <div className={styles.statCard}>
-            <span className={styles.statLabel}>Destinations</span>
-            <span className={styles.statValue}>{totalLinks}</span>
-          </div>
-
-          <div className={styles.statCard}>
-            <span className={styles.statLabel}>Featured</span>
-            <span className={styles.statValue}>{loading ? '…' : featured.length}</span>
-          </div>
-        </div>
-
-        <Link
-          href={sectionHref}
-          className={styles.primaryCta}
-          data-megamenu-item
-          onClick={() => {
-            trackEvent('navigation_click', {
-              component: 'mega_menu',
-              section: item.id,
-              label: `View ${item.label}`,
-              href: sectionHref,
-            })
-            onNavigate?.()
-          }}
-        >
-          View section
-        </Link>
-
-        {featuredSeed ? (
-          <div className={styles.seedCard} data-accent={featuredSeed.accent ?? 'blue'}>
-            <span className={styles.seedEyebrow}>{featuredSeed.eyebrow}</span>
-
-            <div className={styles.seedTitle}>{featuredSeed.title}</div>
-
-            <p className={styles.seedDescription}>{featuredSeed.description}</p>
-
-            {featuredSeed.href !== '#' ? (
-              <Link
-                href={featuredSeed.href}
-                className={styles.seedLink}
-                data-megamenu-item
-                onClick={() => {
-                  trackEvent('navigation_click', {
-                    component: 'mega_menu',
-                    section: item.id,
-                    label: featuredSeed.title,
-                    href: featuredSeed.href,
-                  })
-                  onNavigate?.()
-                }}
-              >
-                Explore feature
-              </Link>
-            ) : null}
-          </div>
-        ) : null}
-      </aside>
-
-      <nav className={styles.columns} aria-label={`${item.label} navigation`}>
-        {featureStripGroups.length > 0 ? (
-          <div className={styles.featureStrip}>
-            {featureStripGroups.map((group, index) => {
-              const href = getGroupHref(group)
-
-              if (href !== '#') {
-                return (
-                  <Link
-                    key={`feature-${getItemKey(group, index)}`}
-                    href={href}
-                    className={styles.featureStripCard}
-                    data-megamenu-item
-                    onClick={() => {
-                      trackEvent('navigation_click', {
-                        component: 'mega_menu',
-                        section: item.id,
-                        label: group.label,
-                        href,
-                      })
-                      onNavigate?.()
-                    }}
-                  >
-                    <span className={styles.featureStripEyebrow}>Explore</span>
-                    <div className={styles.featureStripTitle}>{group.label}</div>
-                    {group.description ? (
-                      <p className={styles.featureStripDesc}>{group.description}</p>
-                    ) : null}
-                  </Link>
-                )
-              }
-
-              return (
-                <div
-                  key={`feature-${getItemKey(group, index)}`}
-                  className={styles.featureStripCard}
-                >
-                  <span className={styles.featureStripEyebrow}>Explore</span>
-                  <div className={styles.featureStripTitle}>{group.label}</div>
-                  {group.description ? (
-                    <p className={styles.featureStripDesc}>{group.description}</p>
-                  ) : null}
-                </div>
-              )
-            })}
-          </div>
-        ) : null}
-
-        <div className={styles.columnGrid}>
-          {item.children?.map((group, index) => (
-            <section key={getItemKey(group, index)} className={styles.column}>
-              <div className={styles.columnHeader}>
-                {hasHref(group) ? (
-                  <Link
-                    href={group.href}
-                    className={styles.groupLink}
-                    data-megamenu-item
-                    onClick={() => {
-                      trackEvent('navigation_click', {
-                        component: 'mega_menu',
-                        section: item.id,
-                        label: group.label,
-                        href: group.href,
-                      })
-                      onNavigate?.()
-                    }}
-                  >
-                    <div className={styles.groupText}>
-                      <div className={styles.groupTopline}>
-                        <h3 className={styles.groupTitle}>{group.label}</h3>
-                        {group.badge ? (
-                          <span className={styles.groupBadge}>{group.badge}</span>
-                        ) : null}
-                      </div>
-
-                      {group.description ? (
-                        <p className={styles.groupDescription}>{group.description}</p>
-                      ) : null}
-                    </div>
-
-                    <span className={styles.arrow} aria-hidden>
-                      ↗
-                    </span>
-                  </Link>
-                ) : (
-                  <div className={styles.groupStatic}>
-                    <div className={styles.groupText}>
-                      <div className={styles.groupTopline}>
-                        <h3 className={styles.groupTitle}>{group.label}</h3>
-                        {group.badge ? (
-                          <span className={styles.groupBadge}>{group.badge}</span>
-                        ) : null}
-                      </div>
-
-                      {group.description ? (
-                        <p className={styles.groupDescription}>{group.description}</p>
-                      ) : null}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {hasChildren(group) ? (
-                <ul className={styles.childList}>
-                  {group.children.map((child, childIndex) => (
-                    <li key={getItemKey(child, childIndex)} className={styles.childItem}>
-                      {hasChildren(child) ? (
-                        <div className={styles.nestedBlock}>
-                          {renderLeafLink({
-                            item: child,
-                            sectionId: item.id,
-                            parentLabel: group.label,
-                            className: styles.childLink,
-                            labelClassName: styles.childLabel,
-                            badgeClassName: styles.childBadge,
-                            onNavigate,
-                          })}
-
-                          <ul className={styles.grandchildList}>
-                            {child.children.map((grandchild, grandchildIndex) => (
-                              <li key={getItemKey(grandchild, grandchildIndex)}>
-                                {renderLeafLink({
-                                  item: grandchild,
-                                  sectionId: item.id,
-                                  parentLabel: child.label,
-                                  className: styles.grandchildLink,
-                                  labelClassName: styles.grandchildLabel,
-                                  badgeClassName: styles.grandchildBadge,
-                                  onNavigate,
-                                })}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ) : (
-                        renderLeafLink({
-                          item: child,
-                          sectionId: item.id,
-                          parentLabel: group.label,
-                          className: styles.childLink,
-                          labelClassName: styles.childLabel,
-                          badgeClassName: styles.childBadge,
-                          onNavigate,
-                        })
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </section>
-          ))}
-        </div>
-      </nav>
-
-      <aside className={styles.featuredPane} aria-label="Featured stories">
-        <div className={styles.featuredHeader}>
-          <span className={styles.featuredHeading}>Featured stories</span>
-          <span className={styles.featuredCount}>{loading ? '…' : featured.length}</span>
-        </div>
-
-        {hero ? (
-          <Link
-            href={hero.href}
-            className={styles.heroCard}
-            data-megamenu-item
-            onClick={() => {
-              trackEvent('hero_click', {
-                placement: 'mega_menu',
-                section: item.id,
-                title: hero.title,
-              })
-              onNavigate?.()
-            }}
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={item.id}
+        className={styles.panelDock}
+        style={panelVars}
+        variants={panelVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
+        <div className={styles.panelViewport}>
+          <section
+            className={clsx(styles.panel, className)}
+            aria-label={`${item.label} menu panel`}
+            data-active={isActive ? 'true' : 'false'}
           >
-            <div className={styles.heroMedia}>
-              {hero.image?.url ? (
-                <Image
-                  src={hero.image.url}
-                  alt={hero.image.alt ?? hero.title}
-                  fill
-                  sizes="(max-width: 1200px) 100vw, 380px"
-                  className={styles.heroImage}
-                />
-              ) : (
-                <div className={styles.heroFallback} />
-              )}
+            <div className={styles.panelBackground} aria-hidden="true" />
+            <div className={styles.panelGlow} aria-hidden="true" />
 
-              <div className={styles.heroOverlay} />
-            </div>
+            <MegaMenuPanelHeader
+              item={enhancedItem}
+              sectionHref={sectionHref}
+              isActive={isActive}
+              sectionBadge={sectionBadge}
+              SectionIcon={SectionIcon}
+              onNavigate={onNavigate}
+            />
 
-            <div className={styles.heroBody}>
-              <span className={styles.heroEyebrow}>{hero.eyebrow ?? 'Editor’s pick'}</span>
-
-              <h3 className={styles.heroTitle}>{hero.title}</h3>
-
-              {hero.description ? (
-                <p className={styles.heroDescription}>{hero.description}</p>
-              ) : null}
-
-              <span className={styles.heroCta}>Read story</span>
-            </div>
-          </Link>
-        ) : (
-          <div className={styles.emptyCard}>
-            {loading ? 'Loading featured coverage…' : `No featured stories yet for ${item.label}.`}
-          </div>
-        )}
-
-        {supportingCards.length > 0 ? (
-          <div className={styles.supportingList}>
-            {supportingCards.map((card, index) => (
-              <Link
-                key={card.id?.toString() ?? `${card.href}-${index}`}
-                href={card.href}
-                className={styles.supportingCard}
-                data-megamenu-item
-                onClick={() => {
-                  trackEvent('content_click', {
-                    placement: 'mega_menu',
-                    section: item.id,
-                    title: card.title,
-                  })
-                  onNavigate?.()
-                }}
-              >
-                <div className={styles.thumb}>
-                  {card.image?.url ? (
-                    <Image
-                      src={card.image.url}
-                      alt={card.image.alt ?? card.title}
-                      fill
-                      sizes="86px"
-                      className={styles.thumbImage}
-                    />
-                  ) : (
-                    <div className={styles.thumbFallback} />
-                  )}
-                </div>
-
-                <div className={styles.supportingBody}>
-                  {card.eyebrow ? (
-                    <div className={styles.supportingEyebrow}>{card.eyebrow}</div>
-                  ) : null}
-
-                  <div className={styles.supportingTitle}>{card.title}</div>
-
-                  {card.description ? (
-                    <div className={styles.supportingDescription}>{card.description}</div>
-                  ) : null}
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : null}
-      </aside>
-    </section>
+            <MegaMenuPanelBody
+              sectionId={item.id}
+              itemLabel={item.label}
+              pathname={pathname}
+              groups={item.children}
+              featuredSeed={featuredSeed}
+              hero={primaryFeatured}
+              secondary={secondaryFeatured}
+              loading={loading}
+              onNavigate={onNavigate}
+            />
+          </section>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   )
 }

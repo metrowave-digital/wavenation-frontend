@@ -1,57 +1,80 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import styles from './FooterBrand.module.css'
 import { trackEvent } from '@/lib/analytics'
+
+const CTA_LINKS = [
+  { label: 'Listen', href: '/listen' },
+  { label: 'Watch', href: '/watch' },
+  { label: 'Creator Hub', href: '/creator-hub' },
+]
 
 export function FooterBrand() {
   const hasTracked = useRef(false)
 
-  /* ======================================================
-     Impression Tracking
-  ====================================================== */
   useEffect(() => {
     if (hasTracked.current) return
 
     trackEvent('content_impression', {
       placement: 'footer',
       component: 'FooterBrand',
+      version: 'v3',
     })
 
     hasTracked.current = true
   }, [])
 
-  /* ======================================================
-     Interaction Tracking
-  ====================================================== */
   function handleInteraction(type: 'click' | 'focus') {
     trackEvent('content_click', {
       placement: 'footer',
       component: 'FooterBrand',
       interaction: type,
+      version: 'v3',
+    })
+  }
+
+  function handleCtaClick(label: string, href: string) {
+    trackEvent('footer_cta_click', {
+      placement: 'footer',
+      component: 'FooterBrand',
+      label,
+      href,
+      version: 'v3',
     })
   }
 
   return (
-    <div
+    <section
       className={styles.brand}
+      aria-labelledby="footer-brand-title"
       tabIndex={0}
-      role="contentinfo"
-      aria-label="WaveNation Media brand statement"
       onClick={() => handleInteraction('click')}
       onFocus={() => handleInteraction('focus')}
     >
-      <h3 className={styles.title}>WaveNation Media</h3>
+      <div className={styles.header}>
 
-      <p className={styles.tagline}>
-        Culture-forward digital radio & media amplifying
-        <span> music</span>, <span>community</span>, and{' '}
-        <span>creators</span>.
-      </p>
+        <span className={styles.kicker}>WaveNation Media</span>
+      </div>
 
-      <p className={styles.mission}>
-        Built for the now. Rooted in the culture.
-      </p>
-    </div>
+      <div className={styles.body}>
+        <h3 id="footer-brand-title" className={styles.title}>
+          Sound. Story. Screens.
+        </h3>
+
+        <p className={styles.tagline}>
+          Culture-forward radio, streaming, editorial, and creator experiences
+          built for the voices shaping what’s next.
+        </p>
+
+        <p className={styles.mission}>
+          Built for the now. Rooted in the culture.
+        </p>
+      </div>
+
+      <div className={styles.footer}>
+      </div>
+    </section>
   )
 }

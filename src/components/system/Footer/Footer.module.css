@@ -1,35 +1,127 @@
 .root {
-  background: #050507;
-  color: var(--color-text-primary);
-
-  /* ↓ slightly tighter top */
-  padding: 48px 24px 32px;
-
-  /* 👇 reserve space for fixed player */
-  margin-bottom: 72px;
+  position: relative;
+  width: 100%;
+  margin-top: clamp(3.5rem, 7vw, 6rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 12, 18, 0.96) 0%,
+      rgba(7, 9, 14, 0.985) 100%
+    );
 }
 
-.grid {
-  max-width: 1200px;
+.root::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.container {
+  width: min(100%, 1440px);
   margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 32px;
+  padding:
+    clamp(1.5rem, 2vw, 2rem)
+    clamp(1rem, 2.2vw, 2rem)
+    clamp(1rem, 1.8vw, 1.4rem);
 }
 
-/* ======================================================
-   MOBILE
-====================================================== */
+.top {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.1fr) minmax(0, 1.8fr);
+  gap: clamp(1.5rem, 2.5vw, 3rem);
+  align-items: start;
+}
 
-@media (max-width: 768px) {
-  .root {
-    padding: 40px 20px 28px;
-    margin-bottom: 72px; /* same as player height */
+.brand {
+  min-width: 0;
+  padding-right: clamp(0rem, 1vw, 1rem);
+}
+
+.right {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.8fr);
+  gap: clamp(1.25rem, 2vw, 2rem);
+  min-width: 0;
+}
+
+.navWrap {
+  min-width: 0;
+}
+
+.meta {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.bottom {
+  margin-top: clamp(1.4rem, 2vw, 1.8rem);
+  padding-top: clamp(0.9rem, 1.4vw, 1.1rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobileOnly {
+  display: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+@media (max-width: 1080px) {
+  .top {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
   }
 
-  .grid {
+  .right {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 1.5rem;
+  }
+
+  .meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-inline: 1rem;
+    padding-top: 1.15rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .top,
+  .bottom {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-inline: 0.8rem;
   }
 }

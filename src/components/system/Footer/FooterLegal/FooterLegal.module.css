@@ -1,87 +1,75 @@
 .legal {
-  margin-top: 40px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
 }
-
-/* ======================================================
-   Navigation
-====================================================== */
 
 .nav {
   display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 10px;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
 }
 
 .link {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.58);
   text-decoration: none;
-  letter-spacing: 0.04em;
-  position: relative;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  transition: color 160ms ease, opacity 160ms ease;
 }
 
-/* subtle underline accent */
-.link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -3px;
-  width: 100%;
-  height: 1px;
-  background: var(--color-accent);
-  opacity: 0.35;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.2s ease;
-}
-
-.link:hover,
-.link:focus-visible {
-  color: var(--color-accent);
-}
-
-.link:hover::after,
-.link:focus-visible::after {
-  transform: scaleX(1);
+.link:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .link:focus-visible {
   outline: none;
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
-
-/* ======================================================
-   Copyright
-====================================================== */
 
 .copy {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  line-height: 1.4;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.42);
 }
 
-.copy a {
-  color: var(--color-accent);
+.external {
+  color: rgba(255, 255, 255, 0.66);
   text-decoration: none;
-  font-weight: 600;
+  transition: color 160ms ease;
 }
 
-.copy a:hover,
-.copy a:focus-visible {
+.external:hover {
+  color: #ffffff;
+}
+
+.external:focus-visible {
+  outline: none;
   text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
-/* ======================================================
-   Accessibility
-====================================================== */
+@media (max-width: 768px) {
+  .legal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.link:focus-visible,
-.copy a:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+  .nav {
+    gap: 0.55rem 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .link,
+  .copy,
+  .external {
+    font-size: 0.78rem;
+  }
 }

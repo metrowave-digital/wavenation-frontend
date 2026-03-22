@@ -1,17 +1,24 @@
 'use client'
 
 import Image from 'next/image'
+import clsx from 'clsx'
 import styles from './PlayerInfo.module.css'
 
 import { useAudio } from '@/components/system/Player/audio/AudioContext'
 import { useRadioUpNext } from '@/app/lib/shows/useRadioUpNext'
 import { getNextAirLabel } from '@/app/lib/shows/getNextAirLabel'
 
+type PlayerInfoProps = {
+  expanded?: boolean
+}
+
 /* ======================================================
    COMPONENT
 ====================================================== */
 
-export function PlayerInfo() {
+export function PlayerInfo({
+  expanded = false,
+}: PlayerInfoProps) {
   const audio = useAudio()
   const now = audio.nowPlaying
 
@@ -35,17 +42,21 @@ export function PlayerInfo() {
     }`
   })()
 
-  const showStateClass = live
-    ? styles.live
-    : styles.upNext
+  const showStateClass = live ? styles.live : styles.upNext
 
   return (
-    <div className={styles.playerInfo}>
+    <div
+      className={clsx(
+        styles.playerInfo,
+        expanded && styles.expanded
+      )}
+    >
       {/* ===== WAVEFORM ===== */}
       <div
-        className={`${styles.waveform} ${
-          isPlaying ? styles.playing : ''
-        }`}
+        className={clsx(
+          styles.waveform,
+          isPlaying && styles.playing
+        )}
         aria-hidden
       >
         <span />
@@ -65,7 +76,7 @@ export function PlayerInfo() {
             src={now.artwork}
             alt={now.track}
             fill
-            sizes="40px"
+            sizes="56px"
             className={styles.image}
           />
         )}
@@ -82,7 +93,7 @@ export function PlayerInfo() {
         </div>
 
         <div
-          className={`${styles.showLabel} ${showStateClass}`}
+          className={clsx(styles.showLabel, showStateClass)}
           title={showText}
         >
           {showText}

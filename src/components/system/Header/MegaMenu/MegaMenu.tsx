@@ -14,10 +14,14 @@ interface Props {
   onNavigate?: () => void
 }
 
-const OPEN_DELAY_MS = 40
-const CLOSE_DELAY_MS = 140
+const OPEN_DELAY_MS = 60
+const CLOSE_DELAY_MS = 120
 
-export function MegaMenu({ items, className, onNavigate }: Props) {
+export function MegaMenu({
+  items,
+  className,
+  onNavigate,
+}: Props) {
   const [activeId, setActiveId] = useState<MainNavItem['id'] | null>(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -52,8 +56,37 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
     clearCloseTimer()
   }
 
+  function getTriggerElements() {
+    return Array.from(
+      topbarRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[data-nav-trigger="true"]'
+      ) ?? []
+    )
+  }
+
+  function focusTriggerByIndex(index: number) {
+    const triggers = getTriggerElements()
+    if (!triggers.length) return
+
+    const safeIndex =
+      ((index % triggers.length) + triggers.length) % triggers.length
+
+    triggers[safeIndex]?.focus()
+  }
+
+  function focusFirstPanelElement() {
+    const firstFocusable = panelRef.current?.querySelector<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+
+    window.setTimeout(() => {
+      firstFocusable?.focus()
+    }, 0)
+  }
+
   function openMenu(id: MainNavItem['id']) {
     clearCloseTimer()
+
     setActiveId(prev => {
       if (prev !== id) {
         trackEvent('navigation_open', {
@@ -63,6 +96,7 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
       }
       return id
     })
+
     setIsOpen(true)
   }
 
@@ -108,13 +142,15 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
     function handleEscape(event: KeyboardEvent) {
       if (event.key !== 'Escape') return
 
+      const currentActiveId = activeId
       closeMenu()
 
-      const activeTrigger = topbarRef.current?.querySelector<HTMLElement>(
-        '[data-nav-trigger="true"][data-active="true"]'
-      )
-
-      activeTrigger?.focus()
+      if (currentActiveId) {
+        const trigger = topbarRef.current?.querySelector<HTMLElement>(
+          `[data-nav-trigger="true"][data-id="${currentActiveId}"]`
+        )
+        trigger?.focus()
+      }
     }
 
     function handleFocusIn(event: FocusEvent) {
@@ -136,49 +172,63 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
       document.removeEventListener('focusin', handleFocusIn)
       clearAllTimers()
     }
-  }, [])
+  }, [activeId])
 
   function handleTriggerKeyDown(
     event: React.KeyboardEvent<HTMLButtonElement>,
     index: number,
     id: MainNavItem['id']
   ) {
-    const triggers = Array.from(
-      topbarRef.current?.querySelectorAll<HTMLButtonElement>(
-        '[data-nav-trigger="true"]'
-      ) ?? []
-    )
-
     switch (event.key) {
       case 'Enter':
-      case ' ':
+      case ' ': {
+        event.preventDefault()
+
+        if (isOpen && activeId === id) {
+          closeMenu()
+          return
+        }
+
+        openMenu(id)
+        focusFirstPanelElement()
+        break
+      }
+
       case 'ArrowDown': {
         event.preventDefault()
         openMenu(id)
-
-        const firstPanelLink = panelRef.current?.querySelector<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-
-        window.setTimeout(() => {
-          firstPanelLink?.focus()
-        }, 0)
+        focusFirstPanelElement()
         break
       }
 
       case 'ArrowRight': {
         event.preventDefault()
-        const nextIndex = (index + 1) % triggers.length
-        triggers[nextIndex]?.focus()
+        const nextIndex = (index + 1) % items.length
+        focusTriggerByIndex(nextIndex)
         scheduleOpen(items[nextIndex].id)
         break
       }
 
       case 'ArrowLeft': {
         event.preventDefault()
-        const prevIndex = (index - 1 + triggers.length) % triggers.length
-        triggers[prevIndex]?.focus()
+        const prevIndex = (index - 1 + items.length) % items.length
+        focusTriggerByIndex(prevIndex)
         scheduleOpen(items[prevIndex].id)
+        break
+      }
+
+      case 'Home': {
+        event.preventDefault()
+        focusTriggerByIndex(0)
+        scheduleOpen(items[0].id)
+        break
+      }
+
+      case 'End': {
+        event.preventDefault()
+        const lastIndex = items.length - 1
+        focusTriggerByIndex(lastIndex)
+        scheduleOpen(items[lastIndex].id)
         break
       }
 
@@ -193,10 +243,17 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
     }
   }
 
+  if (!items.length) return null
+
   return (
     <div
       ref={rootRef}
-      className={clsx(styles.megaMenu, className)}
+      className={clsx(
+        styles.megaMenu,
+        isOpen && styles.megaMenuOpen,
+        className
+      )}
+      data-open={isOpen ? 'true' : 'false'}
       onMouseEnter={keepOpen}
       onMouseLeave={scheduleClose}
     >
@@ -206,6 +263,8 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
             {items.map((item, index) => {
               const Icon = item.icon
               const isActive = isOpen && activeId === item.id
+              const panelId = `mega-panel-${item.id}`
+              const triggerId = `mega-trigger-${item.id}`
 
               return (
                 <li
@@ -215,13 +274,14 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
                   onMouseEnter={() => scheduleOpen(item.id)}
                 >
                   <button
+                    id={triggerId}
                     type="button"
                     role="menuitem"
                     aria-haspopup="true"
                     aria-expanded={isActive}
-                    aria-controls={`mega-panel-${item.id}`}
+                    aria-controls={panelId}
                     data-nav-trigger="true"
-                    data-active={isActive ? 'true' : 'false'}
+                    data-id={item.id}
                     className={clsx(
                       styles.rootTrigger,
                       isActive && styles.rootTriggerActive
@@ -240,12 +300,16 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
                     }
                   >
                     {Icon ? (
-                      <Icon size={16} className={styles.rootIcon} aria-hidden />
+                      <Icon
+                        size={15}
+                        className={styles.rootIcon}
+                        aria-hidden="true"
+                      />
                     ) : null}
 
                     <span className={styles.rootLabel}>{item.label}</span>
 
-                    <span className={styles.rootCaret} aria-hidden>
+                    <span className={styles.rootCaret} aria-hidden="true">
                       ▾
                     </span>
                   </button>
@@ -256,7 +320,7 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
         </nav>
       </div>
 
-      {isOpen ? <div className={styles.backdrop} aria-hidden /> : null}
+      {isOpen ? <div className={styles.backdrop} aria-hidden="true" /> : null}
 
       <div
         className={clsx(
@@ -272,6 +336,8 @@ export function MegaMenu({ items, className, onNavigate }: Props) {
             ref={panelRef}
             id={`mega-panel-${activeItem.id}`}
             className={styles.panelSurface}
+            role="region"
+            aria-labelledby={`mega-trigger-${activeItem.id}`}
           >
             <MegaMenuPanel
               item={activeItem}

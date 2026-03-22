@@ -1,79 +1,45 @@
 .contact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  max-width: 260px;
+  min-width: 0;
 }
-
-/* ======================================================
-   Heading
-====================================================== */
 
 .heading {
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  margin: 0 0 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  color: var(--color-text-muted);
-}
-
-/* ======================================================
-   Email Line
-====================================================== */
-
-.line {
-  font-size: 0.85rem;
-  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.46);
 }
 
 .email {
-  color: var(--color-text-primary);
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  color: #ffffff;
   text-decoration: none;
-  position: relative;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  transition:
+    opacity 160ms ease,
+    color 160ms ease;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-.email::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 100%;
-  height: 1px;
-  background: var(--color-accent);
-  opacity: 0.4;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease;
+.email:hover {
+  opacity: 0.82;
 }
 
-.email:hover::after,
-.email:focus-visible::after {
-  transform: scaleX(1);
-}
-
-.email:hover,
 .email:focus-visible {
-  color: var(--color-accent);
   outline: none;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
-
-/* ======================================================
-   Subtext
-====================================================== */
 
 .subtext {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  line-height: 1.45;
-}
-
-/* ======================================================
-   Accessibility
-====================================================== */
-
-.email:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-  border-radius: 4px;
+  margin: 0.55rem 0 0;
+  max-width: 28ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.6);
 }

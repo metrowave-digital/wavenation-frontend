@@ -1,0 +1,549 @@
+.stack {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.heroShell,
+.secondaryShell,
+.seedShell,
+.loadingShell,
+.emptyShell {
+  width: 100%;
+}
+
+.heroCard,
+.secondaryCard,
+.seedCard,
+.loadingCard,
+.emptyCard {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: #fff;
+}
+
+.heroCard,
+.seedCard,
+.loadingCard,
+.emptyCard {
+  border-radius: 1.35rem;
+  overflow: hidden;
+}
+
+/* ======================================================
+   HERO
+====================================================== */
+
+.heroCard {
+  min-height: 26rem;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.015)
+    ),
+    rgba(7, 10, 18, 0.88);
+}
+
+.heroMedia {
+  position: relative;
+  min-height: 14.25rem;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.heroMedia::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(0, 179, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 88% 10%, rgba(233, 44, 99, 0.16), transparent 26%);
+}
+
+.heroImageWrap {
+  position: absolute;
+  inset: 0;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.001);
+  transition:
+    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 280ms ease;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+.heroCard:hover .heroImage,
+.heroCard:focus-visible .heroImage {
+  transform: scale(1.035);
+  filter: saturate(1.08) contrast(1.04);
+}
+
+.heroFallback {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0, 179, 255, 0.26), transparent 30%),
+    radial-gradient(circle at 80% 12%, rgba(233, 44, 99, 0.22), transparent 26%),
+    linear-gradient(145deg, rgba(20, 28, 46, 0.96), rgba(10, 13, 22, 0.96));
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 18, 0.06) 0%,
+    rgba(8, 10, 18, 0.16) 38%,
+    rgba(8, 10, 18, 0.78) 100%
+  );
+}
+
+.heroBadge {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0 0.62rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.06)
+    ),
+    rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 24px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.heroBody {
+  position: relative;
+  display: grid;
+  gap: 0.58rem;
+  padding: 1rem 1rem 1.05rem;
+}
+
+.heroBody::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.01)
+  );
+  opacity: 0.9;
+}
+
+.heroEyebrow,
+.seedLabel,
+.secondaryLabel,
+.emptyLabel {
+  position: relative;
+  z-index: 1;
+  font-size: 0.68rem;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.heroTitle,
+.seedTitle,
+.emptyTitle {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 1.22rem;
+  line-height: 1.12;
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+.heroDescription,
+.seedText,
+.emptyText {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.68);
+  text-wrap: pretty;
+}
+
+.heroCtaRow,
+.seedCtaRow {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.3rem;
+  width: fit-content;
+}
+
+.heroCta,
+.seedCta {
+  font-size: 0.78rem;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: 0.01em;
+  color: #fff;
+}
+
+.heroArrow,
+.seedArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.heroCard:hover .heroArrow,
+.heroCard:focus-visible .heroArrow,
+.seedCard:hover .seedArrow,
+.seedCard:focus-visible .seedArrow {
+  transform: translate(2px, -2px);
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* ======================================================
+   SECONDARY
+====================================================== */
+
+.secondaryCard {
+  display: grid;
+  gap: 0.42rem;
+  min-height: 8rem;
+  padding: 0.95rem 1rem 1rem;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(9, 12, 20, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.secondaryCard::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 179, 255, 0.95),
+    rgba(233, 44, 99, 0.88)
+  );
+  opacity: 0.75;
+}
+
+.secondaryCard::after {
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 16%, rgba(0, 179, 255, 0.14), transparent 28%),
+    radial-gradient(circle at 96% 10%, rgba(233, 44, 99, 0.1), transparent 24%);
+  opacity: 0.7;
+}
+
+.secondaryCard:hover,
+.secondaryCard:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.026)
+    ),
+    rgba(9, 12, 20, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 22px 40px rgba(0, 0, 0, 0.2);
+}
+
+.secondaryTitle {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.18;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+.secondaryDescription {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 0.81rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.64);
+}
+
+/* ======================================================
+   SEED
+====================================================== */
+
+.seedCard {
+  display: grid;
+  align-content: end;
+  gap: 0.56rem;
+  min-height: 13.5rem;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(0, 179, 255, 0.18), transparent 26%),
+    radial-gradient(circle at 100% 0%, rgba(233, 44, 99, 0.16), transparent 24%),
+    linear-gradient(145deg, rgba(13, 18, 30, 0.96), rgba(8, 10, 18, 0.98));
+}
+
+.seedCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.085) 0%,
+    rgba(255, 255, 255, 0.018) 36%,
+    rgba(255, 255, 255, 0.008) 100%
+  );
+}
+
+.seedCard:hover,
+.seedCard:focus-visible {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.24);
+}
+
+.seedTitle {
+  max-width: 18rem;
+}
+
+/* ======================================================
+   LOADING
+====================================================== */
+
+.loadingCard {
+  display: grid;
+  gap: 0.72rem;
+  min-height: 14rem;
+  padding: 1rem;
+  background: linear-gradient(
+    145deg,
+    rgba(12, 16, 27, 0.96),
+    rgba(8, 10, 18, 0.98)
+  );
+}
+
+.skeletonHero,
+.skeletonLineLg,
+.skeletonLineMd,
+.skeletonLineSm {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.skeletonHero::after,
+.skeletonLineLg::after,
+.skeletonLineMd::after,
+.skeletonLineSm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 48%,
+    transparent 100%
+  );
+  animation: featuredSkeleton 1.25s ease-in-out infinite;
+}
+
+.skeletonHero {
+  height: 8rem;
+  border-radius: 1rem;
+}
+
+.skeletonLineLg {
+  width: 78%;
+  height: 1rem;
+}
+
+.skeletonLineMd {
+  width: 92%;
+  height: 0.9rem;
+}
+
+.skeletonLineSm {
+  width: 58%;
+  height: 0.9rem;
+}
+
+/* ======================================================
+   EMPTY
+====================================================== */
+
+.emptyCard {
+  display: grid;
+  align-content: center;
+  gap: 0.56rem;
+  min-height: 13rem;
+  padding: 1rem;
+  background: linear-gradient(
+    145deg,
+    rgba(12, 16, 27, 0.94),
+    rgba(8, 10, 18, 0.98)
+  );
+}
+
+/* ======================================================
+   MOTION
+====================================================== */
+
+@keyframes featuredSkeleton {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 960px) {
+  .heroCard {
+    min-height: 22rem;
+  }
+
+  .heroMedia {
+    min-height: 12rem;
+  }
+
+  .heroBody,
+  .seedCard,
+  .loadingCard,
+  .emptyCard,
+  .secondaryCard {
+    padding: 0.9rem;
+  }
+
+  .heroTitle,
+  .seedTitle,
+  .emptyTitle {
+    font-size: 1.08rem;
+  }
+
+  .secondaryTitle {
+    font-size: 0.96rem;
+  }
+
+  .heroDescription,
+  .seedText,
+  .emptyText,
+  .secondaryDescription {
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroImage,
+  .heroArrow,
+  .seedArrow,
+  .secondaryCard {
+    transition: none;
+  }
+
+  .skeletonHero::after,
+  .skeletonLineLg::after,
+  .skeletonLineMd::after,
+  .skeletonLineSm::after {
+    animation: none;
+  }
+
+  .heroCard:hover .heroImage,
+  .heroCard:focus-visible .heroImage,
+  .heroCard:hover .heroArrow,
+  .heroCard:focus-visible .heroArrow,
+  .seedCard:hover .seedArrow,
+  .seedCard:focus-visible .seedArrow,
+  .secondaryCard:hover,
+  .secondaryCard:focus-visible {
+    transform: none;
+  }
+}
+
+.heroMedia {
+  position: relative;
+  height: 14.25rem;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 960px) {
+  .heroMedia {
+    height: 12rem;
+  }
+}

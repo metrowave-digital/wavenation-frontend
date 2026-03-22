@@ -10,9 +10,6 @@ type SocialPlatform = 'facebook' | 'instagram' | 'x'
 export function FooterSocial() {
   const hasTracked = useRef(false)
 
-  /* ======================================================
-     Impression Tracking
-  ====================================================== */
   useEffect(() => {
     if (hasTracked.current) return
 
@@ -24,9 +21,6 @@ export function FooterSocial() {
     hasTracked.current = true
   }, [])
 
-  /* ======================================================
-     Click Tracking
-  ====================================================== */
   function handleSocialClick(platform: SocialPlatform, url: string) {
     trackEvent('navigation_click', {
       placement: 'footer',
@@ -38,13 +32,15 @@ export function FooterSocial() {
   }
 
   return (
-    <div
+    <section
       className={styles.social}
-      aria-label="WaveNation Media social links"
+      aria-labelledby="footer-social-heading"
     >
-      <h4 className={styles.heading}>Connect</h4>
+      <h4 id="footer-social-heading" className={styles.heading}>
+        Connect
+      </h4>
 
-      <div className={styles.socialLinks}>
+      <div className={styles.links}>
         <a
           className={styles.link}
           href="https://www.facebook.com/people/WaveNation-Media/61585147160405/"
@@ -58,7 +54,7 @@ export function FooterSocial() {
             )
           }
         >
-          <Facebook size={18} aria-hidden />
+          <Facebook size={17} aria-hidden />
         </a>
 
         <a
@@ -74,7 +70,7 @@ export function FooterSocial() {
             )
           }
         >
-          <Instagram size={18} aria-hidden />
+          <Instagram size={17} aria-hidden />
         </a>
 
         <a
@@ -84,15 +80,12 @@ export function FooterSocial() {
           rel="noopener noreferrer"
           aria-label="WaveNation on X"
           onClick={() =>
-            handleSocialClick(
-              'x',
-              'https://x.com/WaveNationMedia'
-            )
+            handleSocialClick('x', 'https://x.com/WaveNationMedia')
           }
         >
-          <X size={18} aria-hidden />
+          <X size={17} aria-hidden />
         </a>
       </div>
-    </div>
+    </section>
   )
 }

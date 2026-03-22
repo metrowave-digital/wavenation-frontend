@@ -9,9 +9,6 @@ import { trackEvent } from '@/lib/analytics'
 export function FooterNav() {
   const hasTracked = useRef(false)
 
-  /* ======================================================
-     Impression Tracking
-  ====================================================== */
   useEffect(() => {
     if (hasTracked.current) return
 
@@ -24,9 +21,6 @@ export function FooterNav() {
     hasTracked.current = true
   }, [])
 
-  /* ======================================================
-     Link Tracking
-  ====================================================== */
   function handleNavClick(
     section: string,
     label: string,
@@ -42,43 +36,44 @@ export function FooterNav() {
   }
 
   return (
-    <nav
-      className={styles.nav}
-      aria-label="Footer navigation"
-    >
-      {FOOTER_NAV.map(section => (
-        <div
-          key={section.label}
-          className={styles.section}
-        >
-          <h4 className={styles.heading}>
-            {section.label}
-          </h4>
+    <nav className={styles.nav} aria-label="Footer navigation">
+      {FOOTER_NAV.map(section => {
+        const sectionId = `footer-nav-${section.label
+          .toLowerCase()
+          .replace(/\s+/g, '-')}`
 
-          <ul className={styles.list}>
-            {section.links.map(link => (
-              <li
-                key={link.href}
-                className={styles.item}
-              >
-                <Link
-                  href={link.href}
-                  className={styles.link}
-                  onClick={() =>
-                    handleNavClick(
-                      section.label,
-                      link.label,
-                      link.href
-                    )
-                  }
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+        return (
+          <section
+            key={section.label}
+            className={styles.section}
+            aria-labelledby={sectionId}
+          >
+            <h4 id={sectionId} className={styles.heading}>
+              {section.label}
+            </h4>
+
+            <ul className={styles.list}>
+              {section.links.map(link => (
+                <li key={link.href} className={styles.item}>
+                  <Link
+                    href={link.href}
+                    className={styles.link}
+                    onClick={() =>
+                      handleNavClick(
+                        section.label,
+                        link.label,
+                        link.href
+                      )
+                    }
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      })}
     </nav>
   )
 }

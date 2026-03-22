@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Facebook, Instagram, X } from 'lucide-react'
-import styles from '../NewsTicker.module.css'
+import styles from './NewsTickerMiniMenu.module.css'
 
 export function NewsTickerMiniMenu() {
   return (

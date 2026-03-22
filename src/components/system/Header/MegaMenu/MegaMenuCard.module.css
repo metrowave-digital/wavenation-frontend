@@ -1,0 +1,166 @@
+.card {
+  --card-radius: 1.4rem;
+  --card-bg-top: rgba(255, 255, 255, 0.055);
+  --card-bg-bottom: rgba(255, 255, 255, 0.018);
+  --card-border: rgba(255, 255, 255, 0.09);
+
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  isolation: isolate;
+
+  background:
+    linear-gradient(180deg, var(--card-bg-top), var(--card-bg-bottom)),
+    rgba(8, 10, 18, 0.86);
+
+  border: 1px solid var(--card-border);
+
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.015);
+
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===============================
+   Elevation
+================================= */
+
+.elevated {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.015),
+    0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+/* ===============================
+   Interactive behavior
+================================= */
+
+.interactive:hover,
+.interactive:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    0 26px 58px rgba(0, 0, 0, 0.3);
+}
+
+.interactive:active {
+  transform: translateY(-1px) scale(0.997);
+}
+
+/* ===============================
+   Ambient Glow Layer
+================================= */
+
+.glow::before {
+  content: '';
+  position: absolute;
+  inset: -25% -15%;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at 0% 0%, rgba(0, 179, 255, 0.18), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgba(233, 44, 99, 0.14), transparent 30%);
+
+  opacity: 0.75;
+  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glow:hover::before,
+.glow:focus-visible::before {
+  opacity: 1;
+}
+
+/* ===============================
+   Border Glow (animated)
+================================= */
+
+.borderGlow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(0, 179, 255, 0.0),
+      rgba(0, 179, 255, 0.35),
+      rgba(233, 44, 99, 0.35),
+      rgba(233, 44, 99, 0.0)
+    );
+
+  opacity: 0;
+  mix-blend-mode: screen;
+
+  transition:
+    opacity 220ms ease,
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.interactive:hover .borderGlow,
+.interactive:focus-visible .borderGlow {
+  opacity: 0.65;
+  transform: scale(1.02);
+}
+
+/* ===============================
+   Noise texture (film grain)
+================================= */
+
+.noise {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  opacity: 0.045;
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ===============================
+   Content Layer Safety
+================================= */
+
+.card > *:not(.borderGlow):not(.noise) {
+  position: relative;
+  z-index: 3;
+}
+
+/* ===============================
+   Reduced motion
+================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .borderGlow,
+  .glow::before {
+    transition: none;
+  }
+
+  .interactive:hover,
+  .interactive:focus-visible {
+    transform: none;
+  }
+}
+
+.card[data-section='radio'] { --accent: rgba(233,44,99,0.9); }
+.card[data-section='news'] { --accent: rgba(0,179,255,0.9); }

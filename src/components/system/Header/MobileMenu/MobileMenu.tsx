@@ -1,83 +1,102 @@
 'use client'
 
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from 'react'
 import { usePathname } from 'next/navigation'
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
 
 import { HeaderContext } from '../Header.context'
 import { MAIN_NAV } from '../nav/nav.config'
 import type { MainNavItem, NavItem } from '../nav/nav.types'
-import { hasChildren, hasHref } from '../nav/nav.types'
-import styles from './MobileMenu.module.css'
+import { hasChildren } from '../nav/nav.types'
 import { trackEvent } from '@/lib/analytics'
 
-type MobileMenuLevel = {
-  label: string
-  items: NavItem[]
-  parentLabel?: string
+import { MobileMenuHeader } from './MobileMenuHeader'
+import { MobileMenuContextBar } from './MobileMenuContextBar'
+import { MobileMenuFeatured } from './MobileMenuFeatured'
+import { MobileMenuList } from './MobileMenuList'
+import { MobileMenuFooter } from './MobileMenuFooter'
+import {
+  findPathStack,
+  getFeaturedActions,
+  getRootSections,
+  type MobileMenuLevel,
+} from './mobileMenu.utils'
+
+import styles from './MobileMenu.module.css'
+
+const EASE_OUT = [0.22, 1, 0.36, 1] as const
+const EASE_IN = [0.4, 0, 1, 1] as const
+
+const panelVariants: Variants = {
+  hidden: { x: '100%', opacity: 0.9 },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.42,
+      ease: EASE_OUT,
+    },
+  },
+  exit: {
+    x: '100%',
+    opacity: 0.92,
+    transition: {
+      duration: 0.28,
+      ease: EASE_IN,
+    },
+  },
 }
 
-function normalizePath(pathname: string): string {
-  if (!pathname) return '/'
-  return pathname.endsWith('/') && pathname !== '/'
-    ? pathname.slice(0, -1)
-    : pathname
+const overlayVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.2 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.18 },
+  },
 }
 
-function isPathMatch(pathname: string, href?: string): boolean {
-  if (!href) return false
-
-  const current = normalizePath(pathname)
-  const target = normalizePath(href)
-
-  if (target === '/') return current === '/'
-  return current === target || current.startsWith(`${target}/`)
+const levelVariants: Variants = {
+  initial: { opacity: 0, x: 22, scale: 0.985 },
+  animate: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: {
+      duration: 0.28,
+      ease: EASE_OUT,
+      staggerChildren: 0.035,
+    },
+  },
+  exit: {
+    opacity: 0,
+    x: -16,
+    scale: 0.99,
+    transition: {
+      duration: 0.18,
+      ease: EASE_IN,
+    },
+  },
 }
 
-function findPathStack(
-  items: NavItem[],
-  pathname: string,
-  parents: MobileMenuLevel[] = []
-): MobileMenuLevel[] | null {
-  for (const item of items) {
-    if (hasHref(item) && isPathMatch(pathname, item.href)) {
-      return parents
-    }
-
-    if (hasChildren(item)) {
-      const nextLevel: MobileMenuLevel = {
-        label: item.label,
-        items: item.children,
-        parentLabel: parents[parents.length - 1]?.label,
-      }
-
-      const directChildMatch = item.children.some(child =>
-        hasHref(child) ? isPathMatch(pathname, child.href) : false
-      )
-
-      if (directChildMatch) {
-        return [...parents, nextLevel]
-      }
-
-      const nested = findPathStack(item.children, pathname, [...parents, nextLevel])
-      if (nested) return nested
-    }
-  }
-
-  return null
+type MenuSessionState = {
+  drillStack: MobileMenuLevel[]
+  forceRoot: boolean
 }
 
-function getRootSections(): MobileMenuLevel {
-  return {
-    label: 'Browse',
-    items: MAIN_NAV,
-  }
-}
-
-function getItemKey(item: NavItem, index: number): string {
-  if (item.id) return item.id
-  if (item.href) return item.href
-  return `${item.label}-${index}`
+const INITIAL_SESSION_STATE: MenuSessionState = {
+  drillStack: [],
+  forceRoot: false,
 }
 
 export function MobileMenu() {
@@ -86,21 +105,36 @@ export function MobileMenu() {
   const pathname = usePathname()
   const startX = useRef<number | null>(null)
   const panelRef = useRef<HTMLDivElement | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   const baseStack = useMemo(() => {
     return findPathStack(MAIN_NAV as MainNavItem[], pathname) ?? []
   }, [pathname])
 
-  /**
-   * Only stores user-driven drill-in state beyond the route-derived stack.
-   * This avoids syncing derived state inside an effect.
-   */
-  const [stackOverride, setStackOverride] = useState<MobileMenuLevel[]>([])
+  const [session, setSession] = useState<MenuSessionState>(INITIAL_SESSION_STATE)
 
-  const stack = useMemo(
-    () => [...baseStack, ...stackOverride],
-    [baseStack, stackOverride]
+  const stack = useMemo(() => {
+    if (session.forceRoot) return session.drillStack
+    return [...baseStack, ...session.drillStack]
+  }, [baseStack, session])
+
+  const currentLevel =
+    stack[stack.length - 1] ?? getRootSections(MAIN_NAV as MainNavItem[])
+
+  const canGoBack = stack.length > 0
+  const isRootLevel = stack.length === 0
+
+  const featuredActions = useMemo(
+    () => getFeaturedActions(isRootLevel),
+    [isRootLevel]
   )
+
+  const breadcrumbs = useMemo(() => {
+    const root = ['Browse']
+    const labels = stack.map(level => level.label)
+    return [...root, ...labels]
+  }, [stack])
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
@@ -112,51 +146,103 @@ export function MobileMenu() {
   useEffect(() => {
     if (!mobileOpen) return
 
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        if (stackOverride.length > 0) {
-          setStackOverride(prev => prev.slice(0, -1))
-        } else {
-          setMobileOpen(false)
-        }
-      }
+    previousFocusRef.current = document.activeElement as HTMLElement | null
+    requestAnimationFrame(() => closeButtonRef.current?.focus())
+
+    trackEvent('navigation_open', {
+      component: 'mobile_menu',
+      pathname,
+      section: currentLevel.label,
+    })
+
+    return () => {
+      previousFocusRef.current?.focus?.()
     }
+  }, [mobileOpen, pathname, currentLevel.label])
 
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [mobileOpen, setMobileOpen, stackOverride.length])
+  const closeMenu = useCallback(
+    (reason: 'button' | 'overlay' | 'swipe' | 'link' = 'button') => {
+      trackEvent('navigation_close', {
+        component: 'mobile_menu',
+        action: reason,
+        section: currentLevel.label,
+      })
 
-  const currentLevel = stack[stack.length - 1] ?? getRootSections()
-  const canGoBack = stack.length > 0
+      setSession(INITIAL_SESSION_STATE)
+      setMobileOpen(false)
+    },
+    [currentLevel.label, setMobileOpen]
+  )
 
-  function closeMenu() {
-    setMobileOpen(false)
-  }
+  const openChildLevel = useCallback(
+    (item: NavItem) => {
+      if (!hasChildren(item)) return
 
-  function goBack() {
-    if (stackOverride.length > 0) {
-      setStackOverride(prev => prev.slice(0, -1))
-      return
-    }
-
-    closeMenu()
-  }
-
-  function openChildLevel(item: NavItem) {
-    if (!hasChildren(item)) return
-
-    setStackOverride(prev => [
-      ...prev,
-      {
+      trackEvent('navigation_click', {
+        component: 'mobile_menu',
+        section: currentLevel.label,
         label: item.label,
-        items: item.children,
-        parentLabel:
-          prev[prev.length - 1]?.label ??
-          baseStack[baseStack.length - 1]?.label ??
-          'Browse',
-      },
-    ])
-  }
+        href: 'nested-menu',
+      })
+
+      setSession(prev => ({
+        ...prev,
+        drillStack: [
+          ...prev.drillStack,
+          {
+            label: item.label,
+            items: item.children,
+            parentLabel: currentLevel.label,
+          },
+        ],
+      }))
+    },
+    [currentLevel.label]
+  )
+
+  const goBack = useCallback(
+    (reason: 'button' | 'swipe' | 'escape' = 'button') => {
+      if (session.drillStack.length > 0) {
+        trackEvent('navigation_back', {
+          component: 'mobile_menu',
+          action: reason,
+          level: currentLevel.label,
+          depth: stack.length,
+        })
+
+        setSession(prev => ({
+          ...prev,
+          drillStack: prev.drillStack.slice(0, -1),
+        }))
+        return
+      }
+
+      if (!session.forceRoot && baseStack.length > 0) {
+        trackEvent('navigation_back', {
+          component: 'mobile_menu',
+          action: reason,
+          level: currentLevel.label,
+          depth: stack.length,
+        })
+
+        setSession(prev => ({
+          ...prev,
+          forceRoot: true,
+        }))
+        return
+      }
+
+      closeMenu(reason === 'button' ? 'button' : 'swipe')
+    },
+    [
+      baseStack.length,
+      closeMenu,
+      currentLevel.label,
+      session.drillStack.length,
+      session.forceRoot,
+      stack.length,
+    ]
+  )
 
   function handleTouchStart(e: React.TouchEvent<HTMLDivElement>) {
     startX.current = e.touches[0]?.clientX ?? null
@@ -170,9 +256,9 @@ export function MobileMenu() {
 
     if (delta > 90) {
       if (canGoBack) {
-        goBack()
+        goBack('swipe')
       } else {
-        closeMenu()
+        closeMenu('swipe')
       }
     }
 
@@ -181,175 +267,125 @@ export function MobileMenu() {
 
   function handleOverlayClick(e: React.MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) {
-      closeMenu()
+      closeMenu('overlay')
     }
   }
+
+  useEffect(() => {
+    if (!mobileOpen) return
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        if (canGoBack) {
+          goBack('escape')
+        } else {
+          closeMenu('button')
+        }
+        return
+      }
+
+      if (event.key !== 'Tab' || !panelRef.current) return
+
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+      )
+
+      if (!focusable.length) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const active = document.activeElement as HTMLElement | null
+
+      if (event.shiftKey) {
+        if (active === first || !panelRef.current.contains(active)) {
+          event.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (active === last) {
+          event.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [mobileOpen, canGoBack, closeMenu, goBack])
 
   if (!mobileOpen) return null
 
   return (
-    <div
-      className={styles.overlay}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Mobile navigation"
-      onClick={handleOverlayClick}
-    >
-      <div
-        key={`${pathname}-${mobileOpen}`}
-        ref={panelRef}
-        className={styles.panel}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+    <AnimatePresence>
+      <motion.div
+        className={styles.overlay}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation"
+        variants={overlayVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        onClick={handleOverlayClick}
       >
-        <header className={styles.header}>
-          <div className={styles.headerLeft}>
-            {canGoBack ? (
-              <button
-                type="button"
-                className={styles.backButton}
-                onClick={goBack}
-                aria-label="Go back"
-              >
-                <span className={styles.backArrow} aria-hidden>
-                  ←
-                </span>
-                <span className={styles.backText}>Back</span>
-              </button>
-            ) : (
-              <div className={styles.brandBlock}>
-                <span className={styles.brandEyebrow}>WaveNation</span>
-                <span className={styles.brandTitle}>Menu</span>
-              </div>
-            )}
+        <div className={styles.backdropGlow} aria-hidden />
+        <div className={styles.backdropNoise} aria-hidden />
+
+        <motion.div
+          ref={panelRef}
+          className={styles.panel}
+          variants={panelVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className={styles.panelInner}>
+            <MobileMenuHeader
+              canGoBack={canGoBack}
+              onBack={() => goBack('button')}
+              onClose={() => closeMenu('button')}
+              closeButtonRef={closeButtonRef}
+            />
+
+            <MobileMenuContextBar
+              currentLabel={currentLevel.label}
+              parentLabel={currentLevel.parentLabel}
+              breadcrumbs={breadcrumbs}
+              depth={stack.length + 1}
+              canGoBack={canGoBack}
+            />
+
+            <div className={styles.scrollRegion}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentLevel.label}
+                  className={styles.level}
+                  variants={levelVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                >
+                  {isRootLevel ? (
+                    <MobileMenuFeatured actions={featuredActions} />
+                  ) : null}
+
+                  <MobileMenuList
+                    sectionLabel={currentLevel.label}
+                    items={currentLevel.items}
+                    pathname={pathname}
+                    onOpenChild={openChildLevel}
+                    onNavigate={() => closeMenu('link')}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            <MobileMenuFooter />
           </div>
-
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={closeMenu}
-            aria-label="Close menu"
-          >
-            ✕
-          </button>
-        </header>
-
-        <div className={styles.contextBar}>
-          <div className={styles.contextText}>
-            <span className={styles.contextEyebrow}>
-              {canGoBack ? currentLevel.parentLabel ?? 'Section' : 'Browse'}
-            </span>
-            <h2 className={styles.contextTitle}>{currentLevel.label}</h2>
-          </div>
-
-          {canGoBack ? (
-            <span className={styles.depthPill}>{stack.length + 1}</span>
-          ) : null}
-        </div>
-
-        <nav className={styles.nav} aria-label="Mobile site navigation">
-          <ul className={styles.list}>
-            {currentLevel.items.map((item, index) => {
-              const key = getItemKey(item, index)
-              const childMenu = hasChildren(item)
-              const href = hasHref(item) ? item.href : undefined
-              const active = isPathMatch(pathname, href)
-
-              return (
-                <li key={key} className={styles.item}>
-                  {childMenu ? (
-                    <button
-                      type="button"
-                      className={styles.navCard}
-                      onClick={() => {
-                        trackEvent('navigation_click', {
-                          component: 'mobile_menu',
-                          section: currentLevel.label,
-                          label: item.label,
-                          href: href ?? 'nested-menu',
-                        })
-                        openChildLevel(item)
-                      }}
-                    >
-                      <div className={styles.navCardBody}>
-                        <div className={styles.navTopline}>
-                          <span className={styles.navLabel}>{item.label}</span>
-                          {item.badge ? (
-                            <span className={styles.badge}>{item.badge}</span>
-                          ) : null}
-                        </div>
-
-                        {item.description ? (
-                          <p className={styles.navDescription}>{item.description}</p>
-                        ) : null}
-                      </div>
-
-                      <span className={styles.chevron} aria-hidden>
-                        →
-                      </span>
-                    </button>
-                  ) : hasHref(item) ? (
-                    <Link
-                      href={item.href}
-                      className={`${styles.navCard} ${active ? styles.navCardActive : ''}`}
-                      onClick={() => {
-                        trackEvent('navigation_click', {
-                          component: 'mobile_menu',
-                          section: currentLevel.label,
-                          label: item.label,
-                          href: item.href,
-                        })
-                        closeMenu()
-                      }}
-                    >
-                      <div className={styles.navCardBody}>
-                        <div className={styles.navTopline}>
-                          <span className={styles.navLabel}>{item.label}</span>
-                          {item.badge ? (
-                            <span className={styles.badge}>{item.badge}</span>
-                          ) : null}
-                        </div>
-
-                        {item.description ? (
-                          <p className={styles.navDescription}>{item.description}</p>
-                        ) : null}
-                      </div>
-
-                      <span className={styles.chevron} aria-hidden>
-                        ↗
-                      </span>
-                    </Link>
-                  ) : (
-                    <div className={`${styles.navCard} ${styles.navCardStatic}`}>
-                      <div className={styles.navCardBody}>
-                        <div className={styles.navTopline}>
-                          <span className={styles.navLabel}>{item.label}</span>
-                          {item.badge ? (
-                            <span className={styles.badge}>{item.badge}</span>
-                          ) : null}
-                        </div>
-
-                        {item.description ? (
-                          <p className={styles.navDescription}>{item.description}</p>
-                        ) : null}
-                      </div>
-                    </div>
-                  )}
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
-
-        <footer className={styles.footer}>
-          <div className={styles.footerCard}>
-            <span className={styles.footerEyebrow}>WaveNation</span>
-            <p className={styles.footerText}>
-              Culture-forward radio, news, video, creators, and community.
-            </p>
-          </div>
-        </footer>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   )
 }

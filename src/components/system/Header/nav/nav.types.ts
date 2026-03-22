@@ -2,6 +2,10 @@ import type { LucideIcon } from 'lucide-react'
 
 export type NavAccent = 'blue' | 'magenta' | 'neutral' | 'news' | string
 
+export type NavBadge = 'live' | 'new' | 'trending' | 'editor-pick'
+
+export type SubnavMode = 'default' | 'hidden'
+
 export type NavFeatured =
   | boolean
   | {
@@ -17,10 +21,11 @@ export interface NavItem {
   href?: string
   description?: string
   icon?: LucideIcon
-  badge?: string
+  badge?: NavBadge
   accent?: NavAccent
   featured?: NavFeatured
   children?: NavItem[]
+  subnavMode?: SubnavMode
 }
 
 export type MainNavId =
@@ -37,11 +42,15 @@ export interface MainNavItem extends NavItem {
   children: NavItem[]
 }
 
-export function hasChildren(item?: NavItem | null): item is NavItem & { children: NavItem[] } {
-  return Array.isArray(item?.children) && item!.children.length > 0
+export function hasChildren(
+  item?: NavItem | null
+): item is NavItem & { children: NavItem[] } {
+  return Array.isArray(item?.children) && item.children.length > 0
 }
 
-export function hasHref(item?: NavItem | null): item is NavItem & { href: string } {
+export function hasHref(
+  item?: NavItem | null
+): item is NavItem & { href: string } {
   return typeof item?.href === 'string' && item.href.length > 0
 }
 

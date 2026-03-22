@@ -1,81 +1,171 @@
 /* ======================================================
-   ACTIONS WRAPPER
+   WRAPPER
 ====================================================== */
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* ======================================================
-   BASE BUTTON & LINK (EXCLUDE MOBILE BUTTON)
+   BASE ACTION (UNIFIED SYSTEM)
 ====================================================== */
 
-.actions button:not(.mobileOnly),
-.actions a {
+.action {
+  position: relative;
+  isolation: isolate;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
 
-  border-radius: 10px;
-  border: none;
-  background: transparent;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    );
+
   color: var(--color-text-primary);
+  text-decoration: none;
 
   cursor: pointer;
 
   transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.15s ease;
+    transform 160ms ease,
+    background 200ms ease,
+    border-color 200ms ease,
+    box-shadow 220ms ease;
 }
 
-/* Icon sizing */
-.actions svg {
+/* Subtle inner glow layer */
+.action::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 255, 255, 0.06),
+      transparent 40%,
+      rgba(255, 0, 255, 0.06)
+    );
+
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ======================================================
+   ICON
+====================================================== */
+
+.action svg {
   width: 18px;
   height: 18px;
   stroke-width: 2;
-}
-
-/* Hover / active */
-.actions button:not(.mobileOnly):hover,
-.actions a:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-accent);
-}
-
-.actions button:not(.mobileOnly):active,
-.actions a:active {
-  transform: scale(0.95);
-}
-
-/* Keyboard focus */
-.actions button:not(.mobileOnly):focus-visible,
-.actions a:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
 }
 
 /* ======================================================
-   MOBILE-ONLY HAMBURGER (DESKTOP DEFAULT)
+   HOVER / ACTIVE (PREMIUM FEEL)
+====================================================== */
+
+.action:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(0, 255, 255, 0.18);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 255, 255, 0.08),
+      rgba(255, 0, 255, 0.05)
+    );
+
+  box-shadow:
+    0 0 10px rgba(0, 255, 255, 0.15),
+    0 0 20px rgba(255, 0, 255, 0.1);
+}
+
+.action:active {
+  transform: scale(0.94);
+}
+
+/* ======================================================
+   FOCUS (ACCESSIBILITY)
+====================================================== */
+
+.action:focus-visible {
+  outline: none;
+
+  border-color: rgba(0, 255, 255, 0.4);
+
+  box-shadow:
+    0 0 0 2px rgba(0, 255, 255, 0.25),
+    0 0 16px rgba(255, 0, 255, 0.15);
+}
+
+/* ======================================================
+   BADGE (FUTURE: CART / NOTIFICATIONS)
+====================================================== */
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    var(--color-electric-blue),
+    var(--color-magenta-pulse)
+  );
+
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 0 6px rgba(0, 255, 255, 0.4),
+    0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+/* ======================================================
+   MOBILE BUTTON
 ====================================================== */
 
 .mobileOnly {
-  display: none; /* GUARANTEED hidden on desktop */
+  display: none;
 }
 
 /* ======================================================
-   COMPACT HEADER ADJUSTMENTS
+   COMPACT HEADER
 ====================================================== */
 
-:global(.header--compact) .actions button:not(.mobileOnly),
-:global(.header--compact) .actions a {
-  width: 32px;
-  height: 32px;
+:global(.header--compact) .action {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
 }
 
 /* ======================================================
@@ -83,19 +173,32 @@
 ====================================================== */
 
 @media (max-width: 1024px) {
+  .actions {
+    gap: 8px;
+  }
+
   /* Hide desktop actions */
-  .actions > button:not(.mobileOnly),
-  .actions > a {
+  .actions > .action:not(.mobileOnly) {
     display: none;
   }
 
-  /* Show hamburger ONLY on mobile */
-  .actions > .mobileOnly {
+  /* Show hamburger */
+  .mobileOnly {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  }
+}
 
-    width: 36px;
-    height: 36px;
+/* ======================================================
+   REDUCED MOTION
+====================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .action {
+    transition: none;
+  }
+
+  .action:hover,
+  .action:active {
+    transform: none;
   }
 }

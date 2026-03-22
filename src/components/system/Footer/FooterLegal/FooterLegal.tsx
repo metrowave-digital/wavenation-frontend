@@ -9,9 +9,6 @@ import { trackEvent } from '@/lib/analytics'
 export function FooterLegal() {
   const hasTracked = useRef(false)
 
-  /* ======================================================
-     Impression Tracking
-  ====================================================== */
   useEffect(() => {
     if (hasTracked.current) return
 
@@ -24,9 +21,6 @@ export function FooterLegal() {
     hasTracked.current = true
   }, [])
 
-  /* ======================================================
-     Link Tracking
-  ====================================================== */
   function trackLegalClick(label: string, href: string) {
     trackEvent('navigation_click', {
       placement: 'footer',
@@ -58,6 +52,7 @@ export function FooterLegal() {
           href="https://metrowavedigital.com"
           target="_blank"
           rel="noopener noreferrer"
+          className={styles.external}
           onClick={() =>
             trackLegalClick(
               'MetroWave Digital',

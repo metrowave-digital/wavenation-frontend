@@ -1,4 +1,4 @@
-import type { NavItem } from './nav.types'
+import type { MainNavItem } from './nav.types'
 import {
   Compass,
   Radio,
@@ -6,13 +6,18 @@ import {
   Tv,
   ShoppingBag,
   Users,
+  Music4,
+  TrendingUp,
+  Sparkles,
+  Mic2,
 } from 'lucide-react'
 
-export const MAIN_NAV: NavItem[] = [
+export const MAIN_NAV: MainNavItem[] = [
   {
     id: 'discover',
     label: 'Discover',
     icon: Compass,
+    badge: 'trending',
     description:
       'Explore music, culture, creators, playlists, charts, and what is moving the culture.',
     children: [
@@ -20,6 +25,7 @@ export const MAIN_NAV: NavItem[] = [
         label: 'Discover Home',
         href: '/discover',
         description: 'The main hub for discovery across WaveNation.',
+        icon: Compass,
         featured: {
           eyebrow: 'Start here',
           title: 'Discover WaveNation',
@@ -31,6 +37,8 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Playlists',
         href: '/music/playlists',
+        icon: Music4,
+        badge: 'new',
         description: 'Curated playlists across moods, genres, and moments.',
         featured: {
           eyebrow: 'Featured',
@@ -44,6 +52,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Editorial Playlists',
             href: '/music/playlists/editorial',
             description: 'Flagship WaveNation playlist brands.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'All Editorial Playlists',
@@ -53,6 +62,7 @@ export const MAIN_NAV: NavItem[] = [
               {
                 label: 'Hitlist 20',
                 href: '/music/playlists/editorial/hitlist-20',
+                badge: 'editor-pick',
                 description: 'WaveNation’s flagship ranking and playlist brand.',
               },
               {
@@ -71,6 +81,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Mood & Vibes',
             href: '/music/playlists/moods',
             description: 'Playlists built around mood, energy, and feel.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Late Night',
@@ -98,6 +109,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Genre Playlists',
             href: '/music/playlists/genres',
             description: 'Genre-based playlist hubs.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'R&B',
@@ -126,6 +138,8 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Charts',
         href: '/charts',
+        icon: TrendingUp,
+        badge: 'trending',
         description: 'Weekly rankings tracking what is rising and resonating.',
         featured: {
           eyebrow: 'Charts',
@@ -139,6 +153,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Chart Hubs',
             href: '/charts',
             description: 'Explore major chart destinations.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Charts Home',
@@ -148,6 +163,7 @@ export const MAIN_NAV: NavItem[] = [
               {
                 label: 'Trending',
                 href: '/charts/trending',
+                badge: 'trending',
                 description: 'Fast risers, breakouts, and new entries.',
               },
               {
@@ -166,10 +182,12 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Flagship Charts',
             href: '/charts/flagship',
             description: 'WaveNation’s signature ranking products.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Hitlist 20',
                 href: '/charts/hitlist-20/current',
+                badge: 'editor-pick',
                 description: 'WaveNation’s flagship chart.',
               },
             ],
@@ -178,6 +196,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Genre Charts',
             href: '/charts/genres',
             description: 'Genre-specific rankings.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'R&B / Soul',
@@ -211,12 +230,15 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Creators',
         href: '/creators',
+        icon: Sparkles,
         description: 'Artists, hosts, and cultural voices.',
         children: [
           {
             label: 'Creator Hub',
             href: '/creators',
+            icon: Sparkles,
             description: 'Meet WaveNation creators and contributors.',
+            subnavMode: 'hidden',
             featured: {
               eyebrow: 'Creator Hub',
               title: 'Meet the voices',
@@ -243,6 +265,7 @@ export const MAIN_NAV: NavItem[] = [
               {
                 label: 'Join as a Creator',
                 href: '/creators/join',
+                badge: 'new',
                 description: 'Apply to become part of the network.',
               },
             ],
@@ -256,16 +279,20 @@ export const MAIN_NAV: NavItem[] = [
     id: 'onair',
     label: 'On-Air',
     icon: Radio,
+    badge: 'live',
     description: 'Live radio, scheduled shows, hosts, and what’s playing now.',
     children: [
       {
         label: 'On-Air Home',
         href: '/radio',
+        icon: Radio,
         description: 'Listen live and explore WaveNation Radio.',
       },
       {
         label: 'Listen',
         href: '/radio/live',
+        icon: Radio,
+        badge: 'live',
         description: 'Live stream and real-time radio experience.',
         featured: {
           eyebrow: 'Live now',
@@ -279,15 +306,18 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Live Experience',
             href: '/radio/live',
             description: 'Access the current live stream and metadata.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Listen Live',
                 href: '/radio/live',
+                badge: 'live',
                 description: 'Listen to WaveNation live.',
               },
               {
                 label: 'Now Playing',
                 href: '/radio/now-playing',
+                badge: 'trending',
                 description: 'See what is currently in rotation.',
               },
             ],
@@ -303,6 +333,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Schedule Views',
             href: '/radio/schedule',
             description: 'Browse daily and weekly schedule views.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Today',
@@ -332,6 +363,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Show Categories',
             href: '/radio/shows',
             description: 'Featured and signature programming.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'All Shows',
@@ -341,6 +373,7 @@ export const MAIN_NAV: NavItem[] = [
               {
                 label: 'Featured Shows',
                 href: '/radio/shows/featured',
+                badge: 'editor-pick',
                 description: 'Highlighted signature programs.',
               },
               {
@@ -366,242 +399,262 @@ export const MAIN_NAV: NavItem[] = [
   },
 
   {
-  id: 'news',
-  label: 'News',
-  icon: Newspaper,
-  description:
-    'Culture-led journalism across music, entertainment, business, sports, and community.',
-  children: [
-    {
-      label: 'News Home',
-      href: '/news',
-      description: 'The main newsroom hub.',
-    },
-    {
-  label: 'Music',
-  href: '/news/music',
-  description: 'Music reporting, releases, interviews, charts, and industry coverage.',
-  accent: 'news',
-  children: [
-    {
-      label: 'Artist Interviews',
-      href: '/news/music/artists',
-      description: 'Interviews, artist conversations, and profiles.',
-      featured: true,
-      children: [
-        {
-          label: 'New Music',
-          href: '/news/music/new-music',
-          description: 'Fresh singles, albums, EPs, and release coverage.',
-        },
-        {
-          label: 'Artists',
-          href: '/news/music/artists',
-          description: 'Artist interviews, profiles, and conversations.',
-        },
-        {
-          label: 'Tours',
-          href: '/news/music/tours',
-          description: 'Tour announcements, live shows, and concert coverage.',
-        },
-        {
-          label: 'Awards',
-          href: '/news/music/awards',
-          description: 'Award nominations, wins, and ceremony coverage.',
-        },
-        {
-          label: 'WaveNation Originals',
-          href: '/news/music/wavenation-originals',
-          description: 'Original music interviews, features, and exclusives.',
-        },
-      ],
-    },
-    {
-      label: 'Charts & Rankings',
-      href: '/news/music/charts',
-      description: 'Chart movement, rankings, genre performance, and legacy context.',
-      featured: true,
-      children: [
-        {
-          label: 'Charts',
-          href: '/news/music/charts',
-          description: 'Chart coverage, rankings, and breakout artists.',
-        },
-        {
-          label: 'Genres',
-          href: '/news/music/genres',
-          description: 'Genre-specific reporting and movements.',
-        },
-        {
-          label: 'Legacy',
-          href: '/news/music/legacy',
-          description: 'Legacy artists, catalog impact, and retrospectives.',
-        },
-      ],
-    },
-    {
-      label: 'Industry News',
-      href: '/news/music/industry',
-      description: 'Labels, deals, producers, and business shifts.',
-      featured: true,
-      children: [
-        {
-          label: 'Industry',
-          href: '/news/music/industry',
-          description: 'Label news, executive changes, and business developments.',
-        },
-        {
-          label: 'Producers',
-          href: '/news/music/producers',
-          description: 'Producer spotlights and production culture.',
-        },
-      ],
-    },
-  ],
-},
-    {
-      label: 'Film & TV',
-      href: '/news/film-tv',
-      description: 'Film, television, streaming, and entertainment coverage.',
-      children: [
-        {
-          label: 'Coverage Areas',
-          href: '/news/film-tv',
-          description: 'Explore film and TV reporting by topic.',
-          children: [
-            {
-              label: 'Film News',
-              href: '/news/film-tv/film',
-              description: 'Movie releases, premieres, and industry updates.',
-            },
-            {
-              label: 'TV News',
-              href: '/news/film-tv/tv',
-              description: 'Series, renewals, cancellations, and buzz.',
-            },
-            {
-              label: 'Reviews',
-              href: '/news/film-tv/reviews',
-              description: 'Reviews and cultural takes.',
-            },
-            {
-              label: 'Interviews',
-              href: '/news/film-tv/interviews',
-              description: 'Conversations with talent and creators.',
-            },
-            {
-              label: 'Streaming',
-              href: '/news/film-tv/streaming',
-              description: 'What is landing across major platforms.',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: 'Culture & Politics',
-      href: '/news/culture-politics',
-      description: 'Cultural commentary, policy, and community conversations.',
-      children: [
-        {
-          label: 'Coverage Areas',
-          href: '/news/culture-politics',
-          description: 'Explore culture and politics coverage.',
-          children: [
-            {
-              label: 'Culture',
-              href: '/news/culture-politics/culture',
-              description: 'Identity, conversation, and community stories.',
-            },
-            {
-              label: 'Politics',
-              href: '/news/culture-politics/politics',
-              description: 'Policy, civic issues, and public life.',
-            },
-            {
-              label: 'Opinion & Analysis',
-              href: '/news/culture-politics/analysis',
-              description: 'Context, commentary, and deeper takes.',
-            },
-            {
-              label: 'Social Justice',
-              href: '/news/culture-politics/social-justice',
-              description: 'Equity, advocacy, and movement coverage.',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: 'Business & Technology',
-      href: '/news/business-technology',
-      description: 'Business, media, creator economy, and technology.',
-      children: [
-        {
-          label: 'Coverage Areas',
-          href: '/news/business-technology',
-          description: 'Explore business and technology reporting.',
-          children: [
-            {
-              label: 'Media Business',
-              href: '/news/business-technology/media-business',
-              description: 'Deals, strategy, and media shifts.',
-            },
-            {
-              label: 'Creator Economy',
-              href: '/news/business-technology/creator-economy',
-              description: 'Monetization, platforms, and creator growth.',
-            },
-            {
-              label: 'Technology',
-              href: '/news/business-technology/technology',
-              description: 'Digital tools, platforms, innovation, and product shifts.',
-            },
-            {
-              label: 'Streaming Business',
-              href: '/news/business-technology/streaming',
-              description: 'Platform moves and streaming economics.',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: 'Sports',
-      href: '/news/sports',
-      description: 'Sports culture, headlines, athlete stories, and moments.',
-      children: [
-        {
-          label: 'Coverage Areas',
-          href: '/news/sports',
-          description: 'Explore sports coverage by topic.',
-          children: [
-            {
-              label: 'Sports News',
-              href: '/news/sports/news',
-              description: 'Top sports headlines and updates.',
-            },
-            {
-              label: 'Athlete Culture',
-              href: '/news/sports/culture',
-              description: 'Athletes, style, impact, and cultural influence.',
-            },
-            {
-              label: 'Interviews',
-              href: '/news/sports/interviews',
-              description: 'Conversations with athletes and voices in sports.',
-            },
-            {
-              label: 'Highlights & Viral',
-              href: '/news/sports/viral',
-              description: 'Big moments, internet reactions, and buzz.',
-            },
-          ],
-        },
-      ],
-    },
-  ],
-},
+    id: 'news',
+    label: 'News',
+    icon: Newspaper,
+    badge: 'trending',
+    description:
+      'Culture-led journalism across music, entertainment, business, sports, and community.',
+    children: [
+      {
+        label: 'News Home',
+        href: '/news',
+        icon: Newspaper,
+        description: 'The main newsroom hub.',
+      },
+      {
+        label: 'Music',
+        href: '/news/music',
+        icon: Music4,
+        badge: 'trending',
+        description:
+          'Music reporting, releases, interviews, charts, and industry coverage.',
+        accent: 'news',
+        children: [
+          {
+            label: 'Artist Interviews',
+            href: '/news/music/artists',
+            description: 'Interviews, artist conversations, and profiles.',
+            featured: true,
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'New Music',
+                href: '/news/music/new-music',
+                badge: 'new',
+                description: 'Fresh singles, albums, EPs, and release coverage.',
+              },
+              {
+                label: 'Artists',
+                href: '/news/music/artists',
+                description: 'Artist interviews, profiles, and conversations.',
+              },
+              {
+                label: 'Tours',
+                href: '/news/music/tours',
+                description: 'Tour announcements, live shows, and concert coverage.',
+              },
+              {
+                label: 'Awards',
+                href: '/news/music/awards',
+                description: 'Award nominations, wins, and ceremony coverage.',
+              },
+              {
+                label: 'WaveNation Originals',
+                href: '/news/music/wavenation-originals',
+                badge: 'editor-pick',
+                description: 'Original music interviews, features, and exclusives.',
+              },
+            ],
+          },
+          {
+            label: 'Charts & Rankings',
+            href: '/news/music/charts',
+            description:
+              'Chart movement, rankings, genre performance, and legacy context.',
+            featured: true,
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'Charts',
+                href: '/news/music/charts',
+                badge: 'trending',
+                description: 'Chart coverage, rankings, and breakout artists.',
+              },
+              {
+                label: 'Genres',
+                href: '/news/music/genres',
+                description: 'Genre-specific reporting and movements.',
+              },
+              {
+                label: 'Legacy',
+                href: '/news/music/legacy',
+                description: 'Legacy artists, catalog impact, and retrospectives.',
+              },
+            ],
+          },
+          {
+            label: 'Industry News',
+            href: '/news/music/industry',
+            description: 'Labels, deals, producers, and business shifts.',
+            featured: true,
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'Industry',
+                href: '/news/music/industry',
+                description: 'Label news, executive changes, and business developments.',
+              },
+              {
+                label: 'Producers',
+                href: '/news/music/producers',
+                description: 'Producer spotlights and production culture.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: 'Film & TV',
+        href: '/news/film-tv',
+        icon: Tv,
+        badge: 'editor-pick',
+        description: 'Film, television, streaming, and entertainment coverage.',
+        children: [
+          {
+            label: 'Coverage Areas',
+            href: '/news/film-tv',
+            description: 'Explore film and TV reporting by topic.',
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'Film News',
+                href: '/news/film-tv/film',
+                description: 'Movie releases, premieres, and industry updates.',
+              },
+              {
+                label: 'TV News',
+                href: '/news/film-tv/tv',
+                description: 'Series, renewals, cancellations, and buzz.',
+              },
+              {
+                label: 'Reviews',
+                href: '/news/film-tv/reviews',
+                description: 'Reviews and cultural takes.',
+              },
+              {
+                label: 'Interviews',
+                href: '/news/film-tv/interviews',
+                icon: Mic2,
+                description: 'Conversations with talent and creators.',
+              },
+              {
+                label: 'Streaming',
+                href: '/news/film-tv/streaming',
+                description: 'What is landing across major platforms.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: 'Culture & Politics',
+        href: '/news/culture-politics',
+        description: 'Cultural commentary, policy, and community conversations.',
+        children: [
+          {
+            label: 'Coverage Areas',
+            href: '/news/culture-politics',
+            description: 'Explore culture and politics coverage.',
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'Culture',
+                href: '/news/culture-politics/culture',
+                description: 'Identity, conversation, and community stories.',
+              },
+              {
+                label: 'Politics',
+                href: '/news/culture-politics/politics',
+                description: 'Policy, civic issues, and public life.',
+              },
+              {
+                label: 'Opinion & Analysis',
+                href: '/news/culture-politics/analysis',
+                description: 'Context, commentary, and deeper takes.',
+              },
+              {
+                label: 'Social Justice',
+                href: '/news/culture-politics/social-justice',
+                description: 'Equity, advocacy, and movement coverage.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: 'Business & Technology',
+        href: '/news/business-technology',
+        description: 'Business, media, creator economy, and technology.',
+        children: [
+          {
+            label: 'Coverage Areas',
+            href: '/news/business-technology',
+            description: 'Explore business and technology reporting.',
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'Media Business',
+                href: '/news/business-technology/media-business',
+                description: 'Deals, strategy, and media shifts.',
+              },
+              {
+                label: 'Creator Economy',
+                href: '/news/business-technology/creator-economy',
+                description: 'Monetization, platforms, and creator growth.',
+              },
+              {
+                label: 'Technology',
+                href: '/news/business-technology/technology',
+                description: 'Digital tools, platforms, innovation, and product shifts.',
+              },
+              {
+                label: 'Streaming Business',
+                href: '/news/business-technology/streaming',
+                description: 'Platform moves and streaming economics.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: 'Sports',
+        href: '/news/sports',
+        description: 'Sports culture, headlines, athlete stories, and moments.',
+        children: [
+          {
+            label: 'Coverage Areas',
+            href: '/news/sports',
+            description: 'Explore sports coverage by topic.',
+            subnavMode: 'hidden',
+            children: [
+              {
+                label: 'Sports News',
+                href: '/news/sports/news',
+                description: 'Top sports headlines and updates.',
+              },
+              {
+                label: 'Athlete Culture',
+                href: '/news/sports/culture',
+                description: 'Athletes, style, impact, and cultural influence.',
+              },
+              {
+                label: 'Interviews',
+                href: '/news/sports/interviews',
+                description: 'Conversations with athletes and voices in sports.',
+              },
+              {
+                label: 'Highlights & Viral',
+                href: '/news/sports/viral',
+                badge: 'trending',
+                description: 'Big moments, internet reactions, and buzz.',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 
   {
     id: 'watch',
@@ -612,11 +665,14 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Watch Home',
         href: '/tv',
+        icon: Tv,
         description: 'Explore live TV, originals, and featured video.',
       },
       {
         label: 'Live TV',
         href: '/tv/live',
+        icon: Tv,
+        badge: 'live',
         description: 'Watch WaveNation live.',
         featured: {
           eyebrow: 'Now streaming',
@@ -628,12 +684,15 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Series',
         href: '/tv/series',
+        icon: Sparkles,
+        badge: 'new',
         description: 'Original episodic and documentary programming.',
         children: [
           {
             label: 'Series Library',
             href: '/tv/series',
             description: 'Browse episodic and documentary programming.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'All Series',
@@ -643,6 +702,7 @@ export const MAIN_NAV: NavItem[] = [
               {
                 label: 'Featured Series',
                 href: '/tv/series/featured',
+                badge: 'editor-pick',
                 description: 'Highlighted programs and signature shows.',
               },
               {
@@ -657,11 +717,13 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Interviews',
         href: '/tv/interviews',
+        icon: Mic2,
         description: 'Conversations with talent and culture-makers.',
       },
       {
         label: 'Creator Spotlights',
         href: '/tv/creators',
+        icon: Sparkles,
         description: 'Featured creators and visual storytelling.',
       },
     ],
@@ -676,6 +738,7 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Shop Home',
         href: '/shop',
+        icon: ShoppingBag,
         description: 'Browse all merchandise and featured collections.',
       },
       {
@@ -687,6 +750,7 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Browse Store',
             href: '/shop/all',
             description: 'Browse all shop destinations.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Shop All',
@@ -696,6 +760,7 @@ export const MAIN_NAV: NavItem[] = [
               {
                 label: 'Limited Drops',
                 href: '/shop/drops',
+                badge: 'new',
                 description: 'Exclusive and time-sensitive releases.',
               },
               {
@@ -719,11 +784,13 @@ export const MAIN_NAV: NavItem[] = [
       {
         label: 'Connect Home',
         href: '/connect',
+        icon: Users,
         description: 'Discover ways to join, submit, partner, and connect.',
       },
       {
         label: 'Get Involved',
         href: '/connect',
+        badge: 'new',
         description: 'Ways to contribute, partner, and reach the team.',
         featured: {
           eyebrow: 'Get involved',
@@ -737,10 +804,12 @@ export const MAIN_NAV: NavItem[] = [
             label: 'Opportunities',
             href: '/connect',
             description: 'Submission and partnership pathways.',
+            subnavMode: 'hidden',
             children: [
               {
                 label: 'Creator Hub',
                 href: '/creators/join',
+                badge: 'new',
                 description: 'Join WaveNation as a creator.',
               },
               {

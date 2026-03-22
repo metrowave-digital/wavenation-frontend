@@ -7,9 +7,6 @@ import { trackEvent } from '@/lib/analytics'
 export function FooterContact() {
   const hasTracked = useRef(false)
 
-  /* ======================================================
-     Impression Tracking
-  ====================================================== */
   useEffect(() => {
     if (hasTracked.current) return
 
@@ -21,9 +18,6 @@ export function FooterContact() {
     hasTracked.current = true
   }, [])
 
-  /* ======================================================
-     Interaction Tracking
-  ====================================================== */
   function trackInteraction(type: 'email_click' | 'focus') {
     trackEvent('content_click', {
       placement: 'footer',
@@ -33,27 +27,29 @@ export function FooterContact() {
   }
 
   return (
-    <div
+    <section
       className={styles.contact}
-      role="contentinfo"
-      aria-label="WaveNation Media contact information"
+      aria-labelledby="footer-contact-heading"
     >
-      <h4 className={styles.heading}>Contact</h4>
+      <h4
+        id="footer-contact-heading"
+        className={styles.heading}
+      >
+        Contact
+      </h4>
 
-      <p className={styles.line}>
-        <a
-          href="mailto:hello@wavenation.online"
-          className={styles.email}
-          onClick={() => trackInteraction('email_click')}
-          onFocus={() => trackInteraction('focus')}
-        >
-          hello@wavenation.online
-        </a>
-      </p>
+      <a
+        href="mailto:hello@wavenation.online"
+        className={styles.email}
+        onClick={() => trackInteraction('email_click')}
+        onFocus={() => trackInteraction('focus')}
+      >
+        hello@wavenation.online
+      </a>
 
       <p className={styles.subtext}>
         Press, partnerships, and creator inquiries welcome.
       </p>
-    </div>
+    </section>
   )
 }
