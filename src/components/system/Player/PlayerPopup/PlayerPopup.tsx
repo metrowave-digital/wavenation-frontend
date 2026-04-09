@@ -5,6 +5,9 @@ import { MobilePlayerPopup } from './MobilePlayerPopup'
 import { DesktopPlayerPopup } from './DesktopPlayerPopup'
 import { usePlayerPopupData, type RecentTrack } from './usePlayerPopupData'
 
+// Matches the 960px breakpoint we used in the Player Shell CSS
+const DESKTOP_BREAKPOINT = '(min-width: 960px)'
+
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState<boolean | null>(null)
 
@@ -16,33 +19,29 @@ function useMediaQuery(query: string) {
 
     updateMatch()
 
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', updateMatch)
-      return () => mediaQuery.removeEventListener('change', updateMatch)
-    }
-
-    mediaQuery.addListener(updateMatch)
-    return () => mediaQuery.removeListener(updateMatch)
+    mediaQuery.addEventListener('change', updateMatch)
+    return () => mediaQuery.removeEventListener('change', updateMatch)
   }, [query])
 
   return matches
 }
 
-interface PlayerPopupProps {
+export interface PlayerPopupProps {
   open: boolean
   onClose: () => void
 }
 
 export function PlayerPopup({ open, onClose }: PlayerPopupProps) {
-  const isDesktop = useMediaQuery('(min-width: 900px)')
+  const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT)
 
-  const recent: RecentTrack[] = [] // TODO: replace with Redis-backed API
+  // TODO: Replace with Redis-backed API or Context data
+  const recent: RecentTrack[] = [] 
 
   const { normalizedNow, showData, recentFive, isPlaying } =
     usePlayerPopupData(recent)
 
-  if (!open) return null
-  if (isDesktop === null) return null
+  // Prevent hydration mismatch or rendering before breakpoint is known
+  if (!open || isDesktop === null) return null
 
   const sharedProps = {
     open,

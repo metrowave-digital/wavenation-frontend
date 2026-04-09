@@ -6,18 +6,21 @@ import { usePathname } from 'next/navigation'
 import styles from './Header.module.css'
 import { HeaderProvider } from './Header.context'
 
-import { BrandBar } from './BrandBar/BrandBar'
-import { MainNav } from './MainNav/MainNav'
-import { SubNav } from './SubNav/SubNav'
-import { MobileSubNav } from './MobileSubNav/MobileSubNav'
+// Child Components
+import { BrandLogo } from './BrandLogo/BrandLogo'
+import { DynamicTicker } from './DynamicTicker/DynamicTicker'
 import { HeaderActions } from './HeaderActions/HeaderActions'
+import { BroadcastNav } from './BroadcastNav/BroadcastNav'
+import { HeaderMeta } from './HeaderMeta/HeaderMeta'
+
+// Portals & Mobile
+import { MobileMenuToggle } from './MobileMenu/MobileMenuToggle'
 import { MobileMenu } from './MobileMenu/MobileMenu'
 import { SearchPopup } from './Popups/SearchPopup'
 import { ProfilePopup } from './Popups/ProfilePopup'
+import { NotificationPopup } from './Popups/NotificationPopup' // 1. Added Import
 
-import { MAIN_NAV } from './nav/nav.config'
-import type { MainNavItem } from './nav/nav.types'
-
+// Utilities
 function normalizePathname(pathname: string | null): string {
   if (!pathname) return '/'
   if (pathname !== '/' && pathname.endsWith('/')) {
@@ -29,61 +32,68 @@ function normalizePathname(pathname: string | null): string {
 export function Header() {
   const pathname = usePathname()
 
-  const currentPath = useMemo(() => normalizePathname(pathname), [pathname])
-  const navItems = useMemo(() => MAIN_NAV as MainNavItem[], [])
+  const currentPath = useMemo(
+    () => normalizePathname(pathname),
+    [pathname]
+  )
 
   return (
     <HeaderProvider>
       <>
+        {/* Skip Link for Accessibility */}
         <a href="#main-content" className={styles.skipLink}>
           Skip to main content
         </a>
 
         <header className={styles.root} role="banner">
-          <div className={styles.surface} aria-hidden="true" />
+          {/* =============================
+              TOP ROW: Brand, Nav, Actions
+              [BrandLogo][BroadcastNav][HeaderActions]
+          ============================== */}
+          <div className={styles.topRow}>
+            <div className={styles.brandZone}>
+              <BrandLogo />
+            </div>
 
-          <div className={styles.topBar}>
-            <div className={styles.topBarInner}>
-              <div className={styles.brandZone}>
-                <BrandBar />
-              </div>
+            <div className={styles.navZone}>
+              <BroadcastNav currentPath={currentPath} />
+            </div>
 
-              <div
-                className={styles.desktopNavZone}
-                aria-label="Primary navigation"
-              >
-                <MainNav />
-              </div>
-
-              <div className={styles.actionsZone}>
+            <div className={styles.actionsZone}>
+              <div className={styles.desktopActions}>
                 <HeaderActions />
               </div>
+              <div className={styles.mobileToggleWrapper}>
+                <MobileMenuToggle />
+              </div>
             </div>
           </div>
 
-          <div className={styles.subNavRail}>
-            <div className={styles.subNavRailInner}>
-              <SubNav
-                items={navItems}
-                pathname={currentPath}
-                className={styles.desktopSubNav}
-              />
-
-              <MobileSubNav
-                items={navItems}
-                pathname={currentPath}
-                className={styles.mobileSubNav}
-              />
+          {/* =============================
+              BOTTOM ROW: Ticker, Space, Meta
+              [DynamicTicker][SPACE][HeaderMeta]
+          ============================== */}
+          <div className={styles.bottomRow}>
+            <div className={styles.tickerZone}>
+              <DynamicTicker />
+            </div>
+            
+            {/* The gap/space is handled by justify-content: space-between in CSS */}
+            
+            <div className={styles.metaZone}>
+              <HeaderMeta />
             </div>
           </div>
-
-          <div className={styles.bottomLine} aria-hidden="true" />
         </header>
 
+        {/* =============================
+            PORTALS
+        ============================== */}
         <div className={styles.portalLayer}>
           <MobileMenu />
           <SearchPopup />
           <ProfilePopup />
+          <NotificationPopup /> {/* 2. Added to portal layer */}
         </div>
       </>
     </HeaderProvider>

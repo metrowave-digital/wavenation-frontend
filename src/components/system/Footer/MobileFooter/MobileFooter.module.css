@@ -1,99 +1,52 @@
 .mobile {
-  display: grid;
-  gap: 1rem;
+  padding: 3rem 1.5rem 8rem; /* Extra bottom padding for the fixed player */
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
 
 .header {
-  display: grid;
-  gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .copy {
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .tagline {
-  font-size: 0.86rem;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  color: #52525b;
+  text-transform: uppercase;
 }
 
 .nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem 0.65rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
 .navLink {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.2rem;
-  padding: 0.5rem 0.8rem;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.82);
+  color: #a1a1aa;
   text-decoration: none;
   font-size: 0.9rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition:
-    color 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease;
-}
-
-.navLink:hover,
-.navLink:focus-visible {
-  outline: none;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-.contact {
-  padding-top: 0.15rem;
 }
 
 .email {
-  color: #ffffff;
+  color: #39FF14;
   text-decoration: none;
-  font-size: 0.95rem;
   font-weight: 600;
-  line-height: 1.4;
-}
-
-.email:focus-visible,
-.email:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
 }
 
 .social {
   display: flex;
-  align-items: center;
-  gap: 0.65rem;
+  gap: 1.5rem;
 }
 
 .socialLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.35rem;
-  height: 2.35rem;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.82);
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.socialLink:focus-visible,
-.socialLink:hover {
-  outline: none;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
+  color: #71717a;
 }

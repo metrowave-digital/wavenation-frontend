@@ -1,265 +1,25 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1400;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(16px);
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background:
-    radial-gradient(circle at top, rgba(78, 118, 255, 0.14), transparent 40%),
-    rgba(4, 8, 16, 0.72);
-  backdrop-filter: blur(12px) saturate(130%);
-  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .sheet {
-  position: relative;
   width: 100%;
-  max-height: min(90vh, 840px);
-  overflow: auto;
-  border-radius: 1.75rem 1.75rem 0 0;
-  padding: 0.8rem 1rem 1.25rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015)),
-    rgba(8, 12, 22, 0.98);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 -22px 48px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.handleRow {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 0.75rem;
-  padding-bottom: 0.7rem;
-  background: linear-gradient(180deg, rgba(8, 12, 22, 0.98), rgba(8, 12, 22, 0.82));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.handle {
-  justify-self: center;
-  width: 3rem;
-  height: 0.34rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.24);
-}
-
-.close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.35rem;
-  height: 2.35rem;
-  border: 0;
-  border-radius: 999px;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.92);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.nowRow {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.15rem 0 1rem;
-}
-
-.artwork {
-  position: relative;
-  width: 96px;
-  height: 96px;
+  height: 94vh; /* Leaves a tiny gap at the top to show the background */
+  background: linear-gradient(180deg, rgba(24, 24, 27, 0.95) 0%, rgba(9, 9, 11, 1) 100%);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  border-radius: 1.2rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
-    rgba(14, 18, 30, 0.95);
-}
-
-.artworkSkeleton {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      110deg,
-      rgba(255, 255, 255, 0.05) 8%,
-      rgba(255, 255, 255, 0.11) 18%,
-      rgba(255, 255, 255, 0.05) 33%
-    );
-  background-size: 220% 100%;
-  animation: shimmer 1.8s linear infinite;
-}
-
-.image {
-  object-fit: cover;
-}
-
-.meta {
-  min-width: 0;
-}
-
-.track {
-  font-size: 1.18rem;
-  line-height: 1.08;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #fff;
-}
-
-.artist {
-  margin-top: 0.28rem;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.68);
-}
-
-.soundBars {
-  display: inline-flex;
-  align-items: end;
-  gap: 0.2rem;
-  height: 1.15rem;
-  margin-top: 0.55rem;
-}
-
-.soundBars span {
-  display: block;
-  width: 0.22rem;
-  height: 0.45rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.38);
-}
-
-.playing span:nth-child(1) {
-  animation: bars 0.9s ease-in-out infinite;
-}
-
-.playing span:nth-child(2) {
-  animation: bars 0.9s ease-in-out 0.15s infinite;
-}
-
-.playing span:nth-child(3) {
-  animation: bars 0.9s ease-in-out 0.3s infinite;
-}
-
-.showCard {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: 0.8rem;
-  align-items: center;
-  padding: 0.9rem;
-  margin-bottom: 1rem;
-  border-radius: 1.15rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
-    rgba(15, 19, 31, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.showArt {
-  width: 48px;
-  height: 48px;
-  overflow: hidden;
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.showArtSkeleton {
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(
-      110deg,
-      rgba(255, 255, 255, 0.05) 8%,
-      rgba(255, 255, 255, 0.11) 18%,
-      rgba(255, 255, 255, 0.05) 33%
-    );
-  background-size: 220% 100%;
-  animation: shimmer 1.8s linear infinite;
-}
-
-.showImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.showMeta {
-  min-width: 0;
-}
-
-.showTitle {
-  font-size: 0.97rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.showHosts {
-  margin-top: 0.2rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.64);
-}
-
-.showTime {
-  margin-top: 0.34rem;
-  font-size: 0.8rem;
-  color: rgba(137, 184, 255, 0.92);
-}
-
-.sectionTitle {
-  margin-bottom: 0.65rem;
-  font-size: 0.73rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.recent {
-  display: grid;
-  gap: 0.55rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.recentItem {
-  padding: 0.82rem 0.9rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.055);
-}
-
-.recentText {
-  min-width: 0;
-}
-
-.recentTrack {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.93rem;
-  font-weight: 650;
-  color: #fff;
-}
-
-.recentArtist {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-top: 0.18rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.62);
-}
-
-.empty {
-  padding: 0.9rem 0 0.2rem;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.58);
 }
 
 .srOnly {
@@ -269,28 +29,279 @@
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  white-space: nowrap;
-  border: 0;
   clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+/* ==========================================================================
+   Header & Drag Handle
+   ========================================================================== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  /* An invisible area that makes grabbing the top of the sheet easier */
+  touch-action: pan-y; 
 }
 
-@keyframes bars {
-  0%,
-  100% {
-    height: 0.4rem;
-    opacity: 0.55;
-  }
-  50% {
-    height: 1rem;
-    opacity: 1;
-  }
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #a1a1aa;
+}
+
+.headerSpacer {
+  width: 44px; /* Balances the flex layout against the close button */
+}
+
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--wn-color-electric-blue, #00FFFF);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ==========================================================================
+   Scrollable Content Area
+   ========================================================================== */
+.contentScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem 3rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Artwork Zone */
+.artworkZone {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.artwork {
+  position: relative;
+  width: 100%;
+  max-width: 360px; /* Looks great on all phones */
+  aspect-ratio: 1/1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #000;
+}
+
+.artworkSkeleton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
+}
+
+.skeletonIcon {
+  color: #27272a;
+}
+
+.image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Track Meta Zone */
+.metaZone {
+  margin-bottom: 2.5rem;
+}
+
+.trackTitleWrap {
+  margin-bottom: 0.25rem;
+}
+
+.track {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.artistRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.artist {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #a1a1aa;
+  margin: 0;
+}
+
+/* Neon EQ */
+.soundBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.soundBars.playing {
+  opacity: 1;
+}
+
+.soundBars span {
+  width: 3px;
+  background-color: var(--wn-color-electric-blue, #00FFFF);
+  border-radius: 2px 2px 0 0;
+  animation: equalize 1s infinite alternate ease-in-out;
+}
+
+.soundBars span:nth-child(1) { animation-delay: 0.1s; height: 8px; }
+.soundBars span:nth-child(2) { animation-delay: 0.3s; height: 14px; }
+.soundBars span:nth-child(3) { animation-delay: 0.2s; height: 6px; }
+
+/* Show Card */
+.showCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.showArt {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #18181b;
+}
+
+.showArtSkeleton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.showMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.showEyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--wn-color-magenta-pulse, #FF00FF);
+  margin-bottom: 0.15rem;
+}
+
+.showTitle {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.showTime {
+  font-size: 0.8rem;
+  color: #71717a;
+}
+
+/* History Zone */
+.historyZone {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #71717a;
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.recentItem {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.recentItem:last-child {
+  border-bottom: none;
+}
+
+.recentTrack {
+  font-weight: 500;
+  color: #d4d4d8;
+  font-size: 1rem;
+  margin-bottom: 0.1rem;
+}
+
+.recentArtist {
+  color: #71717a;
+  font-size: 0.85rem;
+}
+
+.empty {
+  color: #52525b;
+  font-size: 0.9rem;
+  font-style: italic;
 }

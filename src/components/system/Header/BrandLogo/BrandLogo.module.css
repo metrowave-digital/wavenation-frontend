@@ -1,0 +1,89 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* === MONOGRAM === */
+.monogramShell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(6px);
+  opacity: 0;
+  animation: logoIn 0.6s ease forwards;
+}
+
+@keyframes logoIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === TEXT STACK === */
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+/* === WORDMARK === */
+.wordmark {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 1rem;
+
+  transform: translateY(8px);
+  opacity: 0;
+  animation: textIn 0.6s ease forwards;
+  animation-delay: 0.1s;
+}
+
+/* === TAGLINE === */
+.tagline {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+
+  transform: translateY(10px);
+  opacity: 0;
+  animation: textIn 0.6s ease forwards;
+  animation-delay: 0.2s;
+
+  transition: 
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    height 0.3s ease,
+    margin 0.3s ease;
+}
+
+/* Scroll state */
+.taglineHidden {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+}
+
+/* Shared text animation */
+@keyframes textIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === HOVER MICRO INTERACTION === */
+.root:hover .monogramShell {
+  transform: scale(1.08);
+}
+
+.root:hover .wordmark {
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}

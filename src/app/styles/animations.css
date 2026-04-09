@@ -1,0 +1,135 @@
+/* styles/animations.css */
+@import './tokens.css';
+
+/* =========================================
+   KEYFRAMES
+   ========================================= */
+
+/* 1. Cinematic Fades (Part 6.1 - Item 5) */
+@keyframes cinematic-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* 2. Waveform Oscillations (Part 6.1 - Item 1) */
+@keyframes waveform-pulse {
+  0% { transform: scaleY(0.8); }
+  50% { transform: scaleY(1.2); }
+  100% { transform: scaleY(0.8); }
+}
+
+/* 3. Gradient Energy Flow / Sweep (Part 6.1 - Item 2) */
+@keyframes gradient-sweep {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 4. Micro-Animation Logo Pulse (Part 6.2) */
+@keyframes micro-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 179, 255, 0); }
+  50% { transform: scale(1.05); box-shadow: var(--wn-glow-blue); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 179, 255, 0); }
+}
+
+/* 5. Kinetic Typography Slides (Part 6.1 - Item 4) */
+@keyframes kinetic-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 6. Neon Line Trace / Wipe (Part 6.3D - Item 2) */
+@keyframes neon-line-trace {
+  from { width: 0; opacity: 1; }
+  to { width: 100%; opacity: 1; }
+}
+
+/* =========================================
+   ANIMATION UTILITY CLASSES
+   ========================================= */
+
+/* Cinematic (Interviews, News, Docs, WaveNation One) */
+.animate-fade-cinematic {
+  animation: cinematic-fade-in var(--wn-duration-cinematic) var(--wn-ease-cinematic) forwards;
+}
+
+/* Kinetic & UI (WaveNation FM, Social Reels, Hover States) */
+.animate-slide-kinetic {
+  animation: kinetic-slide-up var(--wn-duration-short) var(--wn-ease-kinetic) forwards;
+  will-change: transform, opacity;
+}
+
+/* Background Gradients (Requires background-size: 200% 200%) */
+.animate-bg-sweep {
+  background-size: 200% 200%;
+  animation: gradient-sweep 6s ease-in-out infinite;
+}
+
+/* Micro-Interactions (Corner bugs, app notifications, buttons) */
+.animate-pulse-micro {
+  /* Guideline strict rule: Length 0.4 seconds */
+  animation: micro-pulse 400ms var(--wn-ease-kinetic);
+}
+
+/* Looping UI Pulses (e.g., Live Badges, Now Playing) */
+.animate-pulse-infinite {
+  animation: micro-pulse 2s var(--wn-ease-cinematic) infinite;
+}
+
+/* Audio Visualizers */
+.animate-waveform {
+  animation: waveform-pulse 600ms ease-in-out infinite;
+  transform-origin: bottom;
+  will-change: transform;
+}
+
+/* Lower Thirds & Trace Borders */
+.animate-trace-line {
+  position: relative;
+}
+.animate-trace-line::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: var(--wn-color-electric-blue);
+  box-shadow: var(--wn-glow-blue);
+  animation: neon-line-trace var(--wn-duration-short) var(--wn-ease-kinetic) forwards;
+}
+.animate-trace-line-magenta::after {
+  background-color: var(--wn-color-magenta-pulse);
+  box-shadow: var(--wn-glow-magenta);
+}
+
+/* =========================================
+   STAGGER UTILITIES (For kinetic type splitting)
+   ========================================= */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* =========================================
+   PREFERS-REDUCED-MOTION (Accessibility - Part 9.5)
+   ========================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

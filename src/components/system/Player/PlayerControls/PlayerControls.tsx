@@ -155,56 +155,54 @@ export function PlayerControls({
   return (
     <div
       className={clsx(
-        styles.controls,
+        styles.root,
         placement === 'fullscreen_player' && styles.isFullscreen
       )}
       role="group"
       aria-label="Player controls"
     >
       <div className={styles.transportCluster}>
+        {/* Previous */}
         <button
           type="button"
-          className={clsx(styles.controlButton, styles.secondaryButton)}
+          className={styles.secondaryBtn}
           aria-label="Previous track"
           onClick={handlePrevious}
         >
-          <span className={styles.buttonGlow} aria-hidden="true" />
-          <span className={styles.buttonIcon} aria-hidden="true">
-            <SkipBack size={18} />
-          </span>
+          <SkipBack size={18} />
         </button>
 
+        {/* Play / Pause */}
         <button
           type="button"
           aria-label={playing ? 'Pause audio' : 'Play audio'}
           aria-pressed={playing}
           onClick={togglePlay}
-          className={clsx(styles.controlButton, styles.playButton)}
+          className={clsx(styles.playBtn, playing && styles.isPlaying)}
         >
-          <span className={styles.buttonGlow} aria-hidden="true" />
-          <span className={styles.buttonRing} aria-hidden="true" />
-          <span className={styles.buttonIcon} aria-hidden="true">
+          <span className={styles.playGlow} aria-hidden="true" />
+          <span className={styles.playRing} aria-hidden="true" />
+          <span className={styles.playIconWrapper} aria-hidden="true">
             {playing ? (
-              <Pause size={20} />
+              <Pause size={20} className={styles.icon} />
             ) : (
-              <Play size={20} className={styles.playIcon} />
+              <Play size={20} className={clsx(styles.icon, styles.iconNudge)} />
             )}
           </span>
         </button>
 
+        {/* Next */}
         <button
           type="button"
-          className={clsx(styles.controlButton, styles.secondaryButton)}
+          className={styles.secondaryBtn}
           aria-label="Next track"
           onClick={handleNext}
         >
-          <span className={styles.buttonGlow} aria-hidden="true" />
-          <span className={styles.buttonIcon} aria-hidden="true">
-            <SkipForward size={18} />
-          </span>
+          <SkipForward size={18} />
         </button>
       </div>
 
+      {/* Volume Popover */}
       <div className={styles.volumeWrap} ref={popoverRef}>
         <button
           type="button"
@@ -216,12 +214,9 @@ export function PlayerControls({
             e.preventDefault()
             toggleMute()
           }}
-          className={clsx(styles.controlButton, styles.volumeButton)}
+          className={clsx(styles.secondaryBtn, showVolume && styles.volumeActive)}
         >
-          <span className={styles.buttonGlow} aria-hidden="true" />
-          <span className={styles.buttonIcon} aria-hidden="true">
-            {volumeIcon}
-          </span>
+          {volumeIcon}
         </button>
 
         <div
@@ -234,15 +229,6 @@ export function PlayerControls({
           aria-hidden={!showVolume}
         >
           <div className={styles.volumePopoverInner}>
-            <button
-              type="button"
-              className={styles.muteButton}
-              onClick={toggleMute}
-              aria-label={muted || volume === 0 ? 'Unmute audio' : 'Mute audio'}
-            >
-              {volumeIcon}
-            </button>
-
             <div className={styles.volumeSliderWrap}>
               <input
                 type="range"
@@ -252,17 +238,10 @@ export function PlayerControls({
                 onChange={e => handleVolumeChange(Number(e.target.value))}
                 className={styles.volumeSlider}
                 aria-label="Volume slider"
-                style={
-                  {
-                    '--volume-progress': `${volumePercent}%`,
-                  } as React.CSSProperties
-                }
+                style={{ '--volume-progress': `${volumePercent}%` } as React.CSSProperties}
               />
             </div>
-
-            <span className={styles.volumeValue}>
-              {volumePercent}%
-            </span>
+            <span className={styles.volumeValue}>{volumePercent}%</span>
           </div>
         </div>
       </div>

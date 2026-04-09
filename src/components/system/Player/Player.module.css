@@ -1,338 +1,170 @@
+/* ==========================================================================
+   Spacer (Pushes page content up so the fixed player doesn't cover it)
+   ========================================================================== */
 .playerSpacer {
-  height: var(--player-height, 4.8rem);
+  height: var(--player-height, 90px);
   width: 100%;
   pointer-events: none;
+  transition: height 0.3s ease;
 }
 
+/* ==========================================================================
+   Main Shell
+   ========================================================================== */
 .playerShell {
-  --player-radius: 1rem;
-  --player-border: rgba(255, 255, 255, 0.08);
-  --player-bg:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.016)),
-    rgba(7, 10, 18, 0.86);
-  --player-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --player-pad-x: 0.72rem;
-  --player-pad-y: 0.42rem;
-
   position: fixed;
-  left: 0;
-  right: 0;
   bottom: 0;
-  z-index: 80;
-  padding: 0 0.5rem 0.5rem;
-  transform: translateY(0);
-  transition:
-    transform 220ms ease,
-    opacity 220ms ease,
-    padding 220ms ease;
-  pointer-events: none;
+  left: 0;
+  width: 100%;
+  z-index: 90; /* Sit above page content, below full-screen popups (100) */
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              padding 0.3s ease;
+  /* Default broadcast accent */
+  --player-accent: var(--wn-color-electric-blue, #00FFFF); 
 }
 
+/* Scroll States */
+.isHidden {
+  transform: translateY(100%);
+}
+
+.isElevated .playerInner {
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.isCondensed .desktopPlayer {
+  padding: 0.5rem 1.5rem; /* Shrinks the height slightly when scrolling down */
+}
+
+/* Overlays Open States */
+.hasOverlayOpen {
+  z-index: 101; /* Elevate above its usual layer if expanding */
+}
+
+/* ==========================================================================
+   Frame & Inner Glass Panel
+   ========================================================================== */
 .playerFrame {
-  width: min(100%, 1800px);
-  margin: 0 auto;
-  pointer-events: auto;
+  width: 100%;
+  padding: 0; /* Can add side padding here if you want a "floating pill" look later */
 }
 
 .playerInner {
   position: relative;
-  min-width: 0;
-  border: 1px solid var(--player-border);
-  border-radius: var(--player-radius);
-  background: var(--player-bg);
-  box-shadow: var(--player-shadow);
+  width: 100%;
+  background: rgba(9, 9, 11, 0.85); /* Deep dark tint */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  isolation: isolate;
-  backdrop-filter: blur(14px) saturate(138%);
-  -webkit-backdrop-filter: blur(14px) saturate(138%);
+  transition: all 0.3s ease;
 }
 
-.playerBackdrop,
-.playerGlow,
-.playerNoise,
-.playerShine,
-.playerBorder {
+/* ==========================================================================
+   Visual Cinematic Layers
+   ========================================================================== */
+.playerBackdrop {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-}
-
-.playerBackdrop {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 28%),
-    rgba(6, 9, 16, 0.42);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  z-index: 0;
 }
 
 .playerGlow {
-  inset: -16%;
-  background:
-    radial-gradient(circle at 14% 50%, rgba(0, 179, 255, 0.09), transparent 22%),
-    radial-gradient(circle at 86% 50%, rgba(233, 44, 99, 0.08), transparent 20%);
-  filter: blur(22px);
-  opacity: 0.72;
-}
-
-.playerNoise {
-  opacity: 0.025;
-  background-image:
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.8) 0.5px, transparent 0.7px),
-    radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.8) 0.5px, transparent 0.7px),
-    radial-gradient(circle at 35% 75%, rgba(255, 255, 255, 0.8) 0.5px, transparent 0.7px);
-  background-size: 24px 24px, 32px 32px, 28px 28px;
-}
-
-.playerShine {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(255, 255, 255, 0.012) 18%,
-    rgba(255, 255, 255, 0) 40%
-  );
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 50px;
+  background: var(--player-accent);
+  filter: blur(60px);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .playerBorder {
-  inset: 0.08rem;
-  border-radius: calc(var(--player-radius) - 0.08rem);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.025),
-    0 0 0 1px rgba(255, 255, 255, 0.008);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--player-accent);
+  opacity: 0.8;
+  box-shadow: 0 0 10px var(--player-accent);
+  z-index: 1;
 }
 
+/* ==========================================================================
+   Desktop Layout
+   ========================================================================== */
 .desktopPlayer {
   position: relative;
-  z-index: 1;
+  z-index: 10;
   display: grid;
-  grid-template-columns: minmax(11rem, 15rem) minmax(12rem, 26rem) auto auto;
+  grid-template-columns: 320px 1fr auto 240px; /* Fixed sidebars, fluid middle */
   align-items: center;
-  justify-content: space-between;
-  gap: 0.58rem;
-  width: 100%;
-  min-width: 0;
-  padding: var(--player-pad-y) var(--player-pad-x);
+  gap: 2rem;
+  padding: 0.75rem 2rem;
+  transition: padding 0.3s ease;
 }
 
 .infoColumn {
-  min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  min-width: 0; /* allows text truncation inside */
 }
 
 .progressColumn {
-  min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 26rem;
 }
 
 .controlsColumn {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(0.92);
-  transform-origin: center;
 }
 
 .actionsColumn {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  transform: scale(0.9);
-  transform-origin: right center;
 }
 
+/* ==========================================================================
+   Mobile Layout & Triggers
+   ========================================================================== */
 .mobileDock {
   display: none;
+  position: relative;
+  z-index: 10;
 }
 
 .mobileMoreTrigger {
   display: none;
 }
 
-.mobileMoreIcon {
-  width: 1.05rem;
-  height: 1.05rem;
-}
-
-.isElevated .playerInner {
-  box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.isCondensed {
-  --player-pad-y: 0.34rem;
-  --player-pad-x: 0.64rem;
-}
-
-.isCondensed .desktopPlayer {
-  gap: 0.48rem;
-}
-
-.isCondensed .controlsColumn {
-  transform: scale(0.89);
-}
-
-.isCondensed .actionsColumn {
-  transform: scale(0.87);
-}
-
-.isHidden {
-  transform: translateY(calc(100% + 1rem));
-}
-
-.hasOverlayOpen {
-  transform: translateY(0);
-}
-
-.isExpanded .playerInner,
-.isSheetOpen .playerInner,
-.hasOverlayOpen .playerInner {
-  border-color: rgba(255, 255, 255, 0.11);
-}
-
-.infoExpanded .desktopPlayer {
-  align-items: center;
-}
-
-.isDesktop .desktopPlayer {
-  display: grid;
-}
-
-.isMobile .desktopPlayer {
-  display: none;
-}
-
-.isMobile .mobileDock {
-  position: relative;
-  z-index: 1;
-  display: block;
-}
-
-.isMobile .mobileMoreTrigger {
-  position: absolute;
-  top: 0.42rem;
-  right: 0.42rem;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.04rem;
-  height: 2.04rem;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.024)),
-    rgba(10, 13, 20, 0.74);
-  color: rgba(255, 255, 255, 0.9);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 8px 16px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(12px) saturate(138%);
-  -webkit-backdrop-filter: blur(12px) saturate(138%);
-  cursor: pointer;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.isMobile .mobileMoreTrigger:hover,
-.isMobile .mobileMoreTrigger:focus-visible {
-  outline: none;
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.isMobile .mobileMoreTrigger:active {
-  transform: scale(0.98);
-}
-
-@media (max-width: 1280px) {
-  .desktopPlayer {
-    grid-template-columns: minmax(10rem, 13rem) minmax(10rem, 22rem) auto auto;
-    gap: 0.5rem;
-  }
-
-  .progressColumn {
-    max-width: 22rem;
-  }
-
-  .controlsColumn {
-    transform: scale(0.89);
-  }
-
-  .actionsColumn {
-    transform: scale(0.87);
-  }
-}
-
-@media (max-width: 1100px) {
-  .playerShell {
-    --player-pad-x: 0.62rem;
-    --player-pad-y: 0.38rem;
-  }
-
-  .desktopPlayer {
-    grid-template-columns: minmax(9rem, 11.5rem) minmax(9rem, 18rem) auto auto;
-    gap: 0.42rem;
-  }
-
-  .progressColumn {
-    max-width: 18rem;
-  }
-
-  .controlsColumn {
-    transform: scale(0.84);
-  }
-
-  .actionsColumn {
-    transform: scale(0.82);
-  }
-}
-
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
 @media (max-width: 960px) {
-  .playerSpacer {
-    height: var(--player-height, 4.55rem);
+  .desktopPlayer {
+    display: none;
   }
 
-  .playerShell {
-    --player-radius: 0.92rem;
-    padding: 0 0.42rem 0.42rem;
+  .mobileDock {
+    display: block;
+    width: 100%;
   }
 
+  /* The actual styling for the mobile dock will be handled in PlayerMobileDock.module.css */
   .playerInner {
-    min-height: 4.2rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .playerSpacer {
-    height: var(--player-height, 4.35rem);
-  }
-
-  .playerShell {
-    padding: 0 0.34rem 0.34rem;
-  }
-
-  .isMobile .mobileMoreTrigger {
-    top: 0.36rem;
-    right: 0.36rem;
-    width: 1.94rem;
-    height: 1.94rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .playerShell,
-  .mobileMoreTrigger,
-  .controlsColumn,
-  .actionsColumn {
-    transition: none;
+    background: rgba(9, 9, 11, 0.95); /* slightly more opaque on mobile */
   }
 }

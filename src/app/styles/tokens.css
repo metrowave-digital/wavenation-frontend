@@ -1,0 +1,121 @@
+/* styles/tokens.css */
+
+:root {
+  /* =========================================
+     COLOR SYSTEM (Part 3)
+     ========================================= */
+  
+  /* Primary Palette */
+  --wn-color-black: #0B0D0F;
+  --wn-color-white: #FFFFFF;
+  --wn-color-electric-blue: #00B3FF;
+  --wn-color-neon-green: #39FF14;
+  --wn-color-magenta-pulse: #E92C63;
+  --wn-color-charcoal-gray: #1F1F21;
+
+  /* Secondary Palette */
+  --wn-color-slate-gray: #3A3D42;
+  --wn-color-deep-indigo: #161A2D;
+  --wn-color-soft-blue-gray: #A2B3C7;
+  --wn-color-signal-teal: #00F3C9;
+  
+  /* Text Colors (Dark Mode UI defaults) */
+  --wn-text-primary: var(--wn-color-white);
+  --wn-text-secondary: #DDDDDD; /* Soft Gray */
+  --wn-text-tertiary: #A2A2A2; /* Slate */
+
+  /* =========================================
+     GRADIENT SYSTEM (Part 3.4)
+     ========================================= */
+  --wn-gradient-electric-surge: linear-gradient(135deg, var(--wn-color-electric-blue), var(--wn-color-neon-green));
+  --wn-gradient-pulse-wave: linear-gradient(135deg, var(--wn-color-magenta-pulse), var(--wn-color-electric-blue));
+  --wn-gradient-night-drive: linear-gradient(180deg, var(--wn-color-black) 0%, var(--wn-color-deep-indigo) 50%, var(--wn-color-electric-blue) 100%);
+  --wn-gradient-southern-heat: linear-gradient(135deg, var(--wn-color-magenta-pulse), #FF0048, var(--wn-color-electric-blue));
+  --wn-gradient-tech-glow: linear-gradient(135deg, var(--wn-color-black), var(--wn-color-signal-teal));
+  --wn-gradient-electric-fade: linear-gradient(180deg, var(--wn-color-electric-blue), transparent);
+
+  /* =========================================
+     TYPOGRAPHY (Part 4)
+     ========================================= */
+  /* Font Families */
+  --wn-font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --wn-font-display: 'Oswald', system-ui, -apple-system, sans-serif;
+
+  /* Font Weights */
+  --wn-weight-light: 300;
+  --wn-weight-regular: 400;
+  --wn-weight-medium: 500;
+  --wn-weight-semibold: 600;
+  --wn-weight-bold: 700;
+  --wn-weight-extrabold: 800;
+
+  /* Font Sizes */
+  --wn-text-micro: 12px;
+  --wn-text-caption: 14px;
+  --wn-text-body: 18px;
+  --wn-text-body-lg: 20px;
+  --wn-text-h3: 28px;
+  --wn-text-h2: 36px;
+  --wn-text-h1: 48px;
+  --wn-text-display-xl: 64px;
+  --wn-text-display-xxl: 80px;
+
+  /* Letter Spacing */
+  --wn-tracking-cinematic: -0.05em; /* Used for massive Display type */
+  --wn-tracking-tight: -0.02em;     /* Used for standard Headers */
+  --wn-tracking-normal: 0em;        /* Used for Body */
+  --wn-tracking-wide: 0.05em;       /* Used for Micro text */
+
+  /* =========================================
+     SPACING SYSTEM (Based on 4px/8px grid)
+     ========================================= */
+  --wn-space-1: 4px;
+  --wn-space-2: 8px;
+  --wn-space-3: 12px;
+  --wn-space-4: 16px;
+  --wn-space-6: 24px;
+  --wn-space-8: 32px;
+  --wn-space-12: 48px;
+  --wn-space-16: 64px;
+  --wn-space-24: 96px;
+  --wn-space-32: 128px;
+
+  /* =========================================
+     ELEVATION, GLOWS & SHADOWS
+     ========================================= */
+  /* Structural Shadows (Deep Blacks) */
+  --wn-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --wn-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --wn-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
+  --wn-shadow-tv: 0 24px 48px rgba(0, 0, 0, 0.8);
+
+  /* Neon Glows (For buttons, active states, UI highlights) */
+  --wn-glow-blue: 0 0 16px rgba(0, 179, 255, 0.4);
+  --wn-glow-magenta: 0 0 16px rgba(233, 44, 99, 0.4);
+  --wn-glow-green: 0 0 16px rgba(57, 255, 20, 0.4);
+
+  /* =========================================
+     MOTION & ANIMATION (Part 6)
+     ========================================= */
+  --wn-duration-micro: 150ms;
+  --wn-duration-short: 400ms; /* E.g., logo pulse */
+  --wn-duration-cinematic: 1200ms;
+  
+  --wn-ease-kinetic: cubic-bezier(0.25, 1, 0.5, 1); /* Snappy, fast cuts */
+  --wn-ease-cinematic: cubic-bezier(0.4, 0, 0.2, 1); /* Slow, premium fade */
+  --wn-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* =========================================
+   BREAKPOINTS (Standardized Device Scales)
+   ========================================= */
+/* Media queries can't use standard root CSS variables directly in pure CSS, 
+   so these are standard scales to use in your component CSS/Utilities:
+   
+   --mobile-sm: 320px  (Small phones)
+   --mobile: 480px     (Standard phones)
+   --tablet: 768px     (Tablets)
+   --laptop: 1024px    (Standard laptops)
+   --desktop: 1440px   (Large monitors)
+   --tv: 1920px        (10-Foot UI / WN One)
+*/

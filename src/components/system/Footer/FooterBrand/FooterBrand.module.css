@@ -1,243 +1,41 @@
 .brand {
-  position: relative;
-  display: grid;
-  gap: 1.15rem;
-  min-width: 0;
-  padding-right: clamp(0rem, 1vw, 1rem);
-  outline: none;
-}
-
-.brand::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 1px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.14),
-    rgba(255, 255, 255, 0.03) 55%,
-    transparent
-  );
-  transform: translateX(-1.25rem);
-  pointer-events: none;
-}
-
-.brand:focus-visible .title {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-
-.header {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.85rem 1rem;
-}
-
-.mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-height: 2rem;
-  padding: 0.42rem 0.78rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-  color: #ffffff;
-}
-
-.markPrimary {
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.markDivider {
-  width: 1px;
-  height: 0.9rem;
-  background: rgba(255, 255, 255, 0.18);
-}
-
-.markSecondary {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.66);
+  flex-direction: column;
+  gap: 1.5rem;
+  outline: none;
 }
 
 .kicker {
-  font-size: 0.72rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.46);
-}
-
-.body {
-  display: grid;
-  gap: 0.8rem;
-  min-width: 0;
+  letter-spacing: 0.2em;
+  color: #39FF14; /* Neon Green */
 }
 
 .title {
-  margin: 0;
-  max-width: 12ch;
-  font-size: clamp(1.7rem, 2vw, 2.35rem);
-  line-height: 0.98;
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.5rem;
+  line-height: 1.1;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  text-transform: uppercase;
   color: #ffffff;
-  text-wrap: balance;
+  margin: 0;
 }
 
 .tagline {
-  margin: 0;
-  max-width: 38ch;
-  font-size: 0.98rem;
+  color: #a1a1aa;
+  font-size: 1rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.68);
+  margin: 0;
 }
 
 .mission {
-  margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  color: #52525b;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
-}
-
-.footer {
-  display: grid;
-  gap: 0.85rem;
-  padding-top: 0.15rem;
-}
-
-.ctaNav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-.ctaLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.3rem;
-  padding: 0.56rem 0.88rem;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.84);
-  text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 500;
-  line-height: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition:
-    color 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease,
-    transform 160ms ease;
-}
-
-.ctaLink:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-1px);
-}
-
-.ctaLink:focus-visible {
-  outline: none;
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.18);
-}
-
-.ctaLink:active {
-  transform: translateY(0);
-}
-
-.ctaArrow {
-  font-size: 0.86rem;
-  opacity: 0.72;
-}
-
-.meta {
+  letter-spacing: 0.05em;
   margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-@media (max-width: 1080px) {
-  .brand::before {
-    display: none;
-  }
-
-  .title {
-    max-width: none;
-  }
-
-  .tagline {
-    max-width: 46ch;
-  }
-}
-
-@media (max-width: 768px) {
-  .brand {
-    gap: 1rem;
-    padding-right: 0;
-  }
-
-  .title {
-    font-size: 1.65rem;
-    line-height: 1;
-  }
-
-  .tagline {
-    font-size: 0.94rem;
-    line-height: 1.58;
-  }
-
-  .ctaLink {
-    min-height: 2.4rem;
-    padding-inline: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    gap: 0.7rem 0.85rem;
-  }
-
-  .mark {
-    padding: 0.4rem 0.72rem;
-  }
-
-  .title {
-    font-size: 1.45rem;
-  }
-
-  .tagline {
-    font-size: 0.9rem;
-  }
-
-  .mission,
-  .meta,
-  .kicker {
-    font-size: 0.68rem;
-  }
-
-  .ctaNav {
-    gap: 0.5rem;
-  }
-
-  .ctaLink {
-    min-height: 2.35rem;
-    font-size: 0.88rem;
-  }
 }

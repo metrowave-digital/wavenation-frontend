@@ -18,7 +18,7 @@ type PlayerMobileMoreSheetProps = {
 }
 
 type ActionButtonProps = {
-  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean; size?: number }>
   label: string
   description?: string
   onClick: () => void
@@ -33,17 +33,17 @@ function ActionButton({
   return (
     <button type="button" className={styles.action} onClick={onClick}>
       <span className={styles.actionIconWrap}>
-        <Icon className={styles.actionIcon} aria-hidden />
+        <Icon size={20} className={styles.actionIcon} aria-hidden />
       </span>
 
       <span className={styles.actionBody}>
         <span className={styles.actionText}>{label}</span>
-        {description ? (
+        {description && (
           <span className={styles.actionDescription}>{description}</span>
-        ) : null}
+        )}
       </span>
 
-      <ChevronRight className={styles.actionChevron} aria-hidden />
+      <ChevronRight size={18} className={styles.actionChevron} aria-hidden />
     </button>
   )
 }
@@ -70,20 +70,14 @@ export function PlayerMobileMoreSheet({
       />
 
       <div className={styles.sheet}>
-        <div className={styles.glow} aria-hidden />
-        <div className={styles.noise} aria-hidden />
-
         <div className={styles.handleWrap}>
           <div className={styles.handle} aria-hidden />
         </div>
 
         <div className={styles.header}>
           <div className={styles.headerText}>
-            <p className={styles.eyebrow}>WaveNation</p>
-            <h2 className={styles.title}>Player options</h2>
-            <p className={styles.subtitle}>
-              Quick access to playback, queue, streams, and account tools.
-            </p>
+            <p className={styles.eyebrow}>WAVENATION LIVE</p>
+            <h2 className={styles.title}>Player Options</h2>
           </div>
 
           <button
@@ -92,15 +86,15 @@ export function PlayerMobileMoreSheet({
             onClick={onClose}
             aria-label="Close sheet"
           >
-            <X className={styles.closeIcon} aria-hidden />
+            <X size={24} className={styles.closeIcon} aria-hidden />
           </button>
         </div>
 
         <div className={styles.menu}>
           <ActionButton
             icon={Expand}
-            label="Open full player"
-            description="View the expanded player experience"
+            label="Open Full Player"
+            description="View the expanded broadcast experience"
             onClick={() => {
               onClose()
               onOpenPlayer()
@@ -109,8 +103,8 @@ export function PlayerMobileMoreSheet({
 
           <ActionButton
             icon={ListMusic}
-            label="Queue & upcoming"
-            description="See what is playing next"
+            label="Queue & Up Next"
+            description="See the daily schedule and next tracks"
             onClick={() => {
               console.log('open queue')
               onClose()
@@ -119,8 +113,8 @@ export function PlayerMobileMoreSheet({
 
           <ActionButton
             icon={Radio}
-            label="Stations & streams"
-            description="Switch between available streams"
+            label="Stations & Streams"
+            description="Switch between available broadcast streams"
             onClick={() => {
               console.log('open station selector')
               onClose()
@@ -133,17 +127,17 @@ export function PlayerMobileMoreSheet({
             onClick={onClose}
           >
             <span className={styles.actionIconWrap}>
-              <User className={styles.actionIcon} aria-hidden />
+              <User size={20} className={styles.actionIcon} aria-hidden />
             </span>
 
             <span className={styles.actionBody}>
-              <span className={styles.actionText}>Profile</span>
+              <span className={styles.actionText}>Your Profile</span>
               <span className={styles.actionDescription}>
-                Manage your account and listening preferences
+                Manage your account and settings
               </span>
             </span>
 
-            <ChevronRight className={styles.actionChevron} aria-hidden />
+            <ChevronRight size={18} className={styles.actionChevron} aria-hidden />
           </Link>
         </div>
       </div>

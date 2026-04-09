@@ -1,0 +1,185 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: rgba(9, 9, 11, 0.95); /* Deep dark background */
+  backdrop-filter: blur(20px);
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Input Zone
+   ========================================================================== */
+.inputZone {
+  padding: 4rem 0 2rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.searchIcon {
+  color: var(--wn-color-electric-blue, #00FFFF); /* Distinct broadcast accent */
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: inherit; /* Inherits modern sans */
+  outline: none;
+  padding: 0;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.closeBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a1a1aa;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: rotate(90deg); /* Sleek interaction */
+}
+
+/* ==========================================================================
+   Results / Empty State Zone
+   ========================================================================== */
+.resultsZone {
+  padding: 3rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.trendingHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.trendingIcon {
+  color: var(--wn-color-magenta-pulse, #FF00FF);
+}
+
+.trendingTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a1a1aa;
+}
+
+.trendingList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trendingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #e4e4e7;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.arrowIcon {
+  opacity: 0;
+  transform: translate(-10px, 10px);
+  transition: all 0.2s ease;
+  color: var(--wn-color-electric-blue, #00FFFF);
+}
+
+.trendingItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.trendingItem:hover .arrowIcon {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ==========================================================================
+   Mobile Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .inputZone {
+    padding: 2rem 0 1.5rem 0;
+  }
+
+  .input {
+    font-size: 1.5rem; /* Scale down for mobile keyboards */
+  }
+
+  .searchIcon, .closeBtn {
+    transform: scale(0.8);
+  }
+
+  .trendingItem {
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+  }
+}

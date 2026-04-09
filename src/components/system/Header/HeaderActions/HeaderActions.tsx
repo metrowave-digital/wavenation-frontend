@@ -1,51 +1,41 @@
 'use client'
 
-import { Search, User, ShoppingBag, Menu } from 'lucide-react'
-import { useContext } from 'react'
-import { HeaderContext } from '../Header.context'
+import React from 'react'
+import { Search, Bell, User } from 'lucide-react'
 import styles from './HeaderActions.module.css'
+import { useHeader } from '../Header.context'
 
 export function HeaderActions() {
-  const { setPopup, setMobileOpen } = useContext(HeaderContext)
+  const { setPopup } = useHeader()
 
   return (
-    <div className={styles.actions}>
-      <button
-        type="button"
-        aria-label="Search"
-        className={styles.action}
+    <div className={styles.container}>
+      {/* Search Trigger */}
+      <button 
+        className={styles.actionBtn} 
+        aria-label="Open search"
         onClick={() => setPopup('search')}
       >
-        <Search />
+        <Search size={18} />
       </button>
 
-      <button
-        type="button"
-        aria-label="Profile"
-        className={styles.action}
+      {/* Notifications Trigger */}
+      <button 
+        className={styles.actionBtn} 
+        aria-label="Notifications"
+        onClick={() => setPopup('notification')} 
+      >
+        <span className={styles.indicator} />
+        <Bell size={18} />
+      </button>
+
+      {/* Profile Trigger */}
+      <button 
+        className={styles.profileBtn} 
+        aria-label="User profile"
         onClick={() => setPopup('profile')}
       >
-        <User />
-      </button>
-
-      <a
-        href="/shop"
-        aria-label="Shop"
-        className={styles.action}
-      >
-        <ShoppingBag />
-        {/* Future badge support */}
-        {/* <span className={styles.badge}>2</span> */}
-      </a>
-
-      {/* Mobile menu toggle */}
-      <button
-        type="button"
-        aria-label="Open menu"
-        className={`${styles.action} ${styles.mobileOnly}`}
-        onClick={() => setMobileOpen(true)}
-      >
-        <Menu />
+        <User size={18} />
       </button>
     </div>
   )

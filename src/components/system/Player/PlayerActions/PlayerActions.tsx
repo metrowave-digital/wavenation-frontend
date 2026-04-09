@@ -85,42 +85,41 @@ export function PlayerActions({
   return (
     <div
       className={clsx(
-        styles.actions,
+        styles.root,
         placement === 'fullscreen_player' && styles.isFullscreen
       )}
       role="group"
       aria-label="Player actions"
     >
-      <button
-        type="button"
-        className={clsx(styles.actionButton, styles.expandButton)}
-        aria-label="Expand player"
-        onClick={handleExpand}
-      >
-        <span className={styles.buttonGlow} aria-hidden="true" />
-        <span className={styles.buttonIcon} aria-hidden="true">
-          <Maximize2 size={18} />
-        </span>
-        <span className={styles.buttonLabel}>Expand</span>
-      </button>
-
+      {/* Share Button */}
       <button
         type="button"
         className={clsx(
-          styles.actionButton,
-          styles.shareButton,
+          styles.actionBtn,
           copied && styles.isCopied
         )}
         aria-label={copied ? 'Link copied' : 'Share player'}
         onClick={handleShare}
       >
-        <span className={styles.buttonGlow} aria-hidden="true" />
-        <span className={styles.buttonIcon} aria-hidden="true">
-          {copied ? <Check size={18} /> : <Share2 size={18} />}
+        <span className={styles.iconWrapper} aria-hidden="true">
+          {copied ? <Check size={16} /> : <Share2 size={16} />}
         </span>
-        <span className={styles.buttonLabel}>
-          {copied ? 'Copied' : 'Share'}
+        <span className={styles.label}>
+          {copied ? 'COPIED' : 'SHARE'}
         </span>
+      </button>
+
+      {/* Expand Button */}
+      <button
+        type="button"
+        className={styles.actionBtn}
+        aria-label="Expand player"
+        onClick={handleExpand}
+      >
+        <span className={styles.iconWrapper} aria-hidden="true">
+          <Maximize2 size={16} />
+        </span>
+        <span className={styles.label}>EXPAND</span>
       </button>
     </div>
   )

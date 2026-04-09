@@ -26,70 +26,37 @@ export function PlayerProgress() {
     return Math.min(100, Math.max(0, (safeCurrentTime / safeDuration) * 100))
   }, [isLive, safeCurrentTime, safeDuration])
 
-  const bufferedPercent = useMemo(() => {
-    if (isLive || safeDuration <= 0) return 100
-    return Math.min(100, Math.max(percent, percent + 12))
-  }, [isLive, safeDuration, percent])
-
-  const remaining = useMemo(() => {
-    if (isLive || safeDuration <= 0) return 0
-    return Math.max(0, safeDuration - safeCurrentTime)
-  }, [isLive, safeCurrentTime, safeDuration])
-
   const progressStyle = {
     '--progress': `${percent}%`,
-    '--buffered': `${bufferedPercent}%`,
   } as CSSProperties
 
   return (
     <section
-      className={clsx(styles.root, isLive && styles.live)}
+      className={clsx(styles.root, isLive && styles.isLive)}
       aria-label={isLive ? 'Live playback status' : 'Playback progress'}
     >
-      <div className={styles.topRow}>
-        <div className={styles.leftMeta}>
-          {isLive ? (
-            <span className={styles.livePill}>
-              <span className={styles.liveDot} aria-hidden="true" />
-              LIVE
-            </span>
-          ) : (
-            <span className={styles.timeCurrent}>{formatTime(safeCurrentTime)}</span>
-          )}
+      {/* Top Meta Data */}
+      <div className={styles.metaRow}>
+        <div className={styles.timeLabel}>
+          {isLive ? 'LIVE' : formatTime(safeCurrentTime)}
         </div>
-
-        <div className={styles.centerMeta}>
-          {isLive ? (
-            <span className={styles.liveText}>On air now</span>
-          ) : (
-            <span className={styles.progressLabel}>{Math.round(percent)}%</span>
-          )}
-        </div>
-
-        <div className={styles.rightMeta}>
-          {isLive ? (
-            <span className={styles.liveTextMuted}>Continuous stream</span>
-          ) : (
-            <span className={styles.timeRemaining}>-{formatTime(remaining)}</span>
-          )}
+        <div className={styles.timeLabel}>
+          {isLive ? 'ON AIR' : `-${formatTime(Math.max(0, safeDuration - safeCurrentTime))}`}
         </div>
       </div>
 
+      {/* Scrubber Frame */}
       <div className={styles.trackFrame}>
-        <div className={styles.trackAura} aria-hidden="true" />
-
-        <div
-          className={styles.track}
-          style={progressStyle}
-          aria-hidden="true"
-        >
+        {/* Decorative Glow */}
+        <div className={styles.trackGlow} style={progressStyle} aria-hidden="true" />
+        
+        {/* The Visual Bar */}
+        <div className={styles.trackVisual} style={progressStyle} aria-hidden="true">
           <div className={styles.trackBase} />
-          <div className={styles.trackBuffered} />
-          <div className={styles.trackProgress} />
-          <div className={styles.trackGlass} />
-          {!isLive && <div className={styles.trackThumb} />}
+          <div className={styles.trackFill} />
         </div>
 
+        {/* The Native Input Layer */}
         {!isLive && (
           <input
             type="range"
@@ -98,17 +65,9 @@ export function PlayerProgress() {
             step={0.1}
             value={safeCurrentTime}
             onChange={e => seek(Number(e.target.value))}
-            className={styles.scrubber}
+            className={styles.scrubberInput}
             aria-label="Playback progress"
-            aria-valuemin={0}
-            aria-valuemax={safeDuration}
-            aria-valuenow={safeCurrentTime}
-            aria-valuetext={`${formatTime(safeCurrentTime)} elapsed of ${formatTime(safeDuration)}`}
-            style={
-              {
-                '--progress': `${percent}%`,
-              } as CSSProperties
-            }
+            style={progressStyle}
           />
         )}
       </div>

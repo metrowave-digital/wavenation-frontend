@@ -1,297 +1,154 @@
+/* ==========================================================================
+   Root Layout Variables & Base
+   ========================================================================== */
 .root {
-  --header-safe-top: env(safe-area-inset-top, 0px);
-  --header-side-padding: clamp(0.875rem, 1.6vw, 1.5rem);
-  --header-max-width: 1440px;
-
-  --header-top-height: 60px;
-  --header-subnav-height: 34px;
-
-  --header-bg: rgba(8, 11, 18, 0.82);
-  --header-bg-strong: rgba(10, 14, 24, 0.92);
-  --header-border: rgba(255, 255, 255, 0.08);
-  --header-border-soft: rgba(255, 255, 255, 0.05);
-  --header-text-muted: rgba(255, 255, 255, 0.7);
-
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--wn-bg-header, #09090b);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1200;
-  width: 100%;
-  padding-top: var(--header-safe-top);
-  isolation: isolate;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--header-border);
-}
-
-.surface {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.04),
-      rgba(255, 255, 255, 0.01)
-    ),
-    radial-gradient(
-      circle at top left,
-      rgba(90, 155, 255, 0.08),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at top right,
-      rgba(214, 96, 255, 0.07),
-      transparent 26%
-    );
+  z-index: 40; /* Sit below portals (usually z-index 50+) */
 }
 
 .skipLink {
   position: absolute;
-  left: 1rem;
-  top: calc(var(--header-safe-top) + 0.5rem);
-  z-index: 2000;
-  transform: translateY(-160%);
-  opacity: 0;
-  pointer-events: none;
-  padding: 0.65rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(10, 14, 24, 0.98);
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  transition:
-    transform 180ms ease,
-    opacity 180ms ease;
+  top: -40px;
+  left: 0;
+  background: #fff;
+  color: #000;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.2s ease;
 }
 
-.skipLink:focus-visible {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-  outline: none;
+.skipLink:focus {
+  top: 0;
 }
 
-.root :focus-visible {
-  outline: 2px solid rgba(118, 180, 255, 0.9);
-  outline-offset: 2px;
-}
-
-.topBar {
-  position: relative;
-  z-index: 1;
-  min-height: var(--header-top-height);
-}
-
-.topBarInner {
-  width: min(100%, var(--header-max-width));
-  min-height: var(--header-top-height);
-  margin: 0 auto;
-  padding-inline: var(--header-side-padding);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  column-gap: 1rem;
-  position: relative;
-}
-
-.brandZone,
-.desktopNavZone,
-.actionsZone {
-  min-width: 0;
+/* ==========================================================================
+   TOP ROW: [Brand] [Nav] [Actions]
+   ========================================================================== */
+.topRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  gap: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* subtle divider between rows */
 }
 
 .brandZone {
-  grid-column: 1;
-  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.desktopNavZone {
-  grid-column: 2;
+.navZone {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  overflow: visible;
-  position: relative;
+  flex: 1; /* Takes up available space to center the Nav */
 }
 
 .actionsZone {
-  grid-column: 3;
-  justify-content: flex-end;
-}
-
-.subNavRail {
-  position: relative;
-  z-index: 1;
-  min-height: var(--header-subnav-height);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.018),
-    rgba(255, 255, 255, 0.008)
-  );
-}
-
-.subNavRail::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 1px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--header-border-soft) 12%,
-    var(--header-border-soft) 88%,
-    transparent
-  );
-}
-
-.subNavRailInner {
-  width: min(100%, var(--header-max-width));
-  min-height: var(--header-subnav-height);
-  margin: 0 auto;
-  padding-inline: var(--header-side-padding);
   display: flex;
   align-items: center;
-  position: relative;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-shrink: 0;
 }
 
-.desktopSubNav {
-  width: 100%;
-  min-width: 0;
+.mobileToggleWrapper {
+  display: none; /* Hidden on desktop */
 }
 
-.mobileSubNav {
-  display: none;
-  width: 100%;
-  min-width: 0;
+/* ==========================================================================
+   BOTTOM ROW: [Ticker] [Space] [Meta]
+   ========================================================================== */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02); /* Slight contrast from top row */
 }
 
-.bottomLine {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.12),
-    transparent
-  );
+.tickerZone {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
+.metaZone {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #a1a1aa;
+  font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   Portals
+   ========================================================================== */
 .portalLayer {
   position: relative;
-  z-index: 1300;
+  z-index: 50;
 }
 
-/* mega menu safety */
-.topBar,
-.topBarInner,
-.desktopNavZone,
-.subNavRail,
-.subNavRailInner {
-  overflow: visible;
-}
-
-@media (min-width: 1400px) {
-  .root {
-    --header-top-height: 62px;
-    --header-subnav-height: 36px;
+/* ==========================================================================
+   MOBILE RESPONSIVE QUERIES
+   ========================================================================== */
+@media (max-width: 1024px) {
+  /* Tablet adjustments if needed */
+  .navZone {
+    flex: 0 1 auto; /* Allow nav to shrink */
   }
 }
 
-@media (max-width: 1199px) {
-  .root {
-    --header-top-height: 58px;
-    --header-subnav-height: 33px;
-    --header-side-padding: clamp(0.875rem, 2vw, 1.125rem);
+@media (max-width: 768px) {
+  .topRow {
+    padding: 0.75rem 1rem;
+    gap: 1rem;
   }
 
-  .topBarInner {
-    column-gap: 0.875rem;
-  }
-}
-
-@media (max-width: 991px) {
-  .root {
-    --header-top-height: 54px;
-    --header-subnav-height: 36px;
-    --header-side-padding: clamp(0.75rem, 4vw, 1rem);
-    background: rgba(8, 11, 18, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  .topBarInner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 0.75rem;
-  }
-
-  .desktopNavZone {
+  /* Hide the BroadcastNav on mobile - handled by MobileMenu */
+  .navZone {
     display: none;
   }
 
-  .desktopSubNav {
-    display: none;
-  }
-
-  .mobileSubNav {
+  /* Show the hamburger menu toggle */
+  .mobileToggleWrapper {
     display: block;
   }
 
-  .subNavRail {
-    background: rgba(255, 255, 255, 0.02);
-  }
-}
-
-@media (max-width: 767px) {
-  .root {
-    --header-top-height: 52px;
-    --header-subnav-height: 34px;
-    --header-side-padding: 0.875rem;
+  /* Optionally hide standard HeaderActions to save space, 
+     or keep only specific icons inside it */
+  .desktopActions {
+    display: none; /* Alternatively, adjust inside HeaderActions.module.css */
   }
 
-  .topBarInner,
-  .subNavRailInner {
-    padding-left: max(0.875rem, env(safe-area-inset-left, 0px));
-    padding-right: max(0.875rem, env(safe-area-inset-right, 0px));
+  .bottomRow {
+    padding: 0.5rem 1rem;
+    /* On mobile, let the ticker take the full width */
+    justify-content: center; 
   }
 
-  .topBarInner {
-    column-gap: 0.625rem;
+  /* Hide the HeaderMeta on mobile to prevent clutter */
+  .metaZone {
+    display: none;
   }
 
-  .skipLink {
-    left: 0.75rem;
-    top: calc(var(--header-safe-top) + 0.4rem);
-    padding: 0.625rem 0.85rem;
-    font-size: 0.88rem;
+  /* Expand Ticker to fill space on smaller screens */
+  .tickerZone {
+    width: 100%;
+    justify-content: center;
   }
-}
-
-@media (max-width: 479px) {
-  .root {
-    --header-top-height: 50px;
-    --header-subnav-height: 32px;
-    --header-side-padding: 0.75rem;
-  }
-
-  .topBarInner {
-    column-gap: 0.5rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skipLink {
-    transition: none;
+  
+  /* Ensure the DynamicTicker component itself fills the container if needed */
+  .tickerZone > * {
+    max-width: 100%;
+    width: 100%;
   }
 }

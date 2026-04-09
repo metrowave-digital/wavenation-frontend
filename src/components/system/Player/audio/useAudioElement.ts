@@ -47,41 +47,45 @@ export function useAudioElement({
 
     try {
       audio.pause()
-    } catch {}
+      audio.src = ''
+      audio.load() // Forces immediate release of resources
+    } catch {
+      // Ignore cleanup errors
+    }
 
-    audio.src = ''
     audioRef.current = null
   }, [])
 
   const ensureAudio = useCallback(() => {
-    const existing = audioRef.current
+    let audio = audioRef.current
 
-    if (existing) {
-      if (existing.src && !existing.src.includes(streamUrl)) {
-        existing.src = streamUrl
-        existing.load()
+    if (audio) {
+      // If the URL changed (e.g., quality switch), update the source
+      if (audio.src && !audio.src.includes(streamUrl)) {
+        audio.src = streamUrl
+        audio.load()
       }
 
-      existing.volume = volume
-      existing.muted = muted
-      return existing
+      audio.volume = volume
+      audio.muted = muted
+      return audio
     }
 
-    const audio = new Audio(streamUrl)
+    // Initialize New Audio Instance
+    audio = new Audio(streamUrl)
     audio.preload = 'auto'
     audio.crossOrigin = 'anonymous'
+    
+    // Critical for iOS/Safari background play
     audio.setAttribute('playsinline', 'true')
     audio.setAttribute('webkit-playsinline', 'true')
-
-    if ('playsInline' in audio) {
-      audio.playsInline = true
-    }
 
     audio.volume = volume
     audio.muted = muted
 
-    const handleTimeUpdate = () => onTimeUpdate(audio)
-    const handleLoadedMetadata = () => onLoadedMetadata(audio)
+    // Event Handlers
+    const handleTimeUpdate = () => onTimeUpdate(audio!)
+    const handleLoadedMetadata = () => onLoadedMetadata(audio!)
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
     audio.addEventListener('loadedmetadata', handleLoadedMetadata)
@@ -95,35 +99,21 @@ export function useAudioElement({
     audio.addEventListener('ended', onEnded)
 
     cleanupRef.current = () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate)
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
-      audio.removeEventListener('playing', onPlaying)
-      audio.removeEventListener('pause', onPause)
-      audio.removeEventListener('loadstart', onLoadStart)
-      audio.removeEventListener('waiting', onWaiting)
-      audio.removeEventListener('canplay', onCanPlay)
-      audio.removeEventListener('stalled', onStalled)
-      audio.removeEventListener('error', onError)
-      audio.removeEventListener('ended', onEnded)
+      audio?.removeEventListener('timeupdate', handleTimeUpdate)
+      audio?.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio?.removeEventListener('playing', onPlaying)
+      audio?.removeEventListener('pause', onPause)
+      audio?.removeEventListener('loadstart', onLoadStart)
+      audio?.removeEventListener('waiting', onWaiting)
+      audio?.removeEventListener('canplay', onCanPlay)
+      audio?.removeEventListener('stalled', onStalled)
+      audio?.removeEventListener('error', onError)
+      audio?.removeEventListener('ended', onEnded)
     }
 
     audioRef.current = audio
     return audio
-  }, [
-    muted,
-    onCanPlay,
-    onEnded,
-    onError,
-    onLoadStart,
-    onLoadedMetadata,
-    onPause,
-    onPlaying,
-    onStalled,
-    onTimeUpdate,
-    onWaiting,
-    streamUrl,
-    volume,
-  ])
+  }, [muted, onCanPlay, onEnded, onError, onLoadStart, onLoadedMetadata, onPause, onPlaying, onStalled, onTimeUpdate, onWaiting, streamUrl, volume])
 
   return {
     audioRef,

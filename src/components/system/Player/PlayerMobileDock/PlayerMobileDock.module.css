@@ -1,109 +1,54 @@
+/* ==========================================================================
+   Main Dock Container
+   ========================================================================== */
 .dock {
-  display: grid;
-  gap: 0.56rem;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: rgba(9, 9, 11, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: env(safe-area-inset-bottom); /* CRITICAL for iPhones */
+  position: relative;
+  z-index: 100;
 }
 
-/* =========================
-   TOP MINI PLAYER ROW
-========================= */
-
+/* ==========================================================================
+   TOP ROW: Miniplayer
+   ========================================================================== */
 .topRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: stretch;
-  gap: 0.5rem;
-  min-width: 0;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  height: 56px;
 }
 
 .miniplayer {
-  position: relative;
-  min-width: 0;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.miniplayerGlow {
-  position: absolute;
-  inset: 0;
-  border-radius: 1.18rem;
-  background:
-    radial-gradient(circle at 10% 45%, rgba(0, 179, 255, 0.16), transparent 30%),
-    radial-gradient(circle at 88% 22%, rgba(233, 44, 99, 0.16), transparent 28%),
-    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.05), transparent 40%);
-  filter: blur(14px);
-  opacity: 0.95;
-  pointer-events: none;
-}
-
-.miniplayerInner {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  flex: 1;
+  display: flex;
   align-items: center;
-  gap: 0.72rem;
-  min-width: 0;
-  min-height: 3.85rem;
-  padding: 0.76rem 0.82rem;
-  border-radius: 1.18rem;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02)),
-    linear-gradient(135deg, rgba(0, 179, 255, 0.04), rgba(233, 44, 99, 0.035)),
-    rgba(8, 11, 18, 0.8);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 16px 32px rgba(0, 0, 0, 0.26);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
+  gap: 0.75rem;
+  padding: 0 0.5rem 0 1rem;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0; /* Enables text truncation */
 }
 
-.miniplayerInner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.035), transparent);
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.miniplayer:hover .miniplayerInner,
-.miniplayer:focus-visible .miniplayerInner {
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.14);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03)),
-    linear-gradient(135deg, rgba(0, 179, 255, 0.05), rgba(233, 44, 99, 0.045)),
-    rgba(8, 11, 18, 0.88);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 18px 36px rgba(0, 0, 0, 0.3);
-  outline: none;
-}
-
+/* Artwork */
 .artworkWrap {
-  position: relative;
-  width: 2.7rem;
-  height: 2.7rem;
-  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
   overflow: hidden;
-  border-radius: 0.92rem;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 10px 22px rgba(0, 0, 0, 0.26);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .artwork {
@@ -112,493 +57,188 @@
   object-fit: cover;
 }
 
-.artworkFallback {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(135deg, rgba(0, 179, 255, 0.22), rgba(233, 44, 99, 0.18)),
-    rgba(255, 255, 255, 0.045);
-  color: rgba(255, 255, 255, 0.94);
-}
-
 .artworkFallbackIcon {
-  width: 1.05rem;
-  height: 1.05rem;
+  color: #71717a;
 }
 
+/* Metadata */
 .meta {
-  display: grid;
-  gap: 0.16rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
   min-width: 0;
-  overflow: hidden;
 }
 
 .metaTopline {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.38rem;
-  min-width: 0;
-  overflow: hidden;
+  gap: 0.4rem;
+  margin-bottom: 2px;
 }
 
 .liveBadge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 1.05rem;
-  padding: 0.08rem 0.42rem;
-  border-radius: 999px;
-  background: rgba(255, 59, 59, 0.18);
-  border: 1px solid rgba(255, 59, 59, 0.3);
-  color: #ff9b9b;
-  font-size: 0.56rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  gap: 3px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
   text-transform: uppercase;
-  flex-shrink: 0;
+  color: var(--wn-color-magenta-pulse, #FF00FF);
+  letter-spacing: 0.05em;
 }
 
-.nowPlayingLabel {
-  color: rgba(255, 255, 255, 0.56);
-  font-size: 0.62rem;
+.liveDot {
+  width: 4px;
+  height: 4px;
+  background-color: currentColor;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.healthBadge {
+  font-size: 8px;
   font-weight: 700;
-  letter-spacing: 0.08em;
   text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #ef4444;
 }
 
 .trackTitle {
-  display: block;
-  color: #fff;
   font-size: 0.9rem;
-  font-weight: 750;
-  line-height: 1.08;
+  font-weight: 600;
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.1;
 }
 
 .trackSubtitle {
-  display: block;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.72rem;
-  line-height: 1.08;
+  font-size: 0.75rem;
+  color: #a1a1aa;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .miniplayerRight {
-  display: grid;
-  justify-items: end;
-  gap: 0.18rem;
-  min-width: 0;
-  flex-shrink: 0;
-}
-
-.inlinePlaybackState {
-  color: rgba(255, 255, 255, 0.56);
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.inlinePlaybackStateActive {
-  color: rgba(0, 179, 255, 0.94);
+  display: flex;
+  align-items: center;
+  padding-right: 0.5rem;
 }
 
 .expandIcon {
-  width: 0.98rem;
-  height: 0.98rem;
-  color: rgba(255, 255, 255, 0.88);
+  color: #71717a;
 }
 
+/* More Button */
 .moreButton {
-  position: relative;
-  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  align-self: stretch;
-  width: 3rem;
-  min-width: 3rem;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.18rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.02)),
-    rgba(255, 255, 255, 0.035);
-  color: rgba(255, 255, 255, 0.86);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 12px 24px rgba(0, 0, 0, 0.2);
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
   cursor: pointer;
-  overflow: hidden;
-  isolation: isolate;
-  flex-shrink: 0;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease;
 }
 
-.moreButtonGlow {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(0, 179, 255, 0.12), transparent 42%),
-    radial-gradient(circle at 70% 80%, rgba(233, 44, 99, 0.1), transparent 44%);
-  opacity: 0.95;
-  pointer-events: none;
+.moreButton:active {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.moreButton:hover,
-.moreButton:focus-visible {
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.14);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.03)),
-    rgba(255, 255, 255, 0.05);
-  color: #fff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 14px 28px rgba(0, 0, 0, 0.22);
-  outline: none;
-}
-
-.moreButtonIcon {
-  position: relative;
-  z-index: 1;
-  width: 1rem;
-  height: 1rem;
-}
-
-/* =========================
-   DOCK NAV ROW V2
-========================= */
-
+/* ==========================================================================
+   BOTTOM ROW: Navigation
+   ========================================================================== */
 .navRow {
-  position: relative;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  align-items: end;
-  gap: 0.18rem;
-  min-width: 0;
-  padding: 0.22rem 0.2rem 0.08rem;
-  border-radius: 1.45rem;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015)),
-    rgba(7, 10, 18, 0.72);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 16px 32px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(18px) saturate(145%);
-  -webkit-backdrop-filter: blur(18px) saturate(145%);
-  overflow: visible;
-}
-
-.navRow::before {
-  content: '';
-  position: absolute;
-  inset: auto 12% 0.25rem 12%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.07),
-    transparent
-  );
-  pointer-events: none;
+  grid-template-columns: repeat(5, 1fr);
+  height: 64px;
+  align-items: center;
 }
 
 .navItem {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.28rem;
-  min-width: 0;
-  min-height: 3.25rem;
-  padding: 0.34rem 0.18rem 0.08rem;
-  border: 0;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
   background: transparent;
-  color: rgba(255, 255, 255, 0.72);
+  border: none;
+  color: #71717a;
   text-decoration: none;
-  cursor: pointer;
-  transition:
-    transform 180ms ease,
-    color 180ms ease;
-}
-
-.navItem:hover,
-.navItem:focus-visible {
-  color: rgba(255, 255, 255, 0.97);
-  transform: translateY(-1px);
-  outline: none;
+  transition: color 0.2s ease;
 }
 
 .navItemActive {
-  color: #fff;
-}
-
-.navIconWrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.045);
-  transition:
-    background 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
-}
-
-.navItem:hover .navIconWrap,
-.navItem:focus-visible .navIconWrap {
-  background: rgba(255, 255, 255, 0.085);
-}
-
-.navItemActive .navIconWrap {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04)),
-    rgba(255, 255, 255, 0.06);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 10px 20px rgba(0, 0, 0, 0.18);
+  color: var(--wn-color-electric-blue, #00FFFF);
 }
 
 .navIcon {
-  width: 1rem;
-  height: 1rem;
+  width: 22px;
+  height: 22px;
 }
 
 .navLabel {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+  font-size: 10px;
+  font-weight: 500;
 }
 
-/* =========================
-   FLOATING CENTER PLAY
-========================= */
-
+/* Center FAB Area */
 .centerAction {
   position: relative;
-  z-index: 2;
-  display: grid;
-  justify-items: center;
-  align-content: end;
-  gap: 0.18rem;
-  min-width: 0;
-}
-
-.playerButton {
-  position: relative;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 3.42rem;
-  height: 3.42rem;
-  margin-top: -0.95rem;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  cursor: pointer;
-  transition: transform 180ms ease;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: 8px; /* aligns label with other nav items */
 }
 
-.playerButton:hover,
-.playerButton:focus-visible {
-  transform: translateY(-2px) scale(1.015);
-  outline: none;
-}
-
-.playerButtonGlow {
+.playerFab {
   position: absolute;
-  inset: 0.05rem;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 32% 28%, rgba(0, 179, 255, 0.38), transparent 48%),
-    radial-gradient(circle at 68% 72%, rgba(233, 44, 99, 0.32), transparent 52%);
-  filter: blur(18px);
-  opacity: 1;
-  pointer-events: none;
-}
-
-.playerButtonCore {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
+  top: -24px; /* Breaks out of the top of the nav row */
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #09090b; /* Matches dock background to create a cutout effect */
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.94rem;
-  height: 2.94rem;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.045)),
-    linear-gradient(135deg, rgba(0, 179, 255, 0.24), rgba(233, 44, 99, 0.2)),
-    rgba(14, 18, 28, 0.95);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.09),
-    0 16px 32px rgba(0, 0, 0, 0.32);
-  color: #fff;
+  color: #000;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
 }
 
-.playerButtonIcon {
-  width: 1.04rem;
-  height: 1.04rem;
+.playerFab:active {
+  transform: scale(0.9);
 }
 
-.playerButtonLabel {
-  color: rgba(255, 255, 255, 0.84);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.fabIcon {
+  position: relative;
+  z-index: 2;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 640px) {
-  .dock {
-    gap: 0.46rem;
-  }
-
-  .topRow {
-    gap: 0.42rem;
-  }
-
-  .miniplayerInner {
-    gap: 0.6rem;
-    min-height: 3.58rem;
-    padding: 0.66rem 0.72rem;
-  }
-
-  .artworkWrap {
-    width: 2.45rem;
-    height: 2.45rem;
-    border-radius: 0.8rem;
-  }
-
-  .trackTitle {
-    font-size: 0.84rem;
-  }
-
-  .trackSubtitle {
-    font-size: 0.68rem;
-  }
-
-  .moreButton {
-    width: 2.76rem;
-    min-width: 2.76rem;
-    border-radius: 1rem;
-  }
-
-  .navRow {
-    gap: 0.1rem;
-    padding: 0.18rem 0.12rem 0.06rem;
-    border-radius: 1.2rem;
-  }
-
-  .navItem {
-    min-height: 3rem;
-    padding-inline: 0.08rem;
-  }
-
-  .navIconWrap {
-    width: 1.82rem;
-    height: 1.82rem;
-  }
-
-  .navIcon {
-    width: 0.92rem;
-    height: 0.92rem;
-  }
-
-  .navLabel {
-    font-size: 0.59rem;
-  }
-
-  .playerButton {
-    width: 3.08rem;
-    height: 3.08rem;
-    margin-top: -0.72rem;
-  }
-
-  .playerButtonCore {
-    width: 2.62rem;
-    height: 2.62rem;
-  }
-
-  .playerButtonLabel {
-    font-size: 0.58rem;
-  }
+.fabIconNudge {
+  transform: translateX(2px);
 }
 
-@media (max-width: 420px) {
-  .miniplayerInner {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .miniplayerRight {
-    display: none;
-  }
-
-  .trackSubtitle {
-    display: none;
-  }
-
-  .navRow {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0.04rem;
-    padding-inline: 0.06rem;
-  }
-
-  .navLabel {
-    font-size: 0.54rem;
-  }
-
-  .playerButton {
-    margin-top: -0.5rem;
-  }
-
-  .playerButtonLabel {
-    display: none;
-  }
-
-  .centerAction {
-    padding-bottom: 0.12rem;
-  }
+.spinning {
+  animation: spin 1s linear infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .miniplayerInner,
-  .moreButton,
-  .navItem,
-  .navIconWrap,
-  .playerButton {
-    transition: none;
-  }
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }

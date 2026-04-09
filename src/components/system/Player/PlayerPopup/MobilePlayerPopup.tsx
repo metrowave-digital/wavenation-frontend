@@ -8,6 +8,7 @@ import {
   useReducedMotion,
   type Variants,
 } from 'framer-motion'
+import { ChevronDown, Disc3, Clock, Radio } from 'lucide-react'
 import styles from './MobilePlayerPopup.module.css'
 import type { RecentTrack } from './usePlayerPopupData'
 
@@ -32,10 +33,8 @@ interface MobilePlayerPopupProps {
 
 function lockBodyScroll(locked: boolean) {
   if (!locked) return () => {}
-
   const previousOverflow = document.body.style.overflow
   document.body.style.overflow = 'hidden'
-
   return () => {
     document.body.style.overflow = previousOverflow
   }
@@ -43,35 +42,19 @@ function lockBodyScroll(locked: boolean) {
 
 const backdrop: Variants = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { duration: 0.2, ease: 'easeOut' },
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 0.18, ease: 'easeIn' },
-  },
+  show: { opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { opacity: 0, transition: { duration: 0.2, ease: 'easeIn' } },
 }
 
 const sheet: Variants = {
   hidden: { y: '100%' },
   show: {
     y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 460,
-      damping: 38,
-      mass: 0.95,
-    },
+    transition: { type: 'spring', stiffness: 350, damping: 35, mass: 1 },
   },
   exit: {
     y: '100%',
-    transition: {
-      type: 'spring',
-      stiffness: 420,
-      damping: 40,
-      mass: 1,
-    },
+    transition: { type: 'spring', stiffness: 300, damping: 35, mass: 1 },
   },
 }
 
@@ -92,11 +75,7 @@ export function MobilePlayerPopup({
 
   useEffect(() => {
     if (!open) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
-    }
-
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [open, onClose])
@@ -121,123 +100,115 @@ export function MobilePlayerPopup({
           exit={shouldReduceMotion ? { y: '100%' } : 'exit'}
           drag={shouldReduceMotion ? false : 'y'}
           dragConstraints={{ top: 0, bottom: 0 }}
-          dragElastic={0.18}
+          dragElastic={0.15}
           onClick={e => e.stopPropagation()}
           onDragEnd={(_, info) => {
-            if (info.offset.y > 120 || info.velocity.y > 900) {
-              onClose()
-            }
+            if (info.offset.y > 100 || info.velocity.y > 600) onClose()
           }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="mobile-player-popup-title"
-          aria-describedby="mobile-player-popup-description"
         >
-          <div className={styles.handleRow}>
-            <div className={styles.handle} aria-hidden="true" />
-
-            <button
-              type="button"
-              className={styles.close}
-              onClick={onClose}
-              aria-label="Close player"
-            >
-              ✕
+          {/* Header & Drag Handle */}
+          <div className={styles.header}>
+            <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close player">
+              <ChevronDown size={28} />
             </button>
+            <div className={styles.headerTitle}>
+              <span className={styles.pulseDot} />
+              {showData.isLive ? 'LIVE BROADCAST' : 'NOW PLAYING'}
+            </div>
+            <div className={styles.headerSpacer} />
           </div>
 
-          <h2 id="mobile-player-popup-title" className={styles.srOnly}>
-            Now Playing
-          </h2>
+          <h2 id="mobile-player-popup-title" className={styles.srOnly}>Now Playing</h2>
 
-          <p id="mobile-player-popup-description" className={styles.srOnly}>
-            Current track information, current or upcoming show details, and the
-            last five tracks.
-          </p>
-
-          <div className={styles.nowRow}>
-            <div className={styles.artwork}>
-              {!normalizedNow.artwork && (
-                <div className={styles.artworkSkeleton} />
-              )}
-
-              {normalizedNow.artwork && (
-                <Image
-                  src={normalizedNow.artwork}
-                  alt={`${normalizedNow.track} by ${normalizedNow.artist}`}
-                  fill
-                  priority
-                  sizes="96px"
-                  className={styles.image}
-                />
-              )}
-            </div>
-
-            <div className={styles.meta}>
-              <div className={styles.track}>{normalizedNow.track}</div>
-              <div className={styles.artist}>{normalizedNow.artist}</div>
-
-              <div
-                className={`${styles.soundBars} ${
-                  isPlaying ? styles.playing : ''
-                }`}
-                aria-hidden="true"
-              >
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-          </div>
-
-          {(showData.title || showData.timeLabel) && (
-            <div className={styles.showCard}>
-              <div className={styles.showArt}>
-                {!showData.artwork && <div className={styles.showArtSkeleton} />}
-
-                {showData.artwork && (
+          {/* Scrollable Content Zone */}
+          <div className={styles.contentScroll}>
+            {/* Big Artwork Area */}
+            <div className={styles.artworkZone}>
+              <div className={styles.artwork}>
+                {!normalizedNow.artwork ? (
+                  <div className={styles.artworkSkeleton}>
+                    <Disc3 size={48} className={styles.skeletonIcon} />
+                  </div>
+                ) : (
                   <Image
-                    src={showData.artwork}
-                    alt={showData.title || 'Show artwork'}
-                    width={48}
-                    height={48}
-                    className={styles.showImage}
+                    src={normalizedNow.artwork}
+                    alt={`${normalizedNow.track} by ${normalizedNow.artist}`}
+                    fill
+                    priority
+                    sizes="100vw"
+                    className={styles.image}
                   />
                 )}
               </div>
+            </div>
 
-              <div className={styles.showMeta}>
-                <div className={styles.showTitle}>{showData.title}</div>
-
-                {showData.hosts && (
-                  <div className={styles.showHosts}>{showData.hosts}</div>
-                )}
-
-                {showData.timeLabel && (
-                  <div className={styles.showTime}>{showData.timeLabel}</div>
-                )}
+            {/* Track Info */}
+            <div className={styles.metaZone}>
+              <div className={styles.trackTitleWrap}>
+                <h3 className={styles.track}>{normalizedNow.track}</h3>
+              </div>
+              <div className={styles.artistRow}>
+                <p className={styles.artist}>{normalizedNow.artist}</p>
+                <div className={`${styles.soundBars} ${isPlaying ? styles.playing : ''}`} aria-hidden="true">
+                  <span /><span /><span />
+                </div>
               </div>
             </div>
-          )}
 
-          <div className={styles.sectionTitle}>
-            {showData.isLive ? 'Recently Played' : 'Last 5 tracks'}
+            {/* Show Card (If exists) */}
+            {(showData.title || showData.timeLabel) && (
+              <div className={styles.showCard}>
+                <div className={styles.showArt}>
+                  {!showData.artwork ? (
+                    <div className={styles.showArtSkeleton}>
+                       <Radio size={20} className={styles.skeletonIcon} />
+                    </div>
+                  ) : (
+                    <Image
+                      src={showData.artwork}
+                      alt={showData.title || 'Show'}
+                      width={56}
+                      height={56}
+                      className={styles.showImage}
+                    />
+                  )}
+                </div>
+                <div className={styles.showMeta}>
+                  <div className={styles.showEyebrow}>{showData.isLive ? 'ON AIR NOW' : 'UP NEXT'}</div>
+                  <div className={styles.showTitle}>{showData.title}</div>
+                  {showData.timeLabel && <div className={styles.showTime}>{showData.timeLabel}</div>}
+                </div>
+              </div>
+            )}
+
+            {/* Recent History */}
+            <div className={styles.historyZone}>
+              <div className={styles.sectionHeader}>
+                <Clock size={16} className={styles.sectionIcon} />
+                <span className={styles.sectionTitle}>
+                  {showData.isLive ? 'RECENTLY PLAYED' : 'LAST 5 TRACKS'}
+                </span>
+              </div>
+
+              {recent.length ? (
+                <ul className={styles.recent}>
+                  {recent.map(track => (
+                    <li key={track.key} className={styles.recentItem}>
+                      <div className={styles.recentText}>
+                        <div className={styles.recentTrack}>{track.track}</div>
+                        <div className={styles.recentArtist}>{track.artist}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={styles.empty}>No recent tracks yet.</div>
+              )}
+            </div>
           </div>
-
-          {recent.length ? (
-            <ul className={styles.recent}>
-              {recent.map(track => (
-                <li key={track.key} className={styles.recentItem}>
-                  <div className={styles.recentText}>
-                    <div className={styles.recentTrack}>{track.track}</div>
-                    <div className={styles.recentArtist}>{track.artist}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className={styles.empty}>No recent tracks yet.</div>
-          )}
         </motion.section>
       </motion.div>
     </AnimatePresence>

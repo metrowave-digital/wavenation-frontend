@@ -1,107 +1,140 @@
 .wrap {
   position: fixed;
+  bottom: calc(var(--player-height, 90px) + 20px);
   left: 50%;
-  bottom: 92px; /* sits above player bar */
   transform: translateX(-50%);
-  z-index: 220;
+  z-index: 150;
+  width: calc(100% - 40px);
+  max-width: 400px;
   pointer-events: none;
 }
 
 .toast {
   pointer-events: auto;
-
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  position: relative;
+  display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  background: rgba(15, 15, 18, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 
-  padding: 10px 12px;
-  border-radius: 14px;
+.toast:hover {
+  background: rgba(20, 20, 24, 0.95);
+  border-color: rgba(57, 255, 20, 0.3);
+}
 
-  background: linear-gradient(
-    to bottom,
-    rgba(22, 22, 28, 0.78),
-    rgba(16, 16, 22, 0.72)
-  );
+/* Neon Accent Line */
+.accentBorder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background-color: var(--wn-color-neon-green, #39FF14);
+  box-shadow: 0 0 15px var(--wn-color-neon-green, #39FF14);
+}
 
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+.content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-  border: 1px solid rgba(255, 255, 255, 0.12);
-
-  box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
-  animation: toastIn 0.22s ease-out;
-  max-width: min(420px, calc(100vw - 24px));
+/* Icon & Pulse Animation */
+.iconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--wn-color-neon-green, #39FF14);
 }
 
 .icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary);
+  position: relative;
+  z-index: 2;
 }
 
+.pulseRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--wn-color-neon-green, #39FF14);
+  opacity: 0.2;
+  animation: ripple 2s infinite;
+}
+
+@keyframes ripple {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Text & Typography */
 .text {
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
-  font-size: 0.9rem;
-  font-weight: 650;
-  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+.zap {
+  color: var(--wn-color-neon-green, #39FF14);
 }
 
 .sub {
+  font-size: 11px;
+  color: #a1a1aa;
   margin-top: 2px;
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
-  line-height: 1.2;
 }
 
+/* Close Button */
 .close {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-
-  display: inline-flex;
+  background: transparent;
+  border: none;
+  color: #52525b;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
-
-  cursor: pointer;
 }
 
 .close:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
 }
 
-.close:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px var(--color-bg),
-    0 0 0 4px var(--color-accent);
-  border-radius: 10px;
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes toastIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .wrap {
+    bottom: calc(var(--player-height, 90px) + 12px);
+    width: calc(100% - 24px);
   }
 }

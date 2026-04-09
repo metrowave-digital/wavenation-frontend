@@ -4,12 +4,12 @@ import { useEffect, useRef } from 'react'
 import { trackEvent } from '@/lib/analytics'
 import { NOW_PLAYING_POLL_MS } from './audio.constants'
 import { extractNowPlaying, hasNowPlayingChanged } from './audio.nowPlaying'
-import type { ExtractedNowPlaying } from './audio.types'
+import type { PlaybackMetadata } from './audio.types'
 
 type UseNowPlayingPollerArgs = {
   nowPlayingUrl: string
-  fallback: ExtractedNowPlaying
-  onChange: (next: ExtractedNowPlaying) => void
+  fallback: PlaybackMetadata
+  onChange: (next: PlaybackMetadata) => void
   onError?: (message: string | null) => void
 }
 
@@ -19,16 +19,16 @@ export function useNowPlayingPoller({
   onChange,
   onError,
 }: UseNowPlayingPollerArgs) {
-  const lastRef = useRef<ExtractedNowPlaying>(fallback)
+  const lastRef = useRef<PlaybackMetadata>(fallback)
 
   useEffect(() => {
-    let alive = true
-    let timerId: number | null = null
+    const abortController = new AbortController()
 
     const fetchNowPlaying = async () => {
       try {
         const res = await fetch(nowPlayingUrl, {
           cache: 'no-store',
+          signal: abortController.signal
         })
 
         if (!res.ok) {
@@ -37,21 +37,10 @@ export function useNowPlayingPoller({
         }
 
         const payload = await res.json()
-        if (!alive) return
+        const next = extractNowPlaying(payload)
 
-        const extracted = extractNowPlaying(payload)
-
-        const next: ExtractedNowPlaying = {
-          title: extracted.title || fallback.title,
-          artist: extracted.artist || fallback.artist,
-          album: extracted.album || fallback.album,
-          artwork: extracted.artwork,
-          isLive: extracted.isLive,
-        }
-
-        const changed = hasNowPlayingChanged(lastRef.current, next)
-
-        if (!changed) {
+        // Prevent redundant state updates if song hasn't changed
+        if (!hasNowPlayingChanged(lastRef.current, next)) {
           onError?.(null)
           return
         }
@@ -61,24 +50,26 @@ export function useNowPlayingPoller({
         onError?.(null)
 
         trackEvent('now_playing_updated', {
-          placement: 'sticky_player',
-          track: next.title,
+          track: next.track,
           artist: next.artist,
           live: next.isLive,
         })
-      } catch {
-        onError?.('now_playing_fetch_failed')
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          onError?.('now_playing_fetch_failed')
+        }
       }
     }
 
-    void fetchNowPlaying()
-    timerId = window.setInterval(fetchNowPlaying, NOW_PLAYING_POLL_MS)
+    // Initial fetch on mount
+    fetchNowPlaying()
+    
+    // Fix: Using const here because it's never reassigned after this point
+    const timerId = setInterval(fetchNowPlaying, NOW_PLAYING_POLL_MS)
 
     return () => {
-      alive = false
-      if (timerId != null) {
-        window.clearInterval(timerId)
-      }
+      clearInterval(timerId)
+      abortController.abort()
     }
-  }, [fallback, nowPlayingUrl, onChange, onError])
+  }, [nowPlayingUrl, onChange, onError])
 }

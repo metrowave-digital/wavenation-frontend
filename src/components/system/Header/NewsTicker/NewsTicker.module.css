@@ -1,153 +1,144 @@
-.ticker {
-  display: grid;
-  grid-template-columns: auto 1px minmax(0, 1fr);
-  grid-template-areas: 'label divider1 viewport';
+.root {
+  display: flex;
   align-items: center;
-  min-height: 44px;
-  width: 100%;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.02),
-      rgba(255, 255, 255, 0)
-    ),
-    #0a0a0a;
-  color: #ededed;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  height: 48px;
+  background: #0b0d0f;
+  color: white;
   overflow: hidden;
-  column-gap: 10px;
+  position: relative;
+  border-top: 1px solid #1f1f21;
+  border-bottom: 1px solid #1f1f21;
+}
+
+/* Crisis mode */
+.crisis {
+  background: #b30000;
+}
+
+/* Skeleton */
+.skeleton {
+  height: 48px;
+  background: #1f1f21;
+  animation: pulse 1.5s infinite;
 }
 
 /* Label */
-
 .label {
-  grid-area: label;
-  padding-left: 10px;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #4da3ff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 96px;
-}
+  position: relative;
+  padding: 0 18px;
+  height: 100%;
+  display: flex;
+  align-items: center;
 
-/* Dividers */
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
 
-.sectionDivider {
-  width: 1px;
-  height: 16px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.32),
-    rgba(255, 255, 255, 0.08)
-  );
-  justify-self: center;
-}
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
 
-.sectionDivider:first-of-type {
-  grid-area: divider1;
-}
-
-.sectionDivider:last-of-type {
-  display: none;
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
 /* Viewport */
-
 .viewport {
-  grid-area: viewport;
-  min-width: 0;
+  flex: 1;
   overflow: hidden;
   position: relative;
-  padding-right: 10px;
 }
 
-/* Hide mini menu on mobile */
-.ticker > :last-child {
-  display: none;
+/* Gradient fade edges */
+.viewport::before,
+.viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
 }
 
-/* Breaking flash */
-
-.breakingActive {
-  animation: flash-bg 2.5s linear infinite;
+.viewport::before {
+  left: 0;
+  background: linear-gradient(to right, #0b0d0f, transparent);
 }
 
-@keyframes flash-bg {
-  0%,
-  100% {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.02),
-        rgba(255, 255, 255, 0)
-      ),
-      #0a0a0a;
-  }
-  50% {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(229, 57, 53, 0.14),
-        rgba(255, 255, 255, 0)
-      ),
-      rgba(229, 57, 53, 0.16);
-  }
+.viewport::after {
+  right: 0;
+  background: linear-gradient(to left, #0b0d0f, transparent);
 }
 
-/* Tablet and up */
-
-@media (min-width: 769px) {
-  .ticker {
-    grid-template-columns: auto 1px minmax(0, 1fr) 1px auto;
-    grid-template-areas: 'label divider1 viewport divider2 menu';
-    min-height: 40px;
-    column-gap: 12px;
-  }
-
-  .label {
-    padding-left: 14px;
-    font-size: 12px;
-    max-width: none;
-  }
-
-  .viewport {
-    padding-right: 0;
-  }
-
-  .sectionDivider {
-    height: 18px;
-  }
-
-  .sectionDivider:last-of-type {
-    display: block;
-    grid-area: divider2;
-  }
-
-  .ticker > :last-child {
-    grid-area: menu;
-    display: flex;
-    align-items: center;
-    padding-right: 12px;
-  }
+/* Track */
+.track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
-/* Large desktop */
+/* Items */
+.item {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 32px;
+  font-size: 16px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.2s ease;
+}
 
-@media (min-width: 1200px) {
-  .ticker {
-    column-gap: 14px;
-  }
+.item:hover {
+  color: #a2b3c7;
+  text-shadow: 0 0 6px rgba(0, 179, 255, 0.6);
+}
 
-  .label {
-    padding-left: 16px;
-  }
+/* Divider */
+.divider {
+  margin-right: 16px;
+  opacity: 0.4;
+}
 
-  .ticker > :last-child {
-    padding-right: 14px;
-  }
+/* Breaking */
+.breaking {
+  padding-left: 20px;
+  font-weight: 600;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+}
+
+.controls button:hover {
+  color: white;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 1 }
+  50% { opacity: 0.4 }
+  100% { opacity: 1 }
+}
+
+.labelBreaking {
+  background: linear-gradient(135deg, #e92c63, #ff4d7a);
+  color: white;
+  box-shadow:
+    0 0 12px rgba(233,44,99,0.6),
+    0 0 24px rgba(233,44,99,0.3);
+}
+
+.labelCrisis {
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
 }

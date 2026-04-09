@@ -1,0 +1,182 @@
+/* styles/utilities.css */
+@import './tokens.css';
+
+/* =========================================
+   GLOBAL / BASE
+   ========================================= */
+body {
+  background-color: var(--wn-color-black);
+  color: var(--wn-text-primary);
+  font-family: var(--wn-font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================
+   TYPOGRAPHY
+   ========================================= */
+/* Font Families */
+.font-primary { font-family: var(--wn-font-primary); }
+.font-display { font-family: var(--wn-font-display); text-transform: uppercase; }
+
+/* Font Weights */
+.font-light { font-weight: var(--wn-weight-light); }
+.font-regular { font-weight: var(--wn-weight-regular); }
+.font-medium { font-weight: var(--wn-weight-medium); }
+.font-semibold { font-weight: var(--wn-weight-semibold); }
+.font-bold { font-weight: var(--wn-weight-bold); }
+.font-extrabold { font-weight: var(--wn-weight-extrabold); }
+
+/* Master Hierarchy (Part 4.3) */
+.text-display {
+  font-family: var(--wn-font-display);
+  font-weight: var(--wn-weight-extrabold);
+  font-size: var(--wn-text-display-xl);
+  letter-spacing: var(--wn-tracking-cinematic);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.text-h1 {
+  font-family: var(--wn-font-display);
+  font-weight: var(--wn-weight-bold);
+  font-size: var(--wn-text-h1);
+  letter-spacing: var(--wn-tracking-tight);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.text-h2 {
+  font-family: var(--wn-font-display);
+  font-weight: var(--wn-weight-medium);
+  font-size: var(--wn-text-h2);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.text-h3 {
+  font-family: var(--wn-font-primary);
+  font-weight: var(--wn-weight-semibold);
+  font-size: var(--wn-text-h3);
+  line-height: 1.3;
+}
+
+.text-body-lg {
+  font-family: var(--wn-font-primary);
+  font-weight: var(--wn-weight-regular);
+  font-size: var(--wn-text-body-lg);
+  line-height: 1.5;
+}
+
+.text-body {
+  font-family: var(--wn-font-primary);
+  font-weight: var(--wn-weight-regular);
+  font-size: var(--wn-text-body);
+  line-height: 1.6;
+}
+
+.text-caption {
+  font-family: var(--wn-font-primary);
+  font-weight: var(--wn-weight-regular);
+  font-size: var(--wn-text-caption);
+  line-height: 1.4;
+}
+
+.text-micro {
+  font-family: var(--wn-font-primary);
+  font-weight: var(--wn-weight-regular);
+  font-size: var(--wn-text-micro);
+  letter-spacing: var(--wn-tracking-wide);
+  text-transform: uppercase;
+}
+
+/* =========================================
+   COLORS & BACKGROUNDS
+   ========================================= */
+/* Text Colors */
+.text-primary { color: var(--wn-text-primary); }
+.text-secondary { color: var(--wn-text-secondary); }
+.text-tertiary { color: var(--wn-text-tertiary); }
+.text-electric-blue { color: var(--wn-color-electric-blue); }
+.text-neon-green { color: var(--wn-color-neon-green); }
+.text-magenta-pulse { color: var(--wn-color-magenta-pulse); }
+
+/* Backgrounds */
+.bg-black { background-color: var(--wn-color-black); }
+.bg-charcoal { background-color: var(--wn-color-charcoal-gray); }
+.bg-indigo { background-color: var(--wn-color-deep-indigo); }
+.bg-slate { background-color: var(--wn-color-slate-gray); }
+
+/* Gradient Backgrounds */
+.bg-gradient-surge { background-image: var(--wn-gradient-electric-surge); }
+.bg-gradient-pulse { background-image: var(--wn-gradient-pulse-wave); }
+.bg-gradient-night { background-image: var(--wn-gradient-night-drive); }
+.bg-gradient-heat { background-image: var(--wn-gradient-southern-heat); }
+.bg-gradient-tech { background-image: var(--wn-gradient-tech-glow); }
+
+/* Gradient Text (Allowed ONLY for display headers - Part 3.6) */
+.text-gradient-surge {
+  background: var(--wn-gradient-electric-surge);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =========================================
+   ELEVATION, GLOWS, & BORDERS
+   ========================================= */
+.shadow-sm { box-shadow: var(--wn-shadow-sm); }
+.shadow-md { box-shadow: var(--wn-shadow-md); }
+.shadow-lg { box-shadow: var(--wn-shadow-lg); }
+
+.glow-blue { box-shadow: var(--wn-glow-blue); }
+.glow-magenta { box-shadow: var(--wn-glow-magenta); }
+.glow-green { box-shadow: var(--wn-glow-green); }
+
+.border-neon-blue { border: 1px solid var(--wn-color-electric-blue); }
+.border-neon-magenta { border: 1px solid var(--wn-color-magenta-pulse); }
+.border-neon-green { border: 1px solid var(--wn-color-neon-green); }
+
+/* =========================================
+   MOTION & INTERACTIONS
+   ========================================= */
+/* Transitions */
+.transition-all { transition: all var(--wn-duration-short) var(--wn-ease-kinetic); }
+.transition-cinematic { transition: all var(--wn-duration-cinematic) var(--wn-ease-cinematic); }
+
+/* Interactive Utilities */
+.hover-lift {
+  transition: transform var(--wn-duration-short) var(--wn-ease-bounce), box-shadow var(--wn-duration-short) var(--wn-ease-kinetic);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--wn-shadow-md);
+}
+
+.hover-glow-blue:hover { box-shadow: var(--wn-glow-blue); }
+
+/* =========================================
+   RESPONSIVE OVERRIDES (Mobile First)
+   ========================================= */
+
+/* Small Phones */
+@media (max-width: 479px) {
+  .text-display { font-size: var(--wn-text-h1); } /* Scale down massive text */
+  .text-h1 { font-size: var(--wn-text-h2); }
+}
+
+/* Tablets */
+@media (min-width: 768px) {
+  /* Default utility scaling applies here */
+}
+
+/* 10-Foot UI (TVs - Part 4.4C) */
+@media (min-width: 1920px) {
+  .text-display { 
+    font-size: var(--wn-text-display-xxl); 
+    letter-spacing: var(--wn-tracking-cinematic);
+  }
+  .text-body {
+    font-size: var(--wn-text-h3); /* TV body text needs to be massive */
+  }
+}

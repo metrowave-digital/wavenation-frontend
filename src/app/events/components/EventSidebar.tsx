@@ -1,4 +1,10 @@
+'use client'
+
+import { LiveChat } from './LiveChat'
+import { QuestionForm } from './QuestionForm'
+
 type EventSidebarProps = {
+  slug: string
   title: string
   isLive: boolean
   chatEnabled: boolean
@@ -47,6 +53,7 @@ function statusLabel(
 }
 
 export function EventSidebar({
+  slug,
   title,
   isLive,
   chatEnabled,
@@ -71,15 +78,7 @@ export function EventSidebar({
         top: '1rem',
       }}
     >
-      <div
-        style={{
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '24px',
-          padding: '1rem',
-          background: 'rgba(255,255,255,0.035)',
-          backdropFilter: 'blur(18px)',
-        }}
-      >
+      <div style={cardStyle}>
         <h3 style={{ marginTop: 0, marginBottom: '0.5rem' }}>
           Event Room
         </h3>
@@ -107,15 +106,7 @@ export function EventSidebar({
       </div>
 
       {(ctaUrl || eventbriteUrl) && (
-        <div
-          style={{
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '24px',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.035)',
-            backdropFilter: 'blur(18px)',
-          }}
-        >
+        <div style={cardStyle}>
           <h3 style={{ marginTop: 0 }}>Event Links</h3>
 
           {ctaUrl ? (
@@ -123,19 +114,7 @@ export function EventSidebar({
               href={ctaUrl}
               target="_blank"
               rel="noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                padding: '0.85rem 1rem',
-                borderRadius: '999px',
-                textDecoration: 'none',
-                color: '#050505',
-                background: '#fff',
-                fontWeight: 700,
-                marginBottom: eventbriteUrl ? '0.75rem' : 0,
-              }}
+              style={primaryLinkStyle}
             >
               {ctaLabel || 'Open Event'}
             </a>
@@ -146,19 +125,7 @@ export function EventSidebar({
               href={eventbriteUrl}
               target="_blank"
               rel="noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                padding: '0.85rem 1rem',
-                borderRadius: '999px',
-                textDecoration: 'none',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.14)',
-                background: 'transparent',
-                fontWeight: 700,
-              }}
+              style={secondaryLinkStyle}
             >
               View on Eventbrite
             </a>
@@ -167,15 +134,7 @@ export function EventSidebar({
       )}
 
       {chatEnabled && chatMode === 'external' && chatEmbedUrl ? (
-        <div
-          style={{
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '24px',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.035)',
-            backdropFilter: 'blur(18px)',
-          }}
-        >
+        <div style={cardStyle}>
           <h3 style={{ marginTop: 0 }}>Live Chat</h3>
           <div
             style={{
@@ -199,89 +158,21 @@ export function EventSidebar({
       ) : null}
 
       {chatEnabled && chatMode === 'native' ? (
-        <div
-          style={{
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '24px',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.035)',
-            backdropFilter: 'blur(18px)',
-            minHeight: '240px',
-          }}
-        >
+        <div style={cardStyle}>
           <h3 style={{ marginTop: 0 }}>Live Chat</h3>
-          <p style={{ margin: 0, color: 'rgba(255,255,255,0.74)' }}>
-            Native chat UI goes here.
-          </p>
+          <LiveChat slug={slug} />
         </div>
       ) : null}
 
-      {qaEnabled && (
-        <div
-          style={{
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '24px',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.035)',
-            backdropFilter: 'blur(18px)',
-          }}
-        >
+      {qaEnabled ? (
+        <div style={cardStyle}>
           <h3 style={{ marginTop: 0 }}>Submit a Question</h3>
-          <p
-            style={{
-              marginTop: 0,
-              color: 'rgba(255,255,255,0.72)',
-              lineHeight: 1.6,
-            }}
-          >
-            {qaPrompt ||
-              'Submit your question for possible inclusion during the live event.'}
-          </p>
-
-          <form>
-            <textarea
-              placeholder="Type your question here"
-              rows={5}
-              style={{
-                width: '100%',
-                borderRadius: '14px',
-                padding: '0.875rem',
-                background: '#101010',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.12)',
-                resize: 'vertical',
-                font: 'inherit',
-                boxSizing: 'border-box',
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                marginTop: '0.75rem',
-                width: '100%',
-                border: 0,
-                borderRadius: '999px',
-                padding: '0.85rem 1rem',
-                cursor: 'pointer',
-                fontWeight: 700,
-              }}
-            >
-              Send Question
-            </button>
-          </form>
+          <QuestionForm slug={slug} prompt={qaPrompt} />
         </div>
-      )}
+      ) : null}
 
       {(producerName || moderatorName || technicalDirectorName) && (
-        <div
-          style={{
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '24px',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.035)',
-            backdropFilter: 'blur(18px)',
-          }}
-        >
+        <div style={cardStyle}>
           <h3 style={{ marginTop: 0 }}>Production</h3>
           <div
             style={{
@@ -301,4 +192,40 @@ export function EventSidebar({
       )}
     </div>
   )
+}
+
+const cardStyle: React.CSSProperties = {
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '24px',
+  padding: '1rem',
+  background: 'rgba(255,255,255,0.035)',
+  backdropFilter: 'blur(18px)',
+}
+
+const primaryLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  padding: '0.85rem 1rem',
+  borderRadius: '999px',
+  textDecoration: 'none',
+  color: '#050505',
+  background: '#fff',
+  fontWeight: 700,
+  marginBottom: '0.75rem',
+}
+
+const secondaryLinkStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  padding: '0.85rem 1rem',
+  borderRadius: '999px',
+  textDecoration: 'none',
+  color: '#fff',
+  border: '1px solid rgba(255,255,255,0.14)',
+  background: 'transparent',
+  fontWeight: 700,
 }

@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useState,
+  type ReactNode,
 } from 'react'
 
 /* ======================================================
@@ -21,28 +22,23 @@ export interface NowPlaying {
    Context
 ====================================================== */
 
-const NowPlayingContext =
-  createContext<NowPlaying | null>(null)
+const NowPlayingContext = createContext<NowPlaying | null>(null)
 
 /* ======================================================
    Provider
 ====================================================== */
 
-export function NowPlayingProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [nowPlaying, setNowPlaying] =
-    useState<NowPlaying | null>(null)
+export function NowPlayingProvider({ children }: { children: ReactNode }) {
+  const [nowPlaying, setNowPlaying] = useState<NowPlaying | null>(null)
 
   useEffect(() => {
-    let alive = true
+    const abortController = new AbortController()
 
     async function fetchNowPlaying() {
       try {
         const res = await fetch('/api/now-playing', {
           cache: 'no-store',
+          signal: abortController.signal,
         })
 
         if (!res.ok) return
@@ -55,28 +51,40 @@ export function NowPlayingProvider({
           }
         }
 
-        if (!alive || !json?.nowPlaying) return
+        const data = json?.nowPlaying
+        if (!data?.title || !data?.artist) return
 
-        const { title, artist, artwork } = json.nowPlaying
+        setNowPlaying((prev) => {
+          if (
+            prev?.track === data.title &&
+            prev?.artist === data.artist &&
+            prev?.artwork === (data.artwork ?? null)
+          ) {
+            return prev
+          }
 
-        if (!title || !artist) return
-
-        setNowPlaying({
-          track: title,
-          artist,
-          artwork: artwork ?? null,
+          return {
+            track: data.title!,
+            artist: data.artist!,
+            artwork: data.artwork ?? null,
+          }
         })
-      } catch {
-        // silent fail
+      } catch (error: unknown) {
+        // Fix: Use 'unknown' and check error name to avoid 'any' lint error
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.warn('NowPlaying polling failed:', error.message)
+        }
       }
     }
 
     fetchNowPlaying()
-    const interval = setInterval(fetchNowPlaying, 15_000)
+    
+    // Fix: Declare as const since it is never reassigned
+    const intervalId = setInterval(fetchNowPlaying, 15_000)
 
     return () => {
-      alive = false
-      clearInterval(interval)
+      clearInterval(intervalId)
+      abortController.abort()
     }
   }, [])
 

@@ -1,0 +1,30 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px;
+  border-radius: 9999px;
+
+  color: white;
+  background: transparent;
+
+  transition: all 0.25s ease;
+}
+
+.button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #00B3FF; /* Electric Blue */
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Hide on desktop */
+@media (min-width: 1024px) {
+  .button {
+    display: none;
+  }
+}

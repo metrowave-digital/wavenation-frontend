@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useContext,
   useState,
   useEffect,
   useMemo,
@@ -12,31 +13,45 @@ import {
    Types
 ====================================================== */
 
-export type HeaderPopup = 'search' | 'profile' | null
+// 1. Added 'notification' to the allowable popups
+export type HeaderPopup = 'search' | 'profile' | 'notification' | null
 
 export interface HeaderState {
   compact: boolean
+
   activeMenu: string | null
   setActiveMenu: (id: string | null) => void
-  mobileOpen: boolean
-  setMobileOpen: (open: boolean) => void
+
+  isMobileMenuOpen: boolean
+  setMobileMenuOpen: (open: boolean) => void
+
   popup: HeaderPopup
   setPopup: (p: HeaderPopup) => void
+
+  /* Derived helpers (cleaner for components) */
+  isSearchOpen: boolean
+  isProfileOpen: boolean
+  isNotificationOpen: boolean // 2. Added to state interface
 }
 
 /* ======================================================
    Context
 ====================================================== */
 
-export const HeaderContext = createContext<HeaderState>({
-  compact: false,
-  activeMenu: null,
-  setActiveMenu: () => {},
-  mobileOpen: false,
-  setMobileOpen: () => {},
-  popup: null,
-  setPopup: () => {},
-})
+// RESTORED: This line was missing from your snippet!
+const HeaderContext = createContext<HeaderState | null>(null)
+
+/* ======================================================
+   Hook (IMPORTANT)
+====================================================== */
+
+export function useHeader() {
+  const context = useContext(HeaderContext)
+  if (!context) {
+    throw new Error('useHeader must be used within HeaderProvider')
+  }
+  return context
+}
 
 /* ======================================================
    Provider
@@ -49,8 +64,15 @@ interface HeaderProviderProps {
 export function HeaderProvider({ children }: HeaderProviderProps) {
   const [compact, setCompact] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [popup, setPopup] = useState<HeaderPopup>(null)
+
+  /* ---------------------------------------------
+     Derived State
+  ---------------------------------------------- */
+  const isSearchOpen = popup === 'search'
+  const isProfileOpen = popup === 'profile'
+  const isNotificationOpen = popup === 'notification' // 3. Added derived variable
 
   /* ---------------------------------------------
      Scroll → Compact Header
@@ -72,6 +94,16 @@ export function HeaderProvider({ children }: HeaderProviderProps) {
   }, [])
 
   /* ---------------------------------------------
+     Lock body scroll when overlays open
+  ---------------------------------------------- */
+  useEffect(() => {
+    const shouldLock =
+      isMobileMenuOpen || popup !== null
+
+    document.body.style.overflow = shouldLock ? 'hidden' : 'unset'
+  }, [isMobileMenuOpen, popup])
+
+  /* ---------------------------------------------
      Close menus on Escape
   ---------------------------------------------- */
   useEffect(() => {
@@ -79,7 +111,7 @@ export function HeaderProvider({ children }: HeaderProviderProps) {
       if (e.key === 'Escape') {
         setActiveMenu(null)
         setPopup(null)
-        setMobileOpen(false)
+        setMobileMenuOpen(false)
       }
     }
 
@@ -93,7 +125,7 @@ export function HeaderProvider({ children }: HeaderProviderProps) {
   useEffect(() => {
     const onResize = () => {
       if (window.innerWidth > 1024) {
-        setMobileOpen(false)
+        setMobileMenuOpen(false)
       }
     }
 
@@ -107,14 +139,29 @@ export function HeaderProvider({ children }: HeaderProviderProps) {
   const value = useMemo<HeaderState>(
     () => ({
       compact,
+
       activeMenu,
       setActiveMenu,
-      mobileOpen,
-      setMobileOpen,
+
+      isMobileMenuOpen,
+      setMobileMenuOpen,
+
       popup,
       setPopup,
+
+      isSearchOpen,
+      isProfileOpen,
+      isNotificationOpen, // 4. Exposed in the provider
     }),
-    [compact, activeMenu, mobileOpen, popup]
+    [
+      compact,
+      activeMenu,
+      isMobileMenuOpen,
+      popup,
+      isSearchOpen,
+      isProfileOpen,
+      isNotificationOpen, // 5. Added to dependencies
+    ]
   )
 
   return (

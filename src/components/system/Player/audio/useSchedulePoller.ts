@@ -7,11 +7,11 @@ import {
   findCurrentShow,
   mapScheduleItemToNowShow,
 } from './audio.schedule'
-import type { ScheduleNowPayload } from './audio.types'
+import type { RadioShowMeta } from './audio.types'
 
 type UseSchedulePollerArgs = {
   scheduleUrl: string
-  onChange: (next: ScheduleNowPayload | null) => void
+  onChange: (next: RadioShowMeta | null) => void
   onError?: (message: string | null) => void
 }
 
@@ -21,13 +21,13 @@ export function useSchedulePoller({
   onError,
 }: UseSchedulePollerArgs) {
   useEffect(() => {
-    let alive = true
-    let timerId: number | null = null
-
+    const abortController = new AbortController()
+    
     const fetchNowShow = async () => {
       try {
         const res = await fetch(scheduleUrl, {
           cache: 'no-store',
+          signal: abortController.signal
         })
 
         if (!res.ok) {
@@ -36,27 +36,25 @@ export function useSchedulePoller({
         }
 
         const payload = await res.json()
-        if (!alive) return
-
         const docs = extractScheduleDocsPayload(payload)
         const current = findCurrentShow(docs)
         const mapped = mapScheduleItemToNowShow(current)
 
         onChange(mapped)
         onError?.(null)
-      } catch {
-        onError?.('schedule_fetch_failed')
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          onError?.('schedule_fetch_failed')
+        }
       }
     }
 
-    void fetchNowShow()
-    timerId = window.setInterval(fetchNowShow, SCHEDULE_POLL_MS)
+    fetchNowShow()
+    const timerId = setInterval(fetchNowShow, SCHEDULE_POLL_MS)
 
     return () => {
-      alive = false
-      if (timerId != null) {
-        window.clearInterval(timerId)
-      }
+      clearInterval(timerId)
+      abortController.abort()
     }
   }, [onChange, onError, scheduleUrl])
 }
