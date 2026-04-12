@@ -3,29 +3,36 @@
 ====================================================== */
 .root {
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 1.5rem; /* Reduced from 2rem */
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem; /* Reduced for mobile */
+}
+
+@media (min-width: 768px) {
+  .root {
+    margin-top: 2rem;
+    gap: 1.5rem;
+  }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center; /* Changed from flex-end for better mobile alignment */
   border-bottom: 1px solid #1A1C20;
-  padding-bottom: 1rem;
+  padding-bottom: 0.75rem;
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .pulseIndicator {
-  width: 8px;
-  height: 8px;
+  width: 6px; /* Slightly smaller for mobile */
+  height: 6px;
   background-color: #00F0FF;
   border-radius: 50%;
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
@@ -34,7 +41,7 @@
 
 .heading {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.1rem; /* Scaled down for mobile */
   text-transform: uppercase;
   color: #FFFFFF;
   margin: 0;
@@ -42,13 +49,20 @@
 }
 
 .more {
-  color: #A0A0A0;
+  color: #71717A;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.7rem; /* Scaled down for mobile */
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.05em;
   transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .heading { font-size: 1.5rem; }
+  .more { font-size: 0.875rem; }
+  .pulseIndicator { width: 8px; height: 8px; }
 }
 
 .more:hover {
@@ -60,8 +74,15 @@
 ====================================================== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: 1fr; /* Single column on mobile */
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr); /* Two columns on tablets */
+    gap: 1.5rem;
+  }
 }
 
 .card {
@@ -75,10 +96,12 @@
   transition: border-color 0.4s ease, transform 0.4s ease;
 }
 
-.card:hover {
-  border-color: #00F0FF;
-  transform: translateY(-4px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+@media (hover: hover) {
+  .card:hover {
+    border-color: #00F0FF;
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .imageWrap {
@@ -104,13 +127,15 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: contrast(1.1) brightness(0.85);
+  filter: contrast(1.1) brightness(0.8); /* Darker on mobile for better text overlay */
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
 }
 
-.card:hover .image {
-  transform: scale(1.05);
-  filter: contrast(1.15) brightness(1);
+@media (hover: hover) {
+  .card:hover .image {
+    transform: scale(1.05);
+    filter: contrast(1.15) brightness(1);
+  }
 }
 
 .imagePlaceholder {
@@ -125,7 +150,7 @@
 .scanlines {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.25));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
   background-size: 100% 4px;
   pointer-events: none;
   z-index: 5;
@@ -134,7 +159,7 @@
 .vignette {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(11, 13, 15, 0.95) 0%, rgba(11, 13, 15, 0.4) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(11, 13, 15, 1) 0%, rgba(11, 13, 15, 0.4) 60%, transparent 100%);
   pointer-events: none;
   z-index: 6;
 }
@@ -147,30 +172,36 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 2rem 1.5rem;
+  padding: 1.25rem 1rem; /* Reduced padding for mobile */
   z-index: 10;
   display: flex;
   flex-direction: column;
 }
 
+@media (min-width: 768px) {
+  .overlay {
+    padding: 2rem 1.5rem;
+  }
+}
+
 .category {
   color: #00F0FF;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.65rem; /* Smaller on mobile */
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .title {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.1rem; /* Scaled down for mobile */
   line-height: 1.2;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.25rem 0;
   text-transform: uppercase;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -179,57 +210,59 @@
 
 .subtitle {
   color: #A0A0A0;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  font-size: 0.8rem;
+  line-height: 1.4;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1; /* Shorter on mobile grid cards */
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .category { font-size: 0.75rem; }
+  .title { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .subtitle { font-size: 0.875rem; -webkit-line-clamp: 2; }
 }
 
 /* ======================================================
    SKELETON LOADER
 ====================================================== */
-.skeleton {
-  background: #111316;
-  border-color: #1A1C20;
+.skeletonCard {
+  pointer-events: none;
 }
 
-.skelImage {
+.skelImageBg {
   position: absolute;
   inset: 0;
-  background: #16181C;
+  background: #111316;
   animation: pulseSkel 1.5s infinite ease-in-out;
 }
 
-.skelOverlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 2rem 1.5rem;
-  z-index: 10;
-}
-
 .skelTag {
-  width: 80px;
-  height: 16px;
-  background: #26282D;
-  margin-bottom: 0.75rem;
+  width: 50px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 0.5rem;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
 }
 
 .skelTitle {
-  width: 80%;
-  height: 24px;
-  background: #26282D;
+  width: 85%;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.15);
   margin-bottom: 0.5rem;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
 }
 
-.skelLine {
+.skelSubtitle {
   width: 60%;
-  height: 16px;
-  background: #26282D;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
 }
 
 /* ======================================================
@@ -242,53 +275,7 @@
 }
 
 @keyframes pulseSkel {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-/* ======================================================
-   SKELETON LOADER
-====================================================== */
-.skeletonCard {
-  pointer-events: none; /* Prevent clicking while loading */
-}
-
-.skelImageBg {
-  position: absolute;
-  inset: 0;
-  background: #111316;
-  animation: pulseSkel 1.5s infinite ease-in-out;
-}
-
-.skelTag {
-  width: 60px;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  margin-bottom: 0.75rem;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
-}
-
-.skelTitle {
-  width: 85%;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.15);
-  margin-bottom: 0.5rem;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
-}
-
-.skelSubtitle {
-  width: 65%;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
-}
-
-@keyframes pulseSkel {
   0% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.6; }
   100% { opacity: 0.3; }
 }

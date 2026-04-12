@@ -4,8 +4,14 @@
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem; /* Reduced from 1.5rem for tighter mobile fit */
   width: 100%;
+}
+
+@media (min-width: 768px) {
+  .stack {
+    gap: 1.5rem;
+  }
 }
 
 /* ======================================================
@@ -15,37 +21,20 @@
   position: relative;
   background: #0B0D0F;
   border: 1px solid #1A1C20;
-  padding: 2rem;
+  padding: 1.25rem; /* Mobile-friendly padding */
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   transition: border-color 0.3s ease;
 }
 
+@media (min-width: 768px) {
+  .primaryCard {
+    padding: 2rem;
+  }
+}
+
 .primaryCard:hover {
   border-color: #B026FF; /* Neon Purple */
-}
-
-/* Studio Monitor Overlays */
-.scanlines {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
-  background-size: 100% 4px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 40%, rgba(11,13,15,0.8) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.cardContent {
-  position: relative;
-  z-index: 10;
 }
 
 /* Header */
@@ -55,7 +44,7 @@
   align-items: center;
   border-bottom: 1px solid #1A1C20;
   padding-bottom: 0.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .headerLeft {
@@ -71,7 +60,7 @@
 .eyebrow {
   color: #A0A0A0;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.65rem; /* Slightly smaller for mobile */
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -80,7 +69,7 @@
 .weekLabel {
   color: #666666;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -88,11 +77,16 @@
 .chartTitle {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 2rem;
+  font-size: 1.5rem; /* Downsized for mobile */
   line-height: 1.1;
   text-transform: uppercase;
-  margin: 0 0 2rem 0;
+  margin: 0 0 1.5rem 0;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 768px) {
+  .eyebrow, .weekLabel { font-size: 0.75rem; }
+  .chartTitle { font-size: 2rem; }
 }
 
 /* List Items */
@@ -100,13 +94,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   padding: 0.75rem;
   background: rgba(17, 19, 22, 0.6);
   border: 1px solid transparent;
@@ -122,9 +116,9 @@
 .rank {
   color: #B026FF;
   font-family: 'Oswald', sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  width: 28px;
+  width: 24px;
 }
 
 .details {
@@ -136,7 +130,7 @@
 
 .track {
   color: #FFFFFF;
-  font-size: 1rem;
+  font-size: 0.95rem; /* Balanced for mobile */
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -145,7 +139,7 @@
 
 .artist {
   color: #A0A0A0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
@@ -170,36 +164,31 @@
   transition: color 0.2s ease;
 }
 
-.fullLink:hover {
-  color: #FFFFFF;
-}
-
 /* ======================================================
    INSIGHT WIDGETS
 ====================================================== */
 .widgetGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* Single column on mobile */
   gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .widgetGrid {
+    grid-template-columns: 1fr 1fr; /* Two columns on tablets/desktop */
+  }
 }
 
 .widget {
   position: relative;
   background: #0B0D0F;
   border: 1px solid #1A1C20;
-  padding: 1.25rem; /* Slightly reduced padding to give text more room */
+  padding: 1.25rem;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
-
-.widget:hover {
-  transform: translateY(-2px);
-}
-
-.widget:nth-child(1):hover { border-color: #39FF14; }
-.widget:nth-child(2):hover { border-color: #00F0FF; }
 
 .widgetLabel {
   color: #A0A0A0;
@@ -216,11 +205,10 @@
 .widgetValue {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 1.1rem; /* Slightly reduced from 1.25rem for better wrapping */
-  line-height: 1.3;
+  font-size: 1.1rem;
+  line-height: 1.2;
   text-transform: uppercase;
   margin: 0 0 0.25rem 0;
-  /* CHANGED: Allow text to wrap up to 2 lines instead of cutting off immediately */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -235,34 +223,25 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
-  /* CHANGED: Allow artist name to wrap to 2 lines as well */
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1; /* Keep artist to one line on mobile widgets */
   -webkit-box-orient: vertical;
   overflow: hidden;
   position: relative;
   z-index: 10;
 }
 
-.widgetGlowGreen {
+.widgetGlowGreen, .widgetGlowPurple {
   position: absolute;
   bottom: -20px;
   right: -20px;
   width: 80px;
   height: 80px;
-  background: radial-gradient(circle, rgba(57, 255, 20, 0.15) 0%, transparent 70%);
   pointer-events: none;
 }
 
-.widgetGlowPurple {
-  position: absolute;
-  bottom: -20px;
-  right: -20px;
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
+.widgetGlowGreen { background: radial-gradient(circle, rgba(57, 255, 20, 0.15) 0%, transparent 70%); }
+.widgetGlowPurple { background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%); }
 
 /* ======================================================
    EXPLORE ALL BUTTON
@@ -273,7 +252,7 @@
   align-items: center;
   background: #111316;
   border: 1px solid #1A1C20;
-  padding: 1.25rem 1.5rem;
+  padding: 1.1rem 1.25rem;
   text-decoration: none;
   transition: all 0.3s ease;
 }
@@ -281,7 +260,7 @@
 .exploreAll span:first-child {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8rem; /* Scaled down for mobile */
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -290,131 +269,34 @@
 .brandTag {
   color: #39FF14;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 
-.exploreAll:hover {
-  background: #FFFFFF;
-  border-color: #FFFFFF;
-}
-
-.exploreAll:hover span:first-child {
-  color: #000000;
-}
-
-.exploreAll:hover .brandTag {
-  color: #000000;
-  opacity: 0.5;
+@media (min-width: 768px) {
+  .exploreAll span:first-child { font-size: 0.875rem; }
+  .brandTag { font-size: 0.7rem; }
 }
 
 /* ======================================================
    SKELETON LOADER
 ====================================================== */
 .skeletonCard {
-  pointer-events: none; /* Prevent interaction while loading */
+  pointer-events: none;
 }
 
-/* Header Skeleton */
-.skelHeaderLeft {
-  width: 140px;
-  height: 14px;
-  background: #1A1C20;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out;
-}
-
-.skelWeek {
-  width: 60px;
-  height: 14px;
-  background: #1A1C20;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.1s;
-}
-
-/* Title Skeleton */
-.skelTitle {
-  width: 180px;
-  height: 32px;
-  background: #1A1C20;
-  margin-bottom: 2rem;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
-}
-
-/* Row Skeletons */
-.skelRank {
-  width: 20px;
-  height: 20px;
-  background: #1A1C20;
-  border-radius: 2px;
-  flex-shrink: 0;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
-}
-
-.skelTrack {
-  width: 70%;
-  height: 14px;
-  background: #26282D;
-  margin-bottom: 6px;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
-}
-
-.skelArtist {
-  width: 40%;
-  height: 12px;
-  background: #1A1C20;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.5s;
-}
-
-/* Full Link Skeleton */
-.skelLink {
-  width: 80px;
-  height: 14px;
-  background: #1A1C20;
-  border-radius: 2px;
-  margin-top: 1rem;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.6s;
-}
-
-/* Widget Skeletons */
-.skelWidgetLabel {
-  width: 90px;
-  height: 12px;
-  background: #1A1C20;
-  margin-bottom: 0.75rem;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
-}
-
-.skelWidgetValue {
-  width: 80%;
-  height: 20px;
-  background: #26282D;
-  margin-bottom: 0.5rem;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
-}
-
-.skelWidgetSub {
-  width: 50%;
-  height: 12px;
-  background: #1A1C20;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
-}
-
-/* Explore Button Skeleton */
-.skelExplore {
-  width: 100%;
-  height: 20px;
-  background: #1A1C20;
-  border-radius: 2px;
-  animation: pulseSkel 1.5s infinite ease-in-out 0.5s;
-}
+.skelHeaderLeft { width: 120px; height: 14px; background: #1A1C20; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out; }
+.skelWeek { width: 50px; height: 14px; background: #1A1C20; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.1s; }
+.skelTitle { width: 160px; height: 28px; background: #1A1C20; margin-bottom: 1.5rem; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.2s; }
+.skelRank { width: 20px; height: 20px; background: #1A1C20; border-radius: 2px; flex-shrink: 0; animation: pulseSkel 1.5s infinite ease-in-out 0.3s; }
+.skelTrack { width: 70%; height: 14px; background: #26282D; margin-bottom: 6px; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.4s; }
+.skelArtist { width: 40%; height: 12px; background: #1A1C20; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.5s; }
+.skelLink { width: 80px; height: 14px; background: #1A1C20; border-radius: 2px; margin-top: 1rem; animation: pulseSkel 1.5s infinite ease-in-out 0.6s; }
+.skelWidgetLabel { width: 80px; height: 12px; background: #1A1C20; margin-bottom: 0.75rem; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.2s; }
+.skelWidgetValue { width: 85%; height: 18px; background: #26282D; margin-bottom: 0.5rem; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.3s; }
+.skelWidgetSub { width: 50%; height: 12px; background: #1A1C20; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.4s; }
+.skelExplore { width: 100%; height: 20px; background: #1A1C20; border-radius: 2px; animation: pulseSkel 1.5s infinite ease-in-out 0.5s; }
 
 @keyframes pulseSkel {
   0% { opacity: 0.4; }

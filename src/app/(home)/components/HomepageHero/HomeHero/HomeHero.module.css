@@ -10,6 +10,7 @@
   overflow: hidden;
 }
 
+/* Texture fixed to background */
 .textureOverlay {
   position: fixed;
   inset: 0;
@@ -20,7 +21,7 @@
 }
 
 /* ======================================================
-   GRID LAYOUT
+   GRID LAYOUT (DESKTOP)
 ====================================================== */
 .heroGrid {
   position: relative;
@@ -28,10 +29,6 @@
   max-width: 1600px;
   margin: 0 auto;
   display: grid;
-  /* Left Rail: 320px 
-    Center Rail: Takes remaining space
-    Right Rail: 320px 
-  */
   grid-template-columns: 320px 1fr 320px;
   gap: 2.5rem;
   align-items: start;
@@ -47,7 +44,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-width: 0; /* Prevents grid blowout from slider */
+  min-width: 0;
 }
 
 .spotlightWrapper {
@@ -91,7 +88,6 @@
   animation: pulseDot 2s infinite;
 }
 
-/* Accent Colors mapped to specific rails */
 .dotPurple {
   background-color: #B026FF;
   box-shadow: 0 0 8px rgba(176, 38, 255, 0.6);
@@ -103,7 +99,7 @@
 }
 
 /* ======================================================
-   KEYFRAMES & RESPONSIVE
+   KEYFRAMES
 ====================================================== */
 @keyframes pulseDot {
   0% { transform: scale(0.95); opacity: 1; }
@@ -111,33 +107,72 @@
   100% { transform: scale(0.95); opacity: 1; }
 }
 
-/* Tablet / Small Desktop: Move Left Rail to bottom, keep Right Rail */
+/* ======================================================
+   RESPONSIVE DESIGN
+====================================================== */
+
+/* TABLET: 2-Column Grid (Left rail drops to bottom) */
 @media (max-width: 1280px) {
   .heroGrid {
     grid-template-columns: 1fr 320px;
+    gap: 2rem;
   }
   
-  /* Select the first rail wrapper (Left Rail) and move it to the bottom */
   .railWrapper:first-child {
     grid-column: 1 / -1;
     order: 3;
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 }
 
-/* Mobile: Stack everything */
+/* MOBILE: Sequential Stacked Layout */
 @media (max-width: 992px) {
-  .heroGrid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  
   .root {
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
-  .railWrapper:first-child {
-    order: unset;
-    margin-top: 0;
+  .heroGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  /* Using display: contents allows the internal items to 
+     act as direct children of the .heroGrid flexbox 
+  */
+  .centerWrapper,
+  .railWrapper {
+    display: contents;
+  }
+
+  /* 1. SLIDER FIRST */
+  .centerWrapper > *:first-child { 
+    order: 1; 
+  }
+
+  /* 2. CHARTS SECOND (Header + Cards) */
+  .railWrapper:first-child > * { 
+    order: 2; 
+  }
+
+  /* 3. SPOTLIGHT THIRD */
+  .spotlightWrapper { 
+    order: 3; 
+    margin-top: 0; /* Let flex gap handle spacing */
+  }
+
+  /* 4. FEATURED ARTIST / NEWSLETTER FOURTH */
+  .railWrapper:last-child > * { 
+    order: 4; 
+  }
+
+  /* Header scaling for mobile */
+  .railHeader {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .railLabel {
+    font-size: 1rem;
   }
 }

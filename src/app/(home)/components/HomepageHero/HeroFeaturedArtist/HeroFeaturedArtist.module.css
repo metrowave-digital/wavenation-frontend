@@ -5,7 +5,8 @@
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 4/5; /* Portrait aspect ratio for right rail */
+  /* Use a slightly shorter ratio on mobile to save vertical space */
+  aspect-ratio: 1 / 1; 
   background: #0B0D0F;
   border: 1px solid #1A1C20;
   overflow: hidden;
@@ -13,10 +14,19 @@
   transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.billboard:hover {
-  border-color: #FF0055; /* Magenta for Talent/Artists */
-  transform: translateY(-4px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+@media (min-width: 768px) {
+  .billboard {
+    aspect-ratio: 4 / 5; /* Return to portrait for tablet/desktop */
+  }
+}
+
+/* Only apply hover lifts on devices that support hover */
+@media (hover: hover) {
+  .billboard:hover {
+    border-color: #FF0055;
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+  }
 }
 
 /* ======================================================
@@ -42,13 +52,22 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(100%) contrast(1.1);
+  /* Reduced grayscale on mobile so the artist is visible without hover */
+  filter: grayscale(40%) contrast(1.1);
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
 }
 
-.billboard:hover .image {
-  transform: scale(1.08);
-  filter: grayscale(0%) contrast(1.05);
+@media (min-width: 1024px) {
+  .image {
+    filter: grayscale(100%) contrast(1.1);
+  }
+}
+
+@media (hover: hover) {
+  .billboard:hover .image {
+    transform: scale(1.08);
+    filter: grayscale(0%) contrast(1.05);
+  }
 }
 
 .imagePlaceholder {
@@ -63,7 +82,7 @@
 .scanlines {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
   background-size: 100% 4px;
   pointer-events: none;
   z-index: 5;
@@ -72,7 +91,7 @@
 .vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, transparent 30%, rgba(11,13,15,0.95) 100%);
+  background: radial-gradient(circle at center, transparent 30%, rgba(11,13,15,0.85) 100%);
   pointer-events: none;
   z-index: 6;
 }
@@ -85,44 +104,65 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem;
+  padding: 0.75rem; /* Reduced from 1.5rem for mobile */
   z-index: 10;
   display: flex;
   flex-direction: column;
 }
 
+@media (min-width: 768px) {
+  .overlay {
+    padding: 1.5rem;
+  }
+}
+
 .content {
   background: rgba(11, 13, 15, 0.85);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1.5rem;
+  padding: 1rem; /* Reduced for mobile */
   width: 100%;
   transition: border-color 0.3s ease;
 }
 
-.billboard:hover .content {
-  border-color: rgba(255, 0, 85, 0.4);
+@media (min-width: 768px) {
+  .content {
+    padding: 1.5rem;
+  }
+}
+
+@media (hover: hover) {
+  .billboard:hover .content {
+    border-color: rgba(255, 0, 85, 0.4);
+  }
 }
 
 .headerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .kicker {
   color: #FF0055;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
+@media (min-width: 768px) {
+  .kicker {
+    font-size: 0.75rem;
+  }
+}
+
 .livePulse {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background-color: #FF0055;
   border-radius: 50%;
   box-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
@@ -132,9 +172,9 @@
 .name {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.25rem; /* Scaled down for mobile */
   line-height: 1.1;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.75rem 0;
   text-transform: uppercase;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
   white-space: nowrap;
@@ -142,32 +182,47 @@
   text-overflow: ellipsis;
 }
 
+@media (min-width: 768px) {
+  .name {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+}
+
 .footerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #1A1C20;
-  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.75rem;
 }
 
 .explore {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   transition: color 0.3s ease;
 }
 
-.billboard:hover .explore {
-  color: #FF0055;
+@media (min-width: 768px) {
+  .explore {
+    font-size: 0.875rem;
+  }
+}
+
+@media (hover: hover) {
+  .billboard:hover .explore {
+    color: #FF0055;
+  }
 }
 
 .brandTag {
-  color: #A0A0A0;
+  color: #71717A;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
@@ -187,25 +242,25 @@
 }
 
 .skelKicker {
-  width: 80px;
-  height: 12px;
+  width: 60px;
+  height: 10px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 2px;
   animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
 }
 
 .skelName {
-  width: 70%;
-  height: 28px;
+  width: 80%;
+  height: 20px;
   background: rgba(255, 255, 255, 0.15);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   border-radius: 2px;
   animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
 }
 
 .skelExplore {
-  width: 100px;
-  height: 14px;
+  width: 80px;
+  height: 12px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 2px;
   animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
@@ -222,6 +277,6 @@
 
 @keyframes pulseSkel {
   0% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+  50% { opacity: 0.6; }
   100% { opacity: 0.3; }
 }
