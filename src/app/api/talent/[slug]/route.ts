@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const CMS_URL = process.env.NEXT_PUBLIC_CMS_URL
 
@@ -11,10 +11,11 @@ if (!CMS_URL) {
  * Proxies the Payload CMS to fetch a single talent profile by slug
  */
 export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
+  request: NextRequest, // Using NextRequest for better type compatibility
+  { params }: { params: Promise<{ slug: string }> } // 1. Set params as a Promise
 ) {
-  const { slug } = params
+  // 2. Await the params before destructuring
+  const { slug } = await params
 
   try {
     const res = await fetch(
@@ -37,14 +38,11 @@ export async function GET(
       return NextResponse.json({ error: 'Talent not found' }, { status: 404 })
     }
 
-    // Return the first matching talent document
     return NextResponse.json(data.docs[0])
 
   } catch (error) {
-    // 1. Log the error to your server console so you can see WHAT failed
     console.error(`[Talent API Error for ${slug}]:`, error)
 
-    // 2. Return a clean message to the frontend
     return NextResponse.json(
       { error: 'Internal Server Error' }, 
       { status: 500 }
