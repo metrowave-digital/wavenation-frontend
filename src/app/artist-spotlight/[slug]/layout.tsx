@@ -1,43 +1,23 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
-
-/* ======================================================
-   Metadata (Head Injection for This Route Group)
-====================================================== */
+import styles from './ArtistSpotlight.module.css'
 
 export const metadata: Metadata = {
-  other: {
-    'google-adsense-account': 'ca-pub-6631983121456407',
-  },
+  title: 'Artist Spotlight | WaveNation',
+  description: 'In-depth cinematic profiles of the artists shaping the culture.',
 }
 
-/* ======================================================
-   Artist Spotlight Layout
-====================================================== */
-
-export default function ArtistSpotlightLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function ArtistSpotlightLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      {/* ================= Google AdSense (Scoped) ================= */}
-      <Script
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6631983121456407"
-        strategy="afterInteractive"
-        crossOrigin="anonymous"
-      />
-
-      <main
-        style={{
-          background: '#0b0b0d',
-          color: '#f5f5f7',
-          minHeight: '100vh',
-        }}
-      >
-        {children}
-      </main>
-    </>
+    <div className={styles.spotlightWrapper}>
+      {/* Texture remains consistent across the desk */}
+      <div className={styles.textureOverlay} />
+      
+      {/* If you have a Global Header component, place it here.
+          We keep this layout light so the child page can 
+          handle the full-bleed 85vh hero.
+      */}
+      
+      {children}
+    </div>
   )
 }

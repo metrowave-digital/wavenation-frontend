@@ -1,197 +1,144 @@
 .page {
-  max-width: 100%;
-}
-
-/* ================= POWERED ================= */
-
-.poweredBy {
-  margin: 1rem auto 2.5rem;
-  max-width: 1100px;
-  padding: 0 1.5rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.65;
-}
-
-.poweredBy a {
-  color: #7dd3fc;
-  text-decoration: none;
-}
-
-/* ================= ADS ================= */
-
-.adSlot {
-  margin: 2.75rem auto;
-  max-width: 1100px;
-  padding: 1.25rem;
-  border-radius: 14px;
-  border: 1px dashed rgba(255,255,255,0.2);
-  text-align: center;
-  font-size: 0.75rem;
-  opacity: 0.6;
-}
-
-/* ================= WEEK SELECTOR ================= */
-
-.weekSelector {
-  max-width: 1100px;
-  margin: 1.5rem auto 2rem;
-  padding: 0 1.5rem;
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.weekSelector select {
-  background: #020617;
+  background: #020202;
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-  padding: 0.45rem 0.6rem;
-  border-radius: 8px;
+  min-height: 100vh;
+  padding-bottom: 6rem;
 }
 
-/* ================= INSIGHTS ================= */
-
-.insights {
-  max-width: 1100px;
-  margin: 0 auto 2.25rem;
-  padding: 0 1.5rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.comparing {
-  filter: grayscale(1);
-  opacity: 0.7;
-}
-
-.insightCard {
-  padding: 1.1rem;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.03);
-}
-
-.insightCard span {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  opacity: 0.6;
-}
-
-.insightCard strong {
-  display: block;
-  font-weight: 900;
-}
-
-.insightCard em {
-  font-style: normal;
-  font-weight: 700;
-}
-
-/* ================= CHART ================= */
-
-.chart {
-  max-width: 1100px;
+.container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
+  padding: 0 2rem;
+}
+
+.cyan { color: #00F0FF; }
+.dimIcon { color: #71717a; }
+
+/* ======================================================
+   COMMAND DECK HERO
+====================================================== */
+.hero {
+  position: relative;
+  background: #050505;
+  padding: 120px 0 40px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  margin-bottom: 2rem;
   overflow: hidden;
 }
 
-.chartHeaderRow,
-.chartRow {
+.gridTexture {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+.sysBreadcrumb { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Oswald', sans-serif; font-size: 10px; color: #71717a; letter-spacing: 0.15em; margin-bottom: 1.5rem; }
+.sysIcon { color: #00F0FF; }
+
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(3rem, 7vw, 5rem);
+  line-height: 0.9;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 1.5rem 0;
+}
+
+.heroMeta { display: flex; gap: 1rem; flex-wrap: wrap; }
+.metaBadge { display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); padding: 6px 12px; font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #a1a1aa; }
+
+/* ======================================================
+   SYSTEM CONTROLS
+====================================================== */
+.systemControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.weekSelector { display: flex; align-items: center; gap: 0.75rem; font-family: 'Oswald', sans-serif; font-size: 11px; color: #71717a; letter-spacing: 0.1em; }
+.selectInput { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 4px 12px; font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 0.1em; outline: none; cursor: pointer; }
+.selectInput:focus { border-color: #00F0FF; }
+
+.poweredBy { display: flex; align-items: center; gap: 0.5rem; font-family: 'Oswald', sans-serif; font-size: 10px; color: #52525b; text-decoration: none; letter-spacing: 0.1em; transition: color 0.2s; }
+.poweredBy:hover { color: #00F0FF; }
+
+/* ======================================================
+   TELEMETRY HUD (INSIGHTS)
+====================================================== */
+.telemetryHud {
   display: grid;
-  grid-template-columns: 80px 1.5fr 1.2fr 90px;
-  padding: 0.9rem 1.1rem;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
 }
 
-.chartHeaderRow {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  opacity: 0.6;
+/* Top 3 Grid */
+.topThreeGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.topCard { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: border-color 0.3s; }
+.topCard:hover { border-color: rgba(0, 240, 255, 0.3); background: rgba(0, 240, 255, 0.02); }
+
+.topRank { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: #00F0FF; margin-bottom: 1rem; line-height: 1; }
+.topInfo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1.5rem; }
+.topTrack { font-family: 'Oswald', sans-serif; font-size: 1.25rem; text-transform: uppercase; line-height: 1.1; }
+.topArtist { font-size: 12px; color: #a1a1aa; font-style: normal; }
+.prevRankReadout { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Oswald', sans-serif; font-size: 9px; color: #71717a; letter-spacing: 0.1em; background: rgba(255,255,255,0.03); padding: 4px 8px; width: fit-content; }
+
+/* Stats Column */
+.statsColumn { display: flex; flex-direction: column; gap: 1rem; }
+.statCard { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; }
+.statLabel { font-family: 'Oswald', sans-serif; font-size: 10px; color: #71717a; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.statTrack { font-family: 'Oswald', sans-serif; font-size: 1.25rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+.statDelta { display: flex; align-items: center; gap: 0.5rem; font-family: 'Oswald', sans-serif; font-size: 12px; color: #fff; letter-spacing: 0.05em; }
+
+/* ======================================================
+   DATA TERMINAL (CHART LIST)
+====================================================== */
+.terminal { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); }
+
+.terminalHeader { display: grid; grid-template-columns: 80px 2fr 1.5fr 100px; gap: 1rem; padding: 1rem 1.5rem; background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.1); font-family: 'Oswald', sans-serif; font-size: 10px; color: #71717a; letter-spacing: 0.1em; }
+.colRank { display: flex; align-items: center; gap: 4px; justify-content: center; }
+.colTrack { display: flex; align-items: center; }
+.colArtist { display: flex; align-items: center; }
+.colMove { display: flex; align-items: center; justify-content: flex-end; }
+
+.terminalBody { display: flex; flex-direction: column; }
+.chartRow { display: grid; grid-template-columns: 80px 2fr 1.5fr 100px; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s; align-items: center; }
+.chartRow:hover { background: rgba(0, 240, 255, 0.03); }
+
+.rankNum { font-family: 'Oswald', sans-serif; font-size: 1.25rem; color: #a1a1aa; }
+.trackName { font-family: 'Oswald', sans-serif; font-size: 1.15rem; color: #fff; text-transform: uppercase; }
+.artistName { font-size: 14px; color: #a1a1aa; }
+
+.movementBadge { display: inline-flex; align-items: center; gap: 4px; font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 2px; letter-spacing: 0.05em; justify-content: center; width: 100%; }
+.moveUp { background: rgba(0, 240, 255, 0.1); color: #00F0FF; }
+.moveDown { background: rgba(233, 44, 99, 0.1); color: #e92c63; }
+.moveNew { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.moveFlat { color: #52525b; }
+
+/* ======================================================
+   DROPPED SECTION
+====================================================== */
+.droppedSection { margin-top: 4rem; border: 1px dashed rgba(233, 44, 99, 0.3); padding: 2rem; background: rgba(233, 44, 99, 0.02); }
+.droppedHeader { display: flex; align-items: center; gap: 0.5rem; font-family: 'Oswald', sans-serif; font-size: 11px; color: #e92c63; letter-spacing: 0.1em; margin-bottom: 1.5rem; }
+.droppedList { display: flex; flex-wrap: wrap; gap: 1rem; }
+.droppedItem { font-size: 12px; color: #a1a1aa; background: rgba(0,0,0,0.5); padding: 6px 12px; border: 1px solid rgba(255,255,255,0.05); }
+.droppedTrack { color: #fff; font-weight: 600; margin-right: 4px; }
+
+@media (max-width: 1024px) {
+  .telemetryHud { grid-template-columns: 1fr; }
+  .topThreeGrid { grid-template-columns: 1fr; }
+  .statsColumn { flex-direction: row; }
+  .terminalHeader { display: none; }
+  .chartRow { grid-template-columns: 40px 1fr 80px; padding: 1rem; }
+  .colArtist { display: none; /* Hide artist col on mobile, could append to track name */ }
 }
-
-.chartRow {
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-
-.rank {
-  font-weight: 900;
-}
-
-.track {
-  font-weight: 600;
-}
-
-.artist {
-  opacity: 0.75;
-}
-
-/* ================= MOVEMENT ================= */
-
-.movement {
-  font-weight: 900;
-  text-align: right;
-  transition: transform 0.25s ease, color 0.25s ease;
-}
-
-.up {
-  color: #22c55e;
-  animation: rise 0.4s ease;
-}
-
-.down {
-  color: #ef4444;
-  animation: drop 0.4s ease;
-}
-
-.new {
-  color: #38bdf8;
-}
-
-@keyframes rise {
-  from { transform: translateY(6px); }
-  to { transform: translateY(0); }
-}
-
-@keyframes drop {
-  from { transform: translateY(-6px); }
-  to { transform: translateY(0); }
-}
-
-/* ================= DROPPED ================= */
-
-.dropped {
-  max-width: 1100px;
-  margin: 3rem auto 0;
-  padding: 0 1.5rem;
-  opacity: 0.85;
-}
-
-.dropped h3 {
-  font-size: 0.85rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-
-.dropped ul {
-  list-style: none;
-  padding: 0;
-}
-
-.dropped li {
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.compareNote {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.65rem;
-  opacity: 0.55;
-  letter-spacing: 0.06em;
+@media (max-width: 768px) {
+  .systemControls { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .statsColumn { flex-direction: column; }
 }

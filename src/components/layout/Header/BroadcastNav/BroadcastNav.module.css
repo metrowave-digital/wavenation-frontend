@@ -1,0 +1,332 @@
+/* ==========================================================================
+   Navigation Color Palette
+   ========================================================================== */
+:root {
+  --wn-color-blue: #00FFFF;    /* Electric Blue */
+  --wn-color-magenta: #FF00FF; /* Magenta Pulse */
+  --wn-color-news: #FF4500;    /* News Orange/Red */
+  --wn-color-brand: #39FF14;   /* Neon Green / Brand */
+  
+  /* Internal helper for badges */
+  --wn-color-magenta-pulse: #ef4444;
+}
+
+/* ==========================================================================
+   Root Navigation (The Top Bar)
+   ========================================================================== */
+.root {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.triggerList {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.triggerItem {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+/* THE FIX: Elevate buttons above the mega menu's hover bridge */
+.triggerBtn {
+  position: relative;
+  z-index: 60; 
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a1a1aa;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.triggerBtn:hover,
+.triggerBtn:focus-visible {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.triggerBtn.active {
+  color: #ffffff;
+}
+
+.chevron {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.5;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Mega Menu Container (Full Width Dropdown)
+   ========================================================================== */
+.megaMenuWrapper {
+  position: absolute;
+  top: 100%; /* Placed directly below the header */
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: rgba(9, 9, 11, 0.98);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 45; /* Stays below the trigger buttons (60) */
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* THE INVISIBLE HOVER BRIDGE */
+.megaMenuWrapper::before {
+  content: '';
+  position: absolute;
+  bottom: 100%; 
+  left: 0;
+  right: 0;
+  height: 100px; 
+  background: transparent; 
+  z-index: -1; /* Pushes the invisible shield safely behind everything in the wrapper */
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.megaMenuInner {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) {
+  .megaMenuInner {
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   Featured Area (Left Column)
+   ========================================================================== */
+.featuredArea {
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyFeaturedSpace {
+  display: none;
+}
+
+.featuredCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+  height: 100%;
+  overflow: hidden;
+}
+
+.featuredCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--card-accent);
+  box-shadow: 0 0 15px var(--card-accent);
+}
+
+.featuredEyebrow {
+  display: block;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--card-accent);
+  margin-bottom: 0.5rem;
+}
+
+.featuredTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.featuredDesc {
+  font-size: 0.85rem;
+  color: #a1a1aa;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+}
+
+.featuredBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #ffffff; /* Default text color */
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.featuredBtn:hover {
+  gap: 0.75rem;
+  color: var(--card-accent); /* Text changes to the section's accent color */
+}
+
+/* ==========================================================================
+   Links Area (Right Columns)
+   ========================================================================== */
+.linksArea {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2.5rem;
+}
+
+.menuColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.colIcon {
+  opacity: 0.7;
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.linkItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  text-decoration: none;
+  padding: 0.15rem 0;
+  transition: transform 0.2s ease;
+}
+
+.linkItem:hover {
+  transform: translateX(4px);
+}
+
+.linkTextWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.linkLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #d4d4d8;
+  transition: color 0.2s ease;
+}
+
+.linkItem:hover .linkLabel {
+  color: #ffffff;
+}
+
+.linkDesc {
+  font-size: 0.75rem;
+  color: #71717a;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Badges
+   ========================================================================== */
+.badge {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.badge_live {
+  background: var(--wn-color-magenta-pulse, #ef4444);
+  color: white;
+  animation: pulseBg 2s infinite;
+}
+
+.badge_new {
+  background: var(--wn-color-electric-blue, #00FFFF);
+  color: #000;
+}
+
+.badge_trending {
+  background: var(--wn-color-neon-green, #39FF14);
+  color: #000;
+}
+
+.badge_editor_pick {
+  background: #ffffff;
+  color: #000;
+}
+
+@keyframes pulseBg {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

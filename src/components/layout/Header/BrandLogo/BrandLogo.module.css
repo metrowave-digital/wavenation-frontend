@@ -1,0 +1,142 @@
+/* === CONTAINER === */
+.root {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 0.85rem;
+  transition: opacity 0.2s ease;
+  outline: none;
+}
+
+.root:hover {
+  opacity: 0.9;
+}
+
+/* === LOGO / MONOGRAM === */
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: auto;
+  
+  /* Entrance Animation */
+  opacity: 0;
+  transform: translateY(6px);
+  animation: logoIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.logoImage {
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+  /* Hover Micro-interaction */
+  transition: transform 0.3s ease;
+}
+
+/* === TEXT STACK === */
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  justify-content: center;
+}
+
+/* === SITE TITLE (WAVENATION) === */
+.siteTitle {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+
+  /* Entrance Animation */
+  opacity: 0;
+  transform: translateY(8px);
+  animation: textIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.1s;
+  transition: text-shadow 0.3s ease;
+}
+
+/* === TAGLINE (Amplify Your Vibe) === */
+.tagline {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wn-color-brand, #39FF14);
+  margin-top: 2px;
+
+  /* Entrance Animation */
+  opacity: 0;
+  transform: translateY(10px);
+  animation: textIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.2s;
+  
+  transition: 
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* === ANIMATIONS === */
+@keyframes logoIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes textIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* === INTERACTION STATES === */
+.root:hover .logoImage {
+  transform: scale(1.05);
+}
+
+.root:hover .siteTitle {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Scroll State logic (if you toggle this via JS later) */
+.taglineHidden {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+/* === FALLBACKS === */
+.fallbackText {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+}
+
+/* === RESPONSIVENESS === */
+@media (max-width: 768px) {
+  .logoWrapper {
+    height: 32px;
+  }
+  
+  .siteTitle {
+    font-size: 1.1rem;
+  }
+
+  .tagline {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (max-width: 480px) {
+  .tagline {
+    display: none; /* Hide tagline on very small phones to prevent header crowding */
+  }
+}

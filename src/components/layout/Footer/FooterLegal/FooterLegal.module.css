@@ -1,0 +1,46 @@
+.legal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.link {
+  color: #71717a;
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #ffffff;
+}
+
+.copy {
+  color: #71717a;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.external {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.external:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 1024px) {
+  .legal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

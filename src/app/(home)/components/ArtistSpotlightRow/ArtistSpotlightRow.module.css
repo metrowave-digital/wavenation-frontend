@@ -1,0 +1,189 @@
+.section {
+  position: relative;
+  background-color: #0B0D0F;
+  padding: 4rem 1.5rem;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #1A1C20;
+  padding-bottom: 1rem;
+}
+
+.kickerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.livePulse {
+  width: 8px;
+  height: 8px;
+  background-color: #FF0055; /* Magenta for Artists */
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+  animation: pulse 2s infinite;
+}
+
+.eyebrow {
+  color: #FF0055;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.title {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Dynamic Grid: Auto-adjusts based on 1, 2, or 3 items */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 4/5;
+  background: #111316;
+  border: 1px solid #1A1C20;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+  border-color: #FF0055;
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Image Centering */
+.imageWrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.imageContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(100%) contrast(1.1);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+  filter: grayscale(0%) contrast(1.05);
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #1A1C20;
+}
+
+/* Studio Effects */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(11, 13, 15, 0.95) 0%, rgba(11, 13, 15, 0.2) 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* Overlay Content */
+.overlay {
+  position: relative;
+  z-index: 10;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.categoryTag {
+  align-self: flex-start;
+  color: #0B0D0F;
+  background: #FF0055;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cardTitle {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: 0 0 1rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.readMore {
+  color: #A0A0A0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.card:hover .readMore {
+  color: #FF0055;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
+  70% { transform: scale(1.5); box-shadow: 0 0 0 6px rgba(255, 0, 85, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+}

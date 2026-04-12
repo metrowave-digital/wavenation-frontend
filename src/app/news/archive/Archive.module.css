@@ -1,0 +1,195 @@
+.archivePage {
+  background-color: #060708;
+  color: #fff;
+  min-height: 100vh;
+  padding: 8rem 2rem;
+  position: relative;
+}
+
+.textureOverlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.archiveHeader {
+  margin-bottom: 6rem;
+  text-align: center;
+}
+
+.eyebrow {
+  color: #00F0FF;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  text-transform: uppercase;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.outlineText {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+}
+
+.description {
+  color: #A1A1AA;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.archiveSection {
+  margin-bottom: 8rem;
+}
+
+.sectionHeading {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid #1A1C20;
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+  color: #71717A;
+}
+
+/* Category Grid */
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.categoryCard {
+  background: #111316;
+  border: 1px solid #1A1C20;
+  padding: 2.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.categoryCard:hover {
+  background: #16181D;
+  border-color: #39FF14;
+  transform: translateY(-5px);
+}
+
+.cardIndicator {
+  width: 30px;
+  height: 2px;
+  background: #39FF14;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.categoryCard h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.categoryCard p {
+  color: #71717A;
+  font-size: 0.9rem;
+}
+
+/* Author Grid */
+.authorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.authorCard {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255,255,255,0.02);
+  padding: 1rem;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.authorCard:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.authorAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #27272A;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-weight: 700;
+  color: #00F0FF;
+}
+
+.authorInfo h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+}
+
+.authorInfo p {
+  color: #71717A;
+  font-size: 0.8rem;
+}
+
+/* Tag Cloud */
+.tagCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tagPill {
+  background: #111316;
+  border: 1px solid #27272A;
+  color: #A1A1AA;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.tagPill:hover {
+  border-color: #00F0FF;
+  color: #fff;
+  background: rgba(0, 240, 255, 0.05);
+}
+
+@media (max-width: 768px) {
+  .archivePage { padding: 6rem 1rem; }
+  .categoryGrid { grid-template-columns: 1fr; }
+}

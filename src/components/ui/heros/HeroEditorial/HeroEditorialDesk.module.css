@@ -1,0 +1,30 @@
+.root { width: 100%; background: #020202; padding: 120px 0 40px; }
+.container { max-width: 1440px; margin: 0 auto; padding: 0 2rem; }
+
+.deskHeader { margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2rem; }
+.sysRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 0.15em; }
+.sysLabel { color: #71717a; }
+.sysStatus { display: flex; align-items: center; gap: 0.5rem; color: #e92c63; font-weight: 700; }
+.pulse { animation: blink 1.5s infinite; }
+.titleMain { font-family: 'Oswald', sans-serif; font-size: clamp(3rem, 6vw, 5rem); color: #fff; margin: 0; line-height: 1; letter-spacing: -0.02em; }
+
+.bentoGrid { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; height: 60vh; min-height: 500px; }
+.leadCard, .subCard { position: relative; display: block; border-radius: 4px; overflow: hidden; background: #111; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); }
+.subGrid { display: grid; grid-template-rows: 1fr 1fr; gap: 1rem; }
+
+.cardBg { object-fit: cover; transition: transform 0.6s ease; }
+.leadCard:hover .cardBg, .subCard:hover .cardBg { transform: scale(1.05); }
+.cardGradient { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 50%, transparent 100%); }
+
+.cardContent { position: absolute; bottom: 0; left: 0; width: 100%; padding: 2.5rem; display: flex; flex-direction: column; justify-content: flex-end; }
+.tagBreaking { align-self: flex-start; background: #e92c63; color: #fff; font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; padding: 4px 10px; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.tagStandard { align-self: flex-start; background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); color: #fff; font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 700; padding: 4px 8px; letter-spacing: 0.1em; margin-bottom: 1rem; }
+
+.leadTitle { font-family: 'Oswald', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem); color: #fff; margin: 0 0 1rem 0; line-height: 1.1; text-transform: uppercase; }
+.subTitle { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: #fff; margin: 0; line-height: 1.2; text-transform: uppercase; }
+
+.metaRow { display: flex; align-items: center; gap: 0.75rem; font-size: 11px; font-weight: 600; color: #a1a1aa; letter-spacing: 0.05em; }
+.separator { color: #e92c63; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@media (max-width: 1024px) { .bentoGrid { grid-template-columns: 1fr; height: auto; } .leadCard { height: 50vh; } .subGrid { height: 50vh; } .cardContent { padding: 1.5rem; } }

@@ -1,0 +1,297 @@
+/* ======================================================
+   HUB PAGE CONTAINER
+====================================================== */
+.hubPage {
+  background-color: #060708;
+  color: #ffffff;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.textureOverlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+  position: relative;
+  z-index: 20;
+}
+
+/* ======================================================
+   HUB HEADER & NAVIGATION
+====================================================== */
+.hubHeader {
+  margin-bottom: 4rem;
+  animation: fadeDown 0.8s ease forwards;
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--feed-color, #00F0FF);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--feed-color, #00F0FF);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--feed-color, #00F0FF);
+  animation: pulse 1.5s infinite;
+}
+
+.mainTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(4rem, 9vw, 7.5rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 3rem;
+}
+
+.outlineText {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+}
+
+.hubNav {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #1A1C20;
+  padding-bottom: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.hubNav::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.navLink {
+  color: #A1A1AA;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  font-size: 1rem;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ======================================================
+   FEED SECTION & GRID
+====================================================== */
+.feedContainer {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.feedHeader {
+  margin-bottom: 3.5rem;
+  border-left: 4px solid var(--feed-color);
+  padding-left: 1.5rem;
+}
+
+.feedTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.feedDescription {
+  color: #A1A1AA;
+  font-size: 1.1rem;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 3.5rem;
+}
+
+/* ======================================================
+   ARTICLE CARDS
+====================================================== */
+.contentCard {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.cardImageWrapper {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: #111316;
+  border: 1px solid #1A1C20;
+  border-bottom: 2px solid var(--feed-color);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.cardImg {
+  object-fit: cover;
+  filter: brightness(0.8) contrast(1.1);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.contentCard:hover .cardImg {
+  filter: brightness(1) contrast(1);
+  transform: scale(1.05);
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 7, 8, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--feed-color);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.contentCard:hover .cardOverlay {
+  opacity: 1;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardMetaRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.cardCategory {
+  color: var(--feed-color);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.cardDate {
+  color: #71717A;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.cardTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+  color: #ffffff;
+}
+
+.contentCard:hover .cardTitle {
+  color: var(--feed-color);
+}
+
+.cardExcerpt {
+  font-size: 0.95rem;
+  color: #A1A1AA;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ======================================================
+   UTILITIES
+====================================================== */
+.emptyState {
+  padding: 6rem 2rem;
+  text-align: center;
+  border: 1px dashed #27272A;
+  color: #71717A;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cardPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #111316 25%, #1A1C20 50%, #111316 75%);
+  background-size: 200% 200%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* ======================================================
+   ANIMATIONS
+====================================================== */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+  0% { opacity: 0; transform: translateY(-30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ======================================================
+   RESPONSIVE ADJUSTMENTS
+====================================================== */
+@media (max-width: 768px) {
+  .main { padding: 4rem 1rem; }
+  .mainTitle { font-size: 3.5rem; }
+  .cardGrid { gap: 2rem; grid-template-columns: 1fr; }
+}

@@ -1,0 +1,13 @@
+.terminal { background: #000; height: 100vh; display: flex; flex-direction: column; color: #fff; overflow: hidden; }
+.statusBar { height: 60px; background: #0B0D0F; border-bottom: 1px solid #1A1C20; display: flex; justify-content: space-between; align-items: center; padding: 0 1.5rem; }
+.statusLeft { display: flex; align-items: center; gap: 1.5rem; }
+.liveIndicator { display: flex; align-items: center; gap: 0.75rem; color: #FF0055; font-family: 'Oswald', sans-serif; font-weight: 700; }
+.pulseDot { width: 10px; height: 10px; background: #FF0055; border-radius: 50%; box-shadow: 0 0 10px #FF0055; animation: pulse 2s infinite; }
+.broadcastGrid { display: grid; grid-template-columns: 1fr 380px; flex: 1; }
+.videoStage { padding: 2rem; display: flex; flex-direction: column; gap: 2rem; background: radial-gradient(circle, #0B0D0F 0%, #000 100%); }
+.monitorFrame { position: relative; flex: 1; border: 1px solid #1A1C20; }
+.iframe { width: 100%; height: 100%; border: none; }
+.scanlines { position: absolute; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px; pointer-events: none; }
+.sidebar { background: #060708; border-left: 1px solid #1A1C20; }
+.sidebarHeader { padding: 1.25rem; border-bottom: 1px solid #1A1C20; color: #FF0055; font-family: 'Oswald', sans-serif; font-weight: 700; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }

@@ -1,0 +1,63 @@
+.root {
+  position: relative;
+  width: 100%;
+  background: #020202;
+  padding: 160px 0 80px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1000px; /* Tighter width for better text readability on simple pages */
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sysRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid;
+  margin-bottom: 2rem;
+}
+
+.sysLabel { display: flex; align-items: center; gap: 0.5rem; color: #71717a; }
+
+.statusBlink { color: #fff; font-weight: 700; animation: blink 2s infinite; }
+
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.9;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #a1a1aa;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 1.5rem 0 0 0;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }

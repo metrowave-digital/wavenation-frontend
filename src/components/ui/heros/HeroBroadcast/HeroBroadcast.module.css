@@ -1,0 +1,49 @@
+.root { position: relative; width: 100%; min-height: 85vh; display: flex; align-items: center; background: #020202; overflow: hidden; padding-top: 80px; opacity: 0; animation: fadeUp 0.8s ease-out forwards; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.bgWrapper { position: absolute; inset: 0; z-index: 1; }
+.bgImage { object-fit: cover; filter: blur(30px) brightness(0.3); transform: scale(1.1); }
+.overlayGradient { position: absolute; inset: 0; background: radial-gradient(circle at 30% 50%, rgba(2,2,2,0.4) 0%, rgba(2,2,2,0.95) 100%); }
+.scanlines { position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.02) 0.5%, transparent 1%); z-index: 2; pointer-events: none; }
+
+.container { position: relative; z-index: 10; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 2rem; display: grid; grid-template-columns: 1fr 400px; gap: 4rem; align-items: center; }
+
+.commandDeck { display: flex; flex-direction: column; }
+.systemBreadcrumb { display: inline-flex; align-items: center; gap: 0.75rem; font-family: 'Oswald', sans-serif; font-size: 10px; color: #71717a; letter-spacing: 0.15em; background: rgba(255,255,255,0.03); padding: 6px 12px; border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; width: fit-content; margin-bottom: 2rem; }
+.blinkingDot { width: 6px; height: 6px; background: #39FF14; border-radius: 50%; animation: blink 1.5s infinite; }
+
+.statusBadge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); padding: 4px 10px; font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #a1a1aa; margin-bottom: 1.5rem; }
+.statusLive { background: #39FF14; color: #000; }
+.showTitle { font-family: 'Oswald', sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); line-height: 0.9; text-transform: uppercase; color: #fff; margin: 0; }
+.hostRow { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; }
+.hosts { font-size: 1.25rem; color: #a1a1aa; font-weight: 500; }
+.accent { color: #39FF14; }
+
+.actionCluster { margin-top: 3rem; display: flex; align-items: center; gap: 2rem; }
+.playBtn { position: relative; display: inline-flex; align-items: center; gap: 0.75rem; background: #fff; color: #000; padding: 1.25rem 2.5rem; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1.1rem; border: none; cursor: pointer; overflow: hidden; transition: transform 0.2s; }
+.playBtn:hover { transform: translateY(-2px); }
+.ctaGlow { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(57,255,20,0.4), transparent); animation: swipe 3s infinite; }
+
+.liveTelemetry { display: flex; align-items: center; gap: 1rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1.5rem; }
+.telemetryData { display: flex; flex-direction: column; }
+.tLabel { font-size: 9px; color: #71717a; font-weight: 700; letter-spacing: 0.1em; }
+.tValue { font-size: 12px; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; }
+
+.bentoHUD { display: flex; flex-direction: column; gap: 1rem; }
+.bentoArtPanel { position: relative; aspect-ratio: 1/1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+.bentoArt { object-fit: cover; }
+.eqOverlay { position: absolute; bottom: 1rem; right: 1rem; background: rgba(0,0,0,0.6); padding: 0.5rem; backdrop-filter: blur(4px); border-radius: 4px; }
+.bentoInfoPanel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.5rem; backdrop-filter: blur(12px); }
+.eyebrow { font-size: 10px; font-weight: 700; color: #39FF14; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem; }
+.trackTitle { font-family: 'Oswald', sans-serif; font-size: 1.75rem; color: #fff; margin: 0 0 0.25rem 0; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trackArtist { font-size: 12px; color: #a1a1aa; margin: 0 0 1.5rem 0; }
+.techSpecs { display: flex; gap: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; }
+.specBox { display: flex; flex-direction: column; }
+.sLabel { font-size: 9px; color: #71717a; font-weight: 700; }
+.sValue { font-family: 'Oswald', sans-serif; font-size: 14px; color: #fff; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes swipe { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+.pulse { animation: blink 1.5s infinite; }
+
+@media (max-width: 1024px) { .container { grid-template-columns: 1fr; gap: 3rem; } .bentoHUD { max-width: 400px; margin: 0 auto; } .commandDeck { text-align: center; align-items: center; } .actionCluster { flex-direction: column; gap: 1.5rem; } .liveTelemetry { border-left: none; border-top: 1px solid rgba(255,255,255,0.1); padding: 1rem 0 0; } }

@@ -1,0 +1,65 @@
+.articleBody {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #D4D4D8;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
+  opacity: 0;
+}
+
+.textBlock {
+  margin-bottom: 2.5rem;
+}
+
+.blockHeading {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  color: #fff;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 4px solid #39FF14; /* Green Accent for subheaders */
+}
+
+.paragraph {
+  margin-bottom: 1.5rem;
+}
+
+.videoBlock {
+  margin: 3rem 0;
+  background: #111316;
+  border: 1px solid #1A1C20;
+  padding: 1rem;
+}
+
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.videoCaption {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #A1A1AA;
+  margin-top: 1rem;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

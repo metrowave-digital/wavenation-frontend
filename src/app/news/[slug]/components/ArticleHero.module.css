@@ -1,0 +1,126 @@
+.heroWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.metaTop {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.categoryBadge {
+  background: #FF0055;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  letter-spacing: 0.1em;
+}
+
+.readingTime {
+  font-family: 'Oswald', sans-serif;
+  color: #39FF14;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.subtitle {
+  font-size: 1.35rem;
+  color: #A1A1AA;
+  line-height: 1.5;
+  font-weight: 400;
+  max-width: 800px;
+  margin-bottom: 2rem;
+}
+
+.byline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3rem;
+  color: #fff;
+}
+
+.separator {
+  color: #FF0055;
+}
+
+.date {
+  color: #71717A;
+}
+
+/* Hero Image */
+.imageContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #111316;
+  border: 1px solid #1A1C20;
+  overflow: hidden;
+}
+
+.heroImage {
+  object-fit: cover;
+  filter: contrast(1.05) brightness(0.9);
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.3;
+}
+
+.captionBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(6, 7, 8, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.captionText {
+  font-size: 0.8rem;
+  color: #D4D4D8;
+}
+
+.creditText {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #FF0055;
+}
+
+@keyframes fadeDown {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

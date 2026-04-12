@@ -1,0 +1,108 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #09090b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  /* High Z-Index ensures the header and all its portal children 
+     stay above the Player, NewsTicker, and main content. */
+  z-index: 1000; 
+  
+  /* Transition for smooth shrinking */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === SHRUNK STATE === */
+.shrunk {
+  background-color: rgba(9, 9, 11, 0.95);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.skipLink {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #fff;
+  color: #000;
+  padding: 8px;
+  z-index: 1100;
+  transition: top 0.2s ease;
+}
+
+.skipLink:focus { top: 0; }
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  gap: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  
+  /* Transition padding for shrink effect */
+  transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reduce padding when shrunk */
+.shrunk .topRow {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.brandZone { 
+  display: flex; 
+  align-items: center; 
+  flex-shrink: 0; 
+  transition: transform 0.4s ease;
+}
+
+/* Subtly scale down the logo when shrunk */
+.shrunk .brandZone {
+  transform: scale(0.92);
+  transform-origin: left center;
+}
+
+.navZone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.actionsZone {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+/* PORTALS LAYER */
+.portalLayer {
+  position: static;
+}
+
+/* MOBILE QUERIES */
+@media (max-width: 1024px) {
+  .navZone { display: none; }
+  .desktopActions { display: none; }
+  .mobileToggleWrapper { display: block; }
+  .metaZone { display: none; }
+  
+  /* On mobile, keep the shrink a bit more subtle */
+  .shrunk .topRow {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

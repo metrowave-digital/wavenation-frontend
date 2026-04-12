@@ -1,134 +1,297 @@
 /* ======================================================
-   ROOT ARTICLE
+   PAGE & TEXTURE
 ====================================================== */
+.page { 
+  background-color: #060708; 
+  color: #ffffff; 
+  min-height: 100vh; 
+  position: relative; 
+}
 
-.root {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+.textureOverlay { 
+  position: fixed; 
+  inset: 0; 
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); 
+  opacity: 0.04; 
+  pointer-events: none; 
+  z-index: 10; 
 }
 
 /* ======================================================
-   CONTENT GRID (MAIN + RAIL)
+   CINEMATIC HERO SECTION
 ====================================================== */
-
-.content {
-  width: 100%;
-  max-width: 1280px;
-
-  margin: 0 auto;
-  padding: 32px 24px 0;
-
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+.heroSection { 
+  position: relative; 
+  padding-top: 100px; /* Clears the site header */
+  min-height: calc(80vh + 100px); 
+  width: 100%; 
+  display: flex; 
+  align-items: flex-end; 
+  padding-bottom: 8rem; 
 }
 
-/* Desktop: main content + rail */
-@media (min-width: 1024px) {
-  .content {
-    grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 48px;
-    align-items: start;
-  }
+.heroImageWrapper { 
+  position: absolute; 
+  inset: 0; 
+  z-index: 1; 
+}
+
+.heroImg { 
+  object-fit: cover; 
+  filter: brightness(0.6) contrast(1.1); 
+}
+
+.heroOverlay { 
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(to top, #060708 2%, rgba(6, 7, 8, 0.4) 40%, rgba(6, 7, 8, 0) 100%); 
+}
+
+.scanlines { 
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%); 
+  background-size: 100% 4px; 
+  pointer-events: none; 
+  opacity: 0.3; 
 }
 
 /* ======================================================
-   MAIN ARTICLE COLUMN
+   HERO CONTENT (TITLES & EXCERPT)
 ====================================================== */
-
-.main {
-  min-width: 0;
+.heroContent { 
+  position: relative; 
+  z-index: 10; 
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 0 1.5rem; 
+  width: 100%; 
+  animation: fadeUp 1s ease-out;
 }
 
-/* Editorial width guardrails */
-.main :global(p),
-.main :global(li) {
-  max-width: 72ch;
+.metaRow { 
+  display: flex; 
+  align-items: center; 
+  gap: 2rem; 
+  margin-bottom: 1.5rem; 
+  font-family: 'Oswald', sans-serif; 
+  letter-spacing: 0.2em; 
+  font-size: 0.8rem; 
 }
 
-/* Section spacing */
-.main :global(h2) {
-  margin-top: 48px;
+.liveIndicator { 
+  color: #B200FF; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
 }
 
-.main :global(h3) {
-  margin-top: 36px;
+.dot { 
+  width: 6px; 
+  height: 6px; 
+  background: #B200FF; 
+  border-radius: 50%; 
+  box-shadow: 0 0 10px #B200FF; 
+  animation: pulse 2s infinite;
 }
 
-.main :global(h4) {
-  margin-top: 28px;
+.readTime { color: #71717A; }
+
+.mainTitle { 
+  font-family: 'Oswald', sans-serif; 
+  font-size: clamp(2.2rem, 5vw, 4.2rem); 
+  text-transform: uppercase; 
+  line-height: 1.1; 
+  font-weight: 800; 
+  margin-bottom: 1.5rem; 
+  max-width: 800px; 
+  color: #fff;
+}
+
+.mainExcerpt { 
+  font-size: 1.15rem; 
+  color: #A1A1AA; 
+  line-height: 1.6; 
+  max-width: 650px; 
+  border-left: 2px solid #B200FF; 
+  padding-left: 1.5rem; 
 }
 
 /* ======================================================
-   RIGHT RAIL COLUMN
+   FLOATING ARTIST CARD (GLASSMORPHISM)
 ====================================================== */
-
-.rail {
-  width: 100%;
-  position: relative;
+.mainContent { 
+  max-width: 1100px; 
+  margin: -5rem auto 0; 
+  position: relative; 
+  z-index: 20; 
+  padding: 0 1.5rem 10rem; 
 }
 
-/* Sticky behavior — ONLY on desktop */
-@media (min-width: 1024px) {
-  .rail {
-    position: sticky;
-    top: 96px; /* below site header */
-    align-self: flex-start;
-  }
+.spotlightCard { 
+  background: rgba(17, 19, 22, 0.8); 
+  backdrop-filter: blur(12px); 
+  border: 1px solid rgba(255, 255, 255, 0.05); 
+  padding: 3rem; 
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+  margin-bottom: 6rem;
+  animation: fadeUp 1s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.spotlightGrid { 
+  display: grid; 
+  grid-template-columns: 350px 1fr; 
+  gap: 4rem; 
+  align-items: flex-start; 
+}
+
+.artistFrame { 
+  position: relative; 
+  aspect-ratio: 4/5; 
+  background: #000; 
+  overflow: hidden; 
+}
+
+.artistImg { 
+  object-fit: cover; 
+  transition: transform 0.8s ease; 
+}
+
+.spotlightCard:hover .artistImg { 
+  transform: scale(1.05); 
+}
+
+.frameAccent { 
+  position: absolute; 
+  inset: 0; 
+  border: 1px solid rgba(178, 0, 255, 0.3); 
+  pointer-events: none; 
+}
+
+.artistHeader { margin-bottom: 1.5rem; }
+
+.eyebrow { 
+  font-family: 'Oswald', sans-serif; 
+  color: #B200FF; 
+  letter-spacing: 0.3em; 
+  font-size: 0.75rem; 
+  margin-bottom: 0.5rem; 
+}
+
+.artistName { 
+  font-family: 'Oswald', sans-serif; 
+  font-size: 2.8rem; 
+  text-transform: uppercase; 
+  line-height: 1; 
+  color: #fff; 
+}
+
+.artistBio { 
+  color: #D4D4D8; 
+  font-size: 1.05rem; 
+  line-height: 1.6; 
+  margin-bottom: 2rem; 
+}
+
+.socialGrid { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 0.75rem; 
+}
+
+.socialPill { 
+  font-family: 'Oswald', sans-serif; 
+  font-size: 0.75rem; 
+  text-transform: uppercase; 
+  color: #fff; 
+  text-decoration: none; 
+  padding: 0.6rem 1.2rem; 
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  background: rgba(255, 255, 255, 0.03); 
+  transition: all 0.3s ease; 
+}
+
+.socialPill:hover { 
+  border-color: #B200FF; 
+  color: #B200FF; 
+  background: rgba(178, 0, 255, 0.05); 
 }
 
 /* ======================================================
-   INLINE AD SLOT (OPTIONAL)
+   EDITORIAL CONTENT BODY
 ====================================================== */
+.editorialContainer { 
+  max-width: 800px; 
+  margin: 0 auto; 
+}
 
-.adInline {
-  margin: 48px 0;
-  display: flex;
-  justify-content: center;
+.articleDivider { 
+  display: flex; 
+  align-items: center; 
+  gap: 2rem; 
+  margin-bottom: 4rem; 
+  opacity: 0.4; 
+}
+
+.eqBar { 
+  flex: 1; 
+  height: 1px; 
+  background: linear-gradient(to right, transparent, #B200FF, transparent); 
+}
+
+.dividerText { 
+  font-family: 'Oswald', sans-serif; 
+  font-size: 0.7rem; 
+  letter-spacing: 0.4em; 
+  color: #B200FF; 
+  white-space: nowrap; 
+}
+
+.bodyWrapper { 
+  font-size: 1.2rem; 
+  line-height: 1.8; 
+  color: #E4E4E7; 
 }
 
 /* ======================================================
-   RESPONSIVE ADJUSTMENTS
+   FOOTER & ATTRIBUTION
 ====================================================== */
-
-@media (max-width: 1024px) {
-  .content {
-    padding: 28px 20px 0;
-  }
-
-  .rail {
-    position: static;
-  }
+.authorFooter { 
+  margin-top: 8rem; 
+  padding-top: 3rem; 
+  border-top: 1px solid #1A1C20; 
+  text-align: center; 
 }
 
-@media (max-width: 768px) {
-  .content {
-    grid-template-columns: 1fr;
-    padding: 24px 16px 0;
-  }
-
-  .adInline {
-    margin: 40px 0;
-  }
-}
-
-@media (max-width: 640px) {
-  .content {
-    padding: 20px 14px 0;
-  }
+.publishDate { 
+  color: #71717A; 
+  font-size: 0.9rem; 
+  margin-top: 0.5rem; 
 }
 
 /* ======================================================
-   HARD CONTENT CONTAINMENT
+   ANIMATIONS & RESPONSIVE
 ====================================================== */
-
-.main {
-  min-width: 0;
-  position: relative;
-  overflow: visible;
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-/* Prevent any child from exceeding column */
-.main > * {
-  max-width: 100%;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .heroSection { 
+    padding-top: 80px; 
+    min-height: 70vh; 
+  }
+  .mainTitle { font-size: 2.2rem; }
+  .spotlightGrid { grid-template-columns: 1fr; gap: 2rem; }
+  .artistFrame { max-width: 350px; margin: 0 auto; }
+  .artistName { font-size: 2.2rem; }
+  .mainContent { margin-top: -2rem; }
 }

@@ -1,0 +1,60 @@
+.musicPage { background-color: #060708; color: #fff; min-height: 100vh; position: relative; overflow-x: hidden; }
+.textureOverlay { position: fixed; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); opacity: 0.04; pointer-events: none; z-index: 10; }
+.main { max-width: 1400px; margin: 0 auto; padding: 6rem 1.5rem; position: relative; z-index: 20; }
+
+.hubHeader { margin-bottom: 4rem; animation: fadeDown 0.8s ease forwards; }
+.liveIndicator { display: flex; align-items: center; gap: 8px; color: #00F0FF; font-family: 'Oswald', sans-serif; font-size: 0.85rem; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 1rem; }
+.liveDot { width: 8px; height: 8px; background-color: #00F0FF; border-radius: 50%; box-shadow: 0 0 10px #00F0FF; animation: pulse 1.5s infinite; }
+.mainTitle { font-family: 'Oswald', sans-serif; font-size: clamp(4rem, 9vw, 7.5rem); line-height: 0.9; text-transform: uppercase; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 3rem; }
+.outlineText { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4); }
+
+.hubNav { display: flex; gap: 1rem; border-bottom: 1px solid #1A1C20; padding-bottom: 1rem; overflow-x: auto; }
+.navLink { color: #A1A1AA; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 1rem; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 4px; transition: all 0.3s ease; white-space: nowrap; }
+.navLink:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+.feedContainer { animation: fadeUp 0.8s ease forwards; }
+.feedHeader { margin-bottom: 3rem; border-left: 4px solid var(--feed-color); padding-left: 1.5rem; }
+.feedTitle { font-family: 'Oswald', sans-serif; font-size: 2.5rem; text-transform: uppercase; color: #fff; margin-bottom: 0.5rem; }
+.feedDescription { color: #A1A1AA; font-size: 1.1rem; max-width: 600px; }
+
+.cardGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 3rem; }
+.contentCard { text-decoration: none; color: inherit; display: flex; flex-direction: column; opacity: 0; animation: fadeUp 0.8s ease forwards; }
+/* ... keep everything above .cardImg the same ... */
+
+.cardImageWrapper { 
+  position: relative; 
+  aspect-ratio: 16/9; 
+  background: #111316; 
+  border: 1px solid #1A1C20; 
+  border-bottom: 2px solid var(--feed-color); 
+  overflow: hidden; 
+  margin-bottom: 1.25rem; 
+}
+
+/* Grayscale removed, replaced with a subtle brightness/contrast for a premium look */
+.cardImg { 
+  object-fit: cover; 
+  filter: grayscale(0); /* Color is back */
+  transition: all 0.5s ease; 
+}
+
+/* Enhanced hover: subtle zoom and slight brightness increase instead of just removing grayscale */
+.contentCard:hover .cardImg { 
+  filter: brightness(1.1); 
+  transform: scale(1.05); 
+}
+
+/* ... keep everything below .cardOverlay the same ... */.cardOverlay { position: absolute; inset: 0; background: rgba(6, 7, 8, 0.7); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-weight: 700; color: var(--feed-color); opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(4px); }
+.contentCard:hover .cardOverlay { opacity: 1; }
+
+.cardMetaRow { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+.cardCategory { color: var(--feed-color); font-family: 'Oswald', sans-serif; font-size: 0.75rem; text-transform: uppercase; }
+.cardDate { color: #71717A; font-family: 'Oswald', sans-serif; font-size: 0.75rem; text-transform: uppercase; }
+.cardTitle { font-family: 'Oswald', sans-serif; font-size: 1.5rem; line-height: 1.2; text-transform: uppercase; margin-bottom: 0.75rem; transition: color 0.3s ease; }
+.contentCard:hover .cardTitle { color: var(--feed-color); }
+.cardExcerpt { font-size: 0.95rem; color: #71717A; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.emptyState { padding: 4rem; text-align: center; border: 1px dashed #27272A; color: #71717A; }
+
+@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0; } 100% { transform: scale(1); opacity: 0; } }
+@keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }

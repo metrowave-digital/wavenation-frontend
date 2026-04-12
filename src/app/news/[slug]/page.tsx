@@ -1,199 +1,149 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-
-import { EditorialHero } from '@/components/editorial/EditorialHero/EditorialHero'
-import { ArticleLayout } from '@/components/articles/ArticleLayout/ArticleLayout'
-import { NewsletterCta } from '@/components/newsletter/NewsletterCTA'
-
-import { ContentRenderer } from '@/components/content/ContentRenderer'
-import type { ContentBlock } from '@/components/content/types'
-
-// Analytics
-import { ArticleImpression } from '../ArticleImpression'
-
-// Sidebar widgets
-import { TrendingArticles } from '@/components/articles/TrendingArticles'
-import { SidebarAd } from '@/components/ads/SidebarAd'
-
-// Styles
-import styles from '@/components/articles/ArticleLayout/ArticleLayout.module.css'
+import Link from 'next/link'
+import Image from 'next/image'
+import { getArticleBySlug, getNewsByCategory, getLatestNews } from '@/services/news.api'
+import { ArticleHero } from './components/ArticleHero'
+import { ContentRenderer } from './components/ContentRenderer'
+import { ArticleSidebar } from './components/ArticleSidebar'
+import type { NewsArticle } from '../news.types'
+import styles from './NewsDetail.module.css'
 
 /* ======================================================
-   Types (article-level, read-only)
+   SEO & Metadata
 ====================================================== */
-
-interface PageProps {
-  params: Promise<{ slug: string }>
-}
-
-interface Category {
-  name: string
-  slug: string
-}
-
-interface Author {
-  displayName?: string | null
-  slug?: string | null
-}
-
-interface HeroImage {
-  url: string
-  alt?: string | null
-  caption?: string | null
-  credit?: string | null
-  sizes?: {
-    hero?: { url?: string | null }
-    card?: { url?: string | null }
-  }
-}
-
-interface Article {
-  title: string
-  subtitle?: string | null
-  slug: string
-  publishDate?: string | null
-  excerpt?: string | null
-  isBreaking?: boolean
-  categories?: Category[]
-  subcategories?: Category[]
-  author?: Author
-  hero?: {
-    image?: HeroImage
-  }
-  contentBlocks?: ContentBlock[]
-}
-
-/* ======================================================
-   Config
-====================================================== */
-
-const CMS_URL =
-  process.env.NEXT_PUBLIC_CMS_URL ?? 'http://localhost:3000'
-
-/* ======================================================
-   Page
-====================================================== */
-
-export default async function NewsArticlePage({
-  params,
-}: PageProps) {
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
   const { slug } = await params
+  const article = await getArticleBySlug(slug)
+  
+  if (!article) return { title: 'Article Not Found' }
+  
+  return {
+    title: `${article.title} | WaveNation News`,
+    description: article.excerpt || 'Read the latest on WaveNation.',
+  }
+}
 
-  const res = await fetch(
-    `${CMS_URL}/api/articles?where[slug][equals]=${slug}&where[_status][equals]=published&limit=1`,
-    { cache: 'no-store' }
-  )
+/* ======================================================
+   Page Component
+====================================================== */
+export default async function NewsArticlePage(
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params
+  const article = await getArticleBySlug(slug)
 
-  if (!res.ok) notFound()
-
-  const data = (await res.json()) as {
-    docs?: Article[]
+  if (!article) {
+    notFound()
   }
 
-  const article = data.docs?.[0]
-  if (!article) notFound()
+  // --- Fetch Related Articles ---
+  const categorySlug = article.categories?.[0]?.slug
+  let relatedArticles: NewsArticle[] = []
 
-  const category = article.categories?.[0]
-  const heroImage = article.hero?.image
+  // Try to get stories from the same category first
+  if (categorySlug) {
+    const relatedRaw = await getNewsByCategory(categorySlug, 4)
+    // Filter out the current article so we don't show it twice
+    relatedArticles = relatedRaw.filter(a => a.id !== article.id).slice(0, 3)
+  }
+
+  // Fallback to latest news if no category matches
+  if (relatedArticles.length === 0) {
+    const latestRaw = await getLatestNews(4)
+    relatedArticles = latestRaw.filter(a => a.id !== article.id).slice(0, 3)
+  }
 
   return (
-    <ArticleLayout
-      hero={
-        <EditorialHero
-          variant="article"
-          eyebrow={
-            article.isBreaking
-              ? 'Breaking'
-              : category?.name ?? 'Article'
-          }
-          title={article.title}
-          lede={
-            article.subtitle ??
-            article.excerpt ??
-            undefined
-          }
-          pills={
-            article.subcategories?.map(
-              (c) => c.name
-            ) ?? []
-          }
-        />
-      }
-      author={
-        article.author?.displayName
-          ? {
-              name: article.author.displayName,
-              href: article.author.slug
-                ? `/authors/${article.author.slug}`
-                : undefined,
-            }
-          : undefined
-      }
-      publishedAt={
-        article.publishDate
-          ? new Date(
-              article.publishDate
-            ).toLocaleDateString()
-          : undefined
-      }
-      readTime={
-        article.contentBlocks?.length
-          ? `${Math.max(
-              3,
-              Math.ceil(
-                article.contentBlocks.length / 3
-              )
-            )} min read`
-          : undefined
-      }
-      newsletterCta={<NewsletterCta />}
-      sidebar={<TrendingArticles />}
-      sidebarAd={<SidebarAd />}
-    >
-      {/* ===============================
-         Article Impression (Analytics)
-      =============================== */}
-      <ArticleImpression
-        slug={article.slug}
-        title={article.title}
-        category={category?.name}
-        author={article.author?.displayName ?? undefined}
-      />
+    <div className={styles.page}>
+      <div className={styles.textureOverlay} />
 
-      {/* ===============================
-         Hero Image
-      =============================== */}
-      {heroImage?.url && (
-        <figure className={styles.heroFigure}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={
-              heroImage.sizes?.hero?.url ??
-              heroImage.sizes?.card?.url ??
-              heroImage.url
-            }
-            alt={heroImage.alt ?? article.title}
-          />
+      <main className={styles.mainContainer}>
+        
+        {/* HERO SECTION */}
+        <ArticleHero article={article} />
 
-          {(heroImage.caption || heroImage.credit) && (
-            <figcaption className={styles.heroCaption}>
-              {heroImage.caption}
-              {heroImage.credit &&
-                ` · ${heroImage.credit}`}
-            </figcaption>
-          )}
-        </figure>
-      )}
+        {/* TWO-COLUMN LAYOUT: Content & Sidebar */}
+        <div className={styles.articleGrid}>
+          
+          <article className={styles.contentColumn}>
+            <ContentRenderer blocks={article.contentBlocks} />
+          </article>
+          
+          <aside className={styles.sidebarColumn}>
+            <div className={styles.stickySidebar}>
+              
+              {/* Original Sidebar Content (Author & Tags) */}
+              <ArticleSidebar author={article.author} tags={article.tags} />
 
-      {/* ===============================
-         Content Blocks
-      =============================== */}
-      {article.contentBlocks?.length ? (
-        <div className={styles.article}>
-          <ContentRenderer
-            blocks={article.contentBlocks}
-          />
+              {/* Sidebar Ad Slot */}
+              <div className={styles.sidebarAd}>
+                <span className={styles.adLabel}>SPONSORED</span>
+                <div className={styles.adSquare}>
+                  <p>Premium Ad Space</p>
+                </div>
+              </div>
+
+              {/* Sidebar Newsletter */}
+              <div className={styles.sidebarNewsletter}>
+                <h4 className={styles.newsletterHeading}>Get the Brief</h4>
+                <p className={styles.newsletterText}>Top stories delivered straight to your inbox daily.</p>
+                <form className={styles.newsletterForm}>
+                  <input type="email" placeholder="Email Address" required className={styles.newsletterInput} />
+                  <button type="submit" className={styles.newsletterSubmit}>Join</button>
+                </form>
+              </div>
+
+            </div>
+          </aside>
+
         </div>
-      ) : null}
-    </ArticleLayout>
+
+        {/* ===============================
+            RELATED ARTICLES SECTION
+        =============================== */}
+        {relatedArticles.length > 0 && (
+          <section className={styles.relatedSection}>
+            
+            {/* EQ Separator */}
+            <div className={styles.eqSeparator}>
+              <div className={styles.eqBar} style={{ animationDelay: '0.1s' }}/>
+              <div className={styles.eqBar} style={{ animationDelay: '0.3s' }}/>
+              <div className={styles.eqBar} style={{ animationDelay: '0.0s' }}/>
+              <span className={styles.eqText}>MORE FROM THE DESK</span>
+              <div className={styles.eqBar} style={{ animationDelay: '0.4s' }}/>
+              <div className={styles.eqBar} style={{ animationDelay: '0.2s' }}/>
+            </div>
+
+            <div className={styles.cardGrid}>
+              {relatedArticles.map((item, idx) => (
+                <Link key={item.id} href={`/news/${item.slug}`} className={styles.contentCard} style={{ animationDelay: `${idx * 0.15}s` }}>
+                  <div className={styles.cardImageWrapper}>
+                    {item.hero?.image?.url ? (
+                      <Image 
+                        src={item.hero.image.sizes?.card?.url || item.hero.image.url} 
+                        alt={item.title} 
+                        fill 
+                        className={styles.cardImg} 
+                      />
+                    ) : (
+                      <div className={styles.cardPlaceholder} />
+                    )}
+                    <div className={styles.cardOverlay}>READ ARTICLE</div>
+                  </div>
+                  <div className={styles.cardBody}>
+                    <p className={styles.cardEyebrow}>{item.categories?.[0]?.name || 'NEWS'}</p>
+                    <h3 className={styles.cardTitle}>{item.title}</h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+      </main>
+    </div>
   )
 }

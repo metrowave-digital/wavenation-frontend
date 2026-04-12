@@ -1,0 +1,140 @@
+.page {
+  background-color: #060708;
+  color: #fff;
+  min-height: 100vh;
+  position: relative;
+  padding: 8rem 2rem;
+}
+
+.textureOverlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.header {
+  margin-bottom: 5rem;
+  text-align: center;
+}
+
+.eyebrow {
+  color: #39FF14;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.4em;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  text-transform: uppercase;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 2rem;
+}
+
+.outlineText {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+}
+
+.subtitle {
+  color: #71717A;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: #111316;
+  border: 1px solid #1A1C20;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+}
+
+.card:hover {
+  background: #16181D;
+  border-color: #39FF14;
+  transform: translateY(-8px);
+}
+
+.cardContent {
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.countIndicator {
+  width: 40px;
+  height: 2px;
+  background: #39FF14;
+  margin-bottom: 2rem;
+  transition: width 0.3s ease;
+}
+
+.card:hover .countIndicator {
+  width: 60px;
+}
+
+.categoryName {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.categoryDesc {
+  color: #71717A;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.viewLink {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #39FF14;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.card:hover .viewLink {
+  opacity: 1;
+  transform: translateX(10px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page { padding: 6rem 1rem; }
+  .title { font-size: 4rem; }
+  .grid { grid-template-columns: 1fr; }
+}

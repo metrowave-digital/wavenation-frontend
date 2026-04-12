@@ -1,45 +1,96 @@
-import styles from './EventPage.module.css'
-import { getEvents } from '@/lib/payload/getEvents'
-import { EventHero } from './components/EventHero'
-import { EventGrid } from './components/EventGrid'
+import Link from 'next/link';
+import styles from './EventsPage.module.css';
+import { getEventsByFeed } from '@/services/events.api'; 
+import { HeroEvents } from '@/components/ui/heros/HeroEvents/HeroEvents';
+import { EventGrid } from './components/EventGrid/EventGrid';
+import { WNEvent } from '@/types/event'; // Import the type we fixed
 
-export const metadata = {
-  title: 'Events | WaveNation',
-  description:
-    'Explore live, virtual, community, and music events from WaveNation.',
+const FEED_NAV = [
+  { label: 'ALL EVENTS', slug: 'all' },
+  { label: 'VIRTUAL', slug: 'virtual' },
+  { label: 'LIVE / IN-PERSON', slug: 'live' },
+  { label: 'MUSIC', slug: 'music' },
+];
+
+interface PageProps {
+  searchParams: Promise<{ feed?: string }>;
 }
 
-export default async function EventsPage() {
-  const { docs } = await getEvents({
-    limit: 12,
-    where: {
-      visibility: 'public',
-    },
-    sort: '-startDate',
-  })
+export default async function EventsPage({ searchParams }: PageProps) {
+  // Await searchParams per Next.js 15 requirements
+  const { feed } = await searchParams;
+  const activeFeed = feed || 'all';
+  
+  const response = await getEventsByFeed(activeFeed);
+  
+  // Cast the docs to our WNEvent type to satisfy ESLint
+  const docs = (response.docs || []) as WNEvent[];
+  
+  // Cleanly find the featured event using the interface
+  const featured = docs.find((e) => e.promotionTier === 'featured') || docs[0];
+  const remainingEvents = docs.filter((e) => e.id !== featured?.id);
 
-  const [featured, ...rest] = docs
+  // Safely resolve the image URL
+  const featuredImageUrl = 
+    featured?.heroImage?.sizes?.hero?.url || 
+    featured?.heroImage?.url || 
+    '';
 
   return (
     <main className={styles.page}>
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <p className={styles.kicker}>WaveNation Events</p>
-          <h1 className={styles.title}>Live experiences across music, culture, radio, and community.</h1>
-          <p className={styles.description}>
-            Discover upcoming events, featured livestreams, community activations,
-            and on-demand replays.
-          </p>
-        </header>
+      <div className={styles.textureOverlay} />
+      <section className={styles.headerSection}>
+        <div className={styles.container}>
+          <header className={styles.pageHeader}>
+             <p className={styles.kicker}>EXPERIENCE THE MOVEMENT</p>
+             <h1 className={styles.mainTitle}>LIVE<br /><span>EVENTS</span></h1>
+          </header>
+        </div>
+      </section>
 
-        {featured ? <EventHero event={featured} /> : null}
+      {featured && (
+        <section className={styles.heroSection}>
+          <div className={styles.studioMonitorFrame}>
+            <HeroEvents 
+              eventName={featured.title}
+              dateRange={featured.startDate ? new Date(featured.startDate).toLocaleDateString() : 'TBA'}
+              location={featured.venue?.name || (featured.eventType === 'virtual' ? 'VIRTUAL' : 'TBA')}
+              description={featured.excerpt || ''} 
+              imageUrl={featuredImageUrl} // Uses the fixed URL string
+              primaryCtaHref={`/events/${featured.slug}`}
+              primaryCtaText={featured.ctaLabel || "GET TICKETS"}
+            />
+            <div className={styles.scanlines} />
+          </div>
+        </section>
+      )}
 
-        <EventGrid
-          title="All Events"
-          events={rest.length ? rest : docs}
-          emptyMessage="No public events are available right now."
-        />
-      </div>
+      <nav className={styles.stickyNav}>
+        <div className={styles.container}>
+          <div className={styles.categoryScroll}>
+            {FEED_NAV.map((cat) => (
+              <Link 
+                key={cat.slug} 
+                href={cat.slug === 'all' ? '/events' : `/events?feed=${cat.slug}`}
+                className={activeFeed === cat.slug ? styles.navLinkActive : styles.navLink}
+                scroll={false}
+              >
+                {cat.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      <section className={styles.gridSection}>
+        <div className={styles.container}>
+          <EventGrid
+            title={`${activeFeed.toUpperCase()} SCHEDULE`}
+            events={remainingEvents.length > 0 ? remainingEvents : (featured ? [] : docs)}
+            emptyMessage="No signals detected in this sector."
+          />
+        </div>
+      </section>
     </main>
-  )
+  );
 }

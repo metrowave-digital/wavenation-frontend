@@ -1,0 +1,28 @@
+.root { background: #09090b; padding-top: 120px; display: flex; flex-direction: column; align-items: center; }
+.container { width: 100%; max-width: 900px; padding: 0 2rem; margin-bottom: 3rem; }
+
+.kickerRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; color: #e92c63; }
+.date { color: #71717a; }
+
+.articleTitle { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); color: #fff; line-height: 1.05; text-transform: uppercase; margin: 0 0 1.5rem 0; }
+.articleExcerpt { font-size: 1.25rem; color: #a1a1aa; line-height: 1.6; margin: 0 0 3rem 0; font-weight: 400; }
+
+.metaConsole { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+.authorBlock { display: flex; align-items: center; gap: 1rem; }
+.avatar { position: relative; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #27272a; }
+.avatar img { object-fit: cover; }
+.authorData { display: flex; flex-direction: column; }
+.authorName { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700; color: #fff; letter-spacing: 0.05em; }
+.authorRole { font-size: 10px; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em; }
+
+.utilityBlock { display: flex; align-items: center; gap: 2rem; }
+.readTime { display: flex; align-items: center; gap: 0.5rem; font-size: 11px; font-weight: 600; color: #a1a1aa; letter-spacing: 0.05em; }
+.actionBtns { display: flex; gap: 1rem; }
+.iconBtn { background: none; border: none; color: #71717a; cursor: pointer; transition: color 0.2s; padding: 4px; }
+.iconBtn:hover { color: #e92c63; }
+
+.heroImageWrapper { position: relative; width: 100%; max-width: 1440px; aspect-ratio: 21/9; margin: 0 auto; background: #111; }
+.heroImage { object-fit: cover; }
+
+@media (max-width: 768px) { .metaConsole { flex-direction: column; align-items: flex-start; gap: 1.5rem; } .heroImageWrapper { aspect-ratio: 16/9; } }

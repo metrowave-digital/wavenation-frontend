@@ -1,0 +1,39 @@
+.social {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.heading {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.link {
+  color: #a1a1aa;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1024px) {
+  .social {
+    align-items: flex-start;
+  }
+}

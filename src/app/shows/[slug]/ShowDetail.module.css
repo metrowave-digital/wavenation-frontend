@@ -1,0 +1,336 @@
+/* ======================================================
+   BASE & TEXTURES
+====================================================== */
+.page {
+  background-color: #0B0D0F; 
+  color: #FFFFFF;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.textureOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ======================================================
+   HERO SPLIT
+====================================================== */
+.heroSplit {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 4rem;
+  margin-bottom: 4rem;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (max-width: 1024px) {
+  .heroSplit {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.artWrapper {
+  background: #111316;
+  border: 1px solid #1A1C20;
+  border-bottom: 4px solid var(--theme-color, #00F0FF);
+  padding: 0; /* Removed padding to let image fill entirely */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  align-self: start;
+}
+
+/* ======================================================
+   IMAGE CENTERING OVERRIDE
+====================================================== */
+.imageContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1; 
+  overflow: hidden;
+}
+
+.heroLogo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Forces fill */
+  object-position: center; /* Forces centered */
+  z-index: 1;
+}
+
+.artPlaceholder {
+  width: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0B0D0F;
+}
+
+.fallbackTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  color: #1A1C20;
+  text-transform: uppercase;
+}
+
+/* Effects */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(11,13,15,0.8) 100%);
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* ======================================================
+   SHOW INFO
+====================================================== */
+.showInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.badgeRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statusBadge {
+  background-color: var(--theme-color, #00F0FF);
+  color: #0B0D0F;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.typeBadge {
+  border: 1px solid var(--theme-color, #00F0FF);
+  color: var(--theme-color, #00F0FF);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.name {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+  margin: 0 0 1.5rem 0;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+
+.metaBox {
+  background: #111316;
+  border: 1px solid #1A1C20;
+  border-left: 4px solid var(--theme-color, #00F0FF);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metaLabel {
+  color: #A0A0A0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metaValue {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.125rem;
+  text-transform: uppercase;
+}
+
+.descriptionBox {
+  color: #D0D0D0;
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+
+.descriptionBox p {
+  margin-bottom: 1.5rem;
+}
+
+.descriptionBox p:last-child {
+  margin-bottom: 0;
+}
+
+/* ======================================================
+   EQ SEPARATOR
+====================================================== */
+.eqSeparator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 4rem 0 3rem 0;
+}
+
+.eqBar {
+  width: 4px;
+  height: 24px;
+  background-color: var(--theme-color, #00F0FF);
+  animation: pulseEQ 1s infinite alternate ease-in-out;
+  border-radius: 2px;
+}
+
+.eqText {
+  color: var(--theme-color, #00F0FF);
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  margin: 0 1.5rem;
+}
+
+@keyframes pulseEQ {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1.2); }
+}
+
+/* ======================================================
+   HOSTS GRID
+====================================================== */
+.hostsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.hostCard {
+  background: #111316;
+  border: 1px solid #1A1C20;
+  padding: 1.5rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hostCard:hover {
+  border-color: var(--theme-color, #00F0FF);
+  transform: translateY(-4px);
+}
+
+.hostAvatarContainer {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #1A1C20;
+  transition: border-color 0.3s ease;
+}
+
+.hostCard:hover .hostAvatarContainer {
+  border-color: var(--theme-color, #00F0FF);
+}
+
+/* IMAGE CENTERING OVERRIDE */
+.hostAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Forces fill */
+  object-position: center; /* Forces centered */
+  filter: grayscale(100%) contrast(1.1);
+  transition: filter 0.3s ease;
+}
+
+.hostCard:hover .hostAvatar {
+  filter: grayscale(0%) contrast(1);
+}
+
+.hostAvatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #0B0D0F;
+}
+
+.hostDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.hostRole {
+  color: var(--theme-color, #00F0FF);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.hostName {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.viewProfileBtn {
+  color: #A0A0A0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+}
+
+.hostCard:hover .viewProfileBtn {
+  color: #FFFFFF;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

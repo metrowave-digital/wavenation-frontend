@@ -1,0 +1,423 @@
+/* ======================================================
+   LAYOUT
+====================================================== */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* ======================================================
+   PRIMARY CARD (STATION LEADERBOARD)
+====================================================== */
+.primaryCard {
+  position: relative;
+  background: #0B0D0F;
+  border: 1px solid #1A1C20;
+  padding: 2rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+.primaryCard:hover {
+  border-color: #B026FF; /* Neon Purple */
+}
+
+/* Studio Monitor Overlays */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 40%, rgba(11,13,15,0.8) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 10;
+}
+
+/* Header */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1A1C20;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.iconPurple {
+  color: #B026FF;
+}
+
+.eyebrow {
+  color: #A0A0A0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.weekLabel {
+  color: #666666;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chartTitle {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 2rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: 0 0 2rem 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* List Items */
+.topList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(17, 19, 22, 0.6);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.row:hover {
+  background: #111316;
+  border-color: #1A1C20;
+  transform: translateX(4px);
+}
+
+.rank {
+  color: #B026FF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  width: 28px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.track {
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist {
+  color: #A0A0A0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trendUp { color: #39FF14; flex-shrink: 0; }
+.trendNew { color: #00F0FF; flex-shrink: 0; }
+
+.fullLink {
+  color: #B026FF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.fullLink:hover {
+  color: #FFFFFF;
+}
+
+/* ======================================================
+   INSIGHT WIDGETS
+====================================================== */
+.widgetGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.widget {
+  position: relative;
+  background: #0B0D0F;
+  border: 1px solid #1A1C20;
+  padding: 1.25rem; /* Slightly reduced padding to give text more room */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.widget:hover {
+  transform: translateY(-2px);
+}
+
+.widget:nth-child(1):hover { border-color: #39FF14; }
+.widget:nth-child(2):hover { border-color: #00F0FF; }
+
+.widgetLabel {
+  color: #A0A0A0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.widgetValue {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem; /* Slightly reduced from 1.25rem for better wrapping */
+  line-height: 1.3;
+  text-transform: uppercase;
+  margin: 0 0 0.25rem 0;
+  /* CHANGED: Allow text to wrap up to 2 lines instead of cutting off immediately */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+.widgetSub {
+  color: #71717A;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  /* CHANGED: Allow artist name to wrap to 2 lines as well */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+.widgetGlowGreen {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(57, 255, 20, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.widgetGlowPurple {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ======================================================
+   EXPLORE ALL BUTTON
+====================================================== */
+.exploreAll {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111316;
+  border: 1px solid #1A1C20;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.exploreAll span:first-child {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.brandTag {
+  color: #39FF14;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.exploreAll:hover {
+  background: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+.exploreAll:hover span:first-child {
+  color: #000000;
+}
+
+.exploreAll:hover .brandTag {
+  color: #000000;
+  opacity: 0.5;
+}
+
+/* ======================================================
+   SKELETON LOADER
+====================================================== */
+.skeletonCard {
+  pointer-events: none; /* Prevent interaction while loading */
+}
+
+/* Header Skeleton */
+.skelHeaderLeft {
+  width: 140px;
+  height: 14px;
+  background: #1A1C20;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out;
+}
+
+.skelWeek {
+  width: 60px;
+  height: 14px;
+  background: #1A1C20;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.1s;
+}
+
+/* Title Skeleton */
+.skelTitle {
+  width: 180px;
+  height: 32px;
+  background: #1A1C20;
+  margin-bottom: 2rem;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
+}
+
+/* Row Skeletons */
+.skelRank {
+  width: 20px;
+  height: 20px;
+  background: #1A1C20;
+  border-radius: 2px;
+  flex-shrink: 0;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
+}
+
+.skelTrack {
+  width: 70%;
+  height: 14px;
+  background: #26282D;
+  margin-bottom: 6px;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
+}
+
+.skelArtist {
+  width: 40%;
+  height: 12px;
+  background: #1A1C20;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.5s;
+}
+
+/* Full Link Skeleton */
+.skelLink {
+  width: 80px;
+  height: 14px;
+  background: #1A1C20;
+  border-radius: 2px;
+  margin-top: 1rem;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.6s;
+}
+
+/* Widget Skeletons */
+.skelWidgetLabel {
+  width: 90px;
+  height: 12px;
+  background: #1A1C20;
+  margin-bottom: 0.75rem;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.2s;
+}
+
+.skelWidgetValue {
+  width: 80%;
+  height: 20px;
+  background: #26282D;
+  margin-bottom: 0.5rem;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.3s;
+}
+
+.skelWidgetSub {
+  width: 50%;
+  height: 12px;
+  background: #1A1C20;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.4s;
+}
+
+/* Explore Button Skeleton */
+.skelExplore {
+  width: 100%;
+  height: 20px;
+  background: #1A1C20;
+  border-radius: 2px;
+  animation: pulseSkel 1.5s infinite ease-in-out 0.5s;
+}
+
+@keyframes pulseSkel {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}

@@ -1,0 +1,266 @@
+/* ======================================================
+   BASE & TEXTURES
+====================================================== */
+.page {
+  background-color: #0B0D0F; 
+  color: #FFFFFF;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.textureOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+.pageHeader {
+  margin-bottom: 4rem;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mainTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(4rem, 8vw, 8rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  margin: 0;
+  color: #FFFFFF;
+}
+
+.mainTitle span {
+  color: transparent;
+  -webkit-text-stroke: 2px #00F0FF; 
+}
+
+/* ======================================================
+   EQ SEPARATOR
+====================================================== */
+.eqSeparator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 4rem 0;
+  opacity: 0;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
+}
+
+.eqBar {
+  width: 4px;
+  height: 24px;
+  background-color: #00F0FF;
+  animation: pulseEQ 1s infinite alternate ease-in-out;
+  border-radius: 2px;
+}
+
+.eqText {
+  color: #00F0FF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  margin: 0 1.5rem;
+}
+
+@keyframes pulseEQ {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1.2); }
+}
+
+/* ======================================================
+   GRID & CARDS
+====================================================== */
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid #1A1C20;
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+}
+
+.rosterTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rosterCount {
+  color: #00F0FF;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.showCard {
+  background: #111316;
+  border: 1px solid #1A1C20;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.showCard:hover {
+  border-color: var(--theme-color, #00F0FF);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.cardHeader {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #0B0D0F;
+  border-bottom: 2px solid var(--theme-color, #00F0FF);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ======================================================
+   IMAGE CENTERING OVERRIDE
+====================================================== */
+.imageContainer {
+  position: absolute;
+  inset: 0; /* Forces container to fill header */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Forces image to fill container */
+  object-position: center; /* Centers the image */
+  transition: transform 0.5s ease;
+}
+
+.showCard:hover .cardImage {
+  transform: scale(1.05);
+}
+
+.cardPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  padding: 1rem;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 13, 15, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+.showCard:hover .cardOverlay {
+  opacity: 1;
+}
+
+.viewShowText {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--theme-color, #00F0FF);
+  padding: 0.5rem 1.5rem;
+  transform: translateY(10px);
+  transition: transform 0.3s ease;
+}
+
+.showCard:hover .viewShowText {
+  transform: translateY(0);
+}
+
+.cardBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cardType {
+  color: var(--theme-color, #00F0FF);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.05em;
+}
+
+.cardName {
+  color: #FFFFFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+}
+
+.cardDescription {
+  color: #A0A0A0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
