@@ -1,0 +1,246 @@
+/* ======================================================
+   LAYOUT & HEADER
+====================================================== */
+.wrapper { margin-bottom: 6rem; position: relative; z-index: 10; padding: 0 1.5rem; }
+.container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
+/* Keep the rest of your existing CSS below this... */
+
+.section { 
+  margin-bottom: 6rem; 
+  position: relative; 
+  z-index: 10; 
+}
+
+.sectionHeaderRow { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-end; 
+  margin-bottom: 3rem; 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+  padding-bottom: 1rem; 
+  gap: 1.5rem;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.headerCopy {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrow { 
+  color: #00F0FF; 
+  font-family: 'Courier New', monospace; 
+  font-size: 0.85rem; 
+  text-transform: uppercase; 
+  margin-bottom: 0.5rem; 
+  letter-spacing: 0.1em; 
+}
+
+.sectionTitle { 
+  font-family: 'Oswald', sans-serif; 
+  font-size: clamp(2rem, 4vw, 2.5rem); /* Fluid scaling for mobile */
+  color: #fff; 
+  margin: 0; 
+  text-transform: uppercase; 
+  line-height: 1.1;
+}
+
+.sectionLink { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+  color: #71717A; 
+  font-family: 'Oswald', sans-serif; 
+  text-decoration: none; 
+  letter-spacing: 0.1em; 
+  transition: color 0.3s ease; 
+  white-space: nowrap;
+}
+
+.sectionLink:hover { 
+  color: #00F0FF; 
+}
+
+.linkIcon {
+  transition: transform 0.3s ease;
+}
+
+.sectionLink:hover .linkIcon {
+  transform: translateX(4px);
+}
+
+/* ======================================================
+   GRID & CARDS
+====================================================== */
+.cardGrid { 
+  display: grid; 
+  /* Safe minimum width for mobile screens to prevent overflow */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+  gap: 2rem; 
+}
+
+.card { 
+  background: #090A0C; 
+  border: 1px solid #1A1C20; 
+  display: flex; 
+  flex-direction: column; 
+  text-decoration: none; 
+  position: relative; 
+  overflow: hidden; 
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease; 
+}
+
+.card:hover { 
+  transform: translateY(-6px); 
+  border-color: #00F0FF; 
+  box-shadow: 0 15px 35px rgba(0, 240, 255, 0.08); 
+}
+
+/* ======================================================
+   IMAGE & VISUALS
+====================================================== */
+.imageWrap { 
+  position: relative; 
+  aspect-ratio: 1/1; 
+  width: 100%; 
+  border-bottom: 1px solid #1A1C20; 
+  overflow: hidden; 
+  background: #000;
+}
+
+.coverImg { 
+  object-fit: cover; 
+  filter: grayscale(100%) contrast(1.1); 
+  transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+}
+
+.card:hover .coverImg { 
+  filter: grayscale(0%) contrast(1.05); 
+  transform: scale(1.06); 
+}
+
+.overlay { 
+  position: absolute; 
+  inset: 0; 
+  background: rgba(0, 0, 0, 0.5); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  opacity: 0; 
+  transition: opacity 0.3s ease; 
+  backdrop-filter: blur(2px);
+}
+
+.card:hover .overlay { 
+  opacity: 1; 
+}
+
+.playIcon { 
+  color: #00F0FF; 
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.6));
+  transform: scale(0.8);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy pop */
+}
+
+.card:hover .playIcon {
+  transform: scale(1);
+}
+
+/* ======================================================
+   CARD BODY & TYPOGRAPHY
+====================================================== */
+.cardBody { 
+  padding: 1.5rem; 
+  display: flex; 
+  flex-direction: column; 
+  flex: 1; 
+  background: #090A0C;
+  position: relative;
+  z-index: 2;
+}
+
+.tag { 
+  color: #00F0FF; 
+  font-family: 'Courier New', monospace; 
+  font-size: 0.7rem; 
+  margin-bottom: 0.75rem; 
+  text-transform: uppercase; 
+  letter-spacing: 0.1em;
+}
+
+.cardTitle { 
+  color: #fff; 
+  font-family: 'Oswald', sans-serif; 
+  font-size: 1.4rem; 
+  margin: 0 0 0.5rem 0; 
+  text-transform: uppercase; 
+  line-height: 1.2;
+}
+
+.cardDescription { 
+  color: #A1A1AA; 
+  font-size: 0.9rem; 
+  line-height: 1.6; 
+  margin: 0; 
+  display: -webkit-box; 
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical; 
+  overflow: hidden; 
+}
+
+.accentBar { 
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 3px; 
+  background: #00F0FF; 
+  transform: scaleX(0); 
+  transform-origin: left; 
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+  z-index: 3;
+}
+
+.card:hover .accentBar { 
+  transform: scaleX(1); 
+}
+
+/* ======================================================
+   MOBILE / TOUCH DEVICE OPTIMIZATIONS
+====================================================== */
+@media (max-width: 768px) {
+  .section { 
+    margin-bottom: 4rem; 
+  }
+  
+  .sectionHeaderRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* On touch devices, remove the grayscale filter so the user doesn't have to tap to see color */
+@media (hover: none) {
+  .coverImg {
+    filter: grayscale(0%) contrast(1.05);
+  }
+  
+  .accentBar {
+    transform: scaleX(1);
+    opacity: 0.4; /* Constant subtle visual indicator */
+  }
+  
+  .card {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Simulate native app tap feel */
+  .card:active {
+    transform: scale(0.98);
+    border-color: #00F0FF;
+  }
+  
+  .card:active .overlay {
+    opacity: 1;
+  }
+}

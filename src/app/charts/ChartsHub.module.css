@@ -1,0 +1,78 @@
+.page { background: #030405; color: #fff; min-height: 100vh; }
+.textureOverlay { position: fixed; inset: 0; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,..."); }
+.main { max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem; position: relative; z-index: 10; }
+.hubHeader { text-align: center; margin-bottom: 5rem; }
+.hubIcon { color: #FF0055; margin-bottom: 1rem; }
+.hubTitle { font-family: 'Oswald', sans-serif; font-size: 5rem; text-transform: uppercase; margin: 0; line-height: 1; }
+.hubTitle span { color: transparent; -webkit-text-stroke: 2px #FF0055; }
+.hubActions { margin-top: 2rem; }
+.archiveLink { font-family: 'Oswald', sans-serif; color: #39FF14; border: 1px solid #39FF14; padding: 0.75rem 1.5rem; text-decoration: none; transition: 0.3s; }
+.archiveLink:hover { background: #39FF14; color: #000; }
+
+.chartsStack { display: flex; flex-direction: column; gap: 6rem; }
+.sectionHeader { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #1A1C20; padding-bottom: 1rem; margin-bottom: 2rem; }
+.sectionTitle { font-family: 'Oswald', sans-serif; font-size: 3rem; text-transform: uppercase; margin: 0; color: #fff; }
+.weekBadge { color: #71717A; font-family: monospace; font-size: 1rem; }
+
+.boardLayout { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.numberOneBlock { display: flex; flex-direction: column; gap: 1.5rem; }
+.no1ArtWrap { position: relative; aspect-ratio: 1/1; border: 1px solid #1A1C20; background: #000; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.no1Art { object-fit: cover; }
+.no1Rank { position: absolute; top: -10px; left: -10px; background: #FF0055; color: #fff; font-family: 'Oswald', sans-serif; font-size: 3rem; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid #000; }
+.no1Label { color: #39FF14; font-family: monospace; font-size: 0.85rem; letter-spacing: 0.1em; }
+.no1Title { font-family: 'Oswald', sans-serif; font-size: 2.5rem; text-transform: uppercase; margin: 0; }
+.no1Artist { color: #A1A1AA; font-size: 1.25rem; margin: 0; }
+
+.ruList { list-style: none; padding: 0; margin: 0 0 2rem 0; display: flex; flex-direction: column; gap: 1rem; }
+.ruItem { display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid #1A1C20; }
+.ruRank { font-family: 'Oswald', sans-serif; font-size: 2rem; color: #555; width: 40px; text-align: center; }
+.ruText { display: flex; flex-direction: column; }
+.ruTitle { font-family: 'Oswald', sans-serif; font-size: 1.25rem; text-transform: uppercase; color: #fff; }
+.ruArtist { color: #A1A1AA; font-size: 0.9rem; }
+.viewFullBtn { display: inline-flex; align-items: center; gap: 0.5rem; color: #fff; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none; padding: 1rem 0; border-bottom: 1px solid #39FF14; transition: 0.3s; }
+.viewFullBtn:hover { color: #39FF14; padding-left: 10px; }
+
+@media (max-width: 900px) { .boardLayout { grid-template-columns: 1fr; } }
+
+/* Existing Hub CSS... add this for the sticky nav */
+.stickyNav {
+  position: sticky;
+  top: 60px; /* Adjust if you have a global top header */
+  z-index: 100;
+  background: rgba(3, 4, 5, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #1A1C20;
+  border-top: 1px solid #1A1C20;
+  margin-bottom: 4rem;
+  padding: 1rem 0;
+}
+
+.navScroll {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  padding: 0 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.navScroll::-webkit-scrollbar { display: none; }
+
+.navAnchor {
+  color: #A1A1AA;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  transition: color 0.3s;
+}
+.navAnchor:hover {
+  color: #39FF14;
+  border-bottom: 2px solid #39FF14;
+}
+
+.chartSection {
+  scroll-margin-top: 150px; /* Crucial: offsets the anchor scroll so it's not hidden behind sticky navs */
+}

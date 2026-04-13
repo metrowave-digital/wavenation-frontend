@@ -1,0 +1,33 @@
+.wrapper { margin-bottom: 6rem; position: relative; z-index: 10; padding: 0 1.5rem; }
+.container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; }
+/* Keep the rest of your existing CSS below this... */
+.section { margin-bottom: 6rem; position: relative; z-index: 10; }
+.chartPanel { position: relative; background: #090A0C; border: 1px solid #1A1C20; overflow: hidden; padding: 4rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.panelOverlay { position: absolute; inset: 0; background: radial-gradient(circle at right, rgba(255,0,85,0.1) 0%, transparent 60%); pointer-events: none; z-index: 1; }
+.contentGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; position: relative; z-index: 2; }
+
+.eyebrow { color: #FF0055; font-family: 'Courier New', monospace; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 0.1em; }
+.sectionTitle { font-family: 'Oswald', sans-serif; font-size: 4rem; color: #fff; margin: 0 0 1rem 0; text-transform: uppercase; line-height: 1; }
+.sectionDescription { color: #A1A1AA; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem; max-width: 450px; }
+
+.buttonRow { display: flex; gap: 1rem; align-items: center; }
+.primaryButton { background: #FF0055; color: #fff; padding: 1rem 2rem; font-family: 'Oswald', sans-serif; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s; border: 1px solid #FF0055; }
+.primaryButton:hover { background: #fff; color: #000; border-color: #fff; }
+.secondaryButton { display: flex; align-items: center; gap: 0.5rem; color: #fff; font-family: 'Oswald', sans-serif; text-decoration: none; padding: 1rem 0; border-bottom: 1px solid transparent; transition: 0.3s; }
+.secondaryButton:hover { color: #FF0055; border-bottom-color: #FF0055; }
+
+/* #1 Spotlight */
+.numberOneSpotlight { background: rgba(0,0,0,0.4); border: 1px solid #1A1C20; padding: 2rem; border-left: 4px solid #FF0055; }
+.no1Header { display: flex; align-items: center; gap: 0.5rem; color: #FF0055; font-family: 'Courier New', monospace; font-size: 0.8rem; margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+.no1Visual { display: flex; gap: 1.5rem; align-items: center; }
+.no1Img { border: 1px solid #1A1C20; object-fit: cover; }
+.no1Meta { display: flex; flex-direction: column; }
+.no1Title { font-family: 'Oswald', sans-serif; font-size: 2rem; color: #fff; text-transform: uppercase; line-height: 1.2; }
+.no1Artist { color: #A1A1AA; font-size: 1.1rem; margin-bottom: 0.5rem; }
+.weeksOnChart { color: #555; font-family: 'Courier New', monospace; font-size: 0.75rem; letter-spacing: 0.1em; }
+
+@media (max-width: 1024px) {
+  .chartPanel { padding: 2rem; }
+  .contentGrid { grid-template-columns: 1fr; gap: 3rem; }
+  .buttonRow { flex-direction: column; align-items: flex-start; }
+}

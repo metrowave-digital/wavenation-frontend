@@ -1,0 +1,347 @@
+/* ======================================================
+   BASE & TEXTURES
+====================================================== */
+.page {
+  background-color: #030405; /* Deep, almost-black background */
+  color: #FFFFFF;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  padding: 2rem 0 6rem 0;
+}
+
+.textureOverlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* ======================================================
+   TOP NAVIGATION
+====================================================== */
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid #1A1C20;
+  padding-bottom: 1rem;
+}
+
+.backLink {
+  color: #71717A;
+  text-decoration: none;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s;
+}
+
+.backLink:hover {
+  color: #FF0055;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  color: #A1A1AA;
+  letter-spacing: 0.1em;
+}
+
+.pulseDot {
+  width: 8px;
+  height: 8px;
+  background-color: #39FF14;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+  animation: pulse 2s infinite;
+}
+
+/* ======================================================
+   STUDIO LAYOUT (LEFT / RIGHT SPLIT)
+====================================================== */
+.studioLayout {
+  display: grid;
+  grid-template-columns: 450px 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+/* --- LEFT PANEL (STICKY) --- */
+.leftPanel {
+  position: relative;
+}
+
+.stickyContent {
+  position: sticky;
+  top: 100px; /* Adjust based on your global header height */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.artworkWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #0B0D0F;
+  border: 1px solid #1A1C20;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.coverImage {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.artworkWrapper:hover .coverImage {
+  transform: scale(1.05);
+}
+
+.artworkOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.primaryMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.typeTag {
+  color: #FF0055;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+  color: #FFFFFF;
+}
+
+/* Technical Data Grid */
+.dataGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #090A0C;
+  border: 1px solid #1A1C20;
+  border-radius: 4px;
+  padding: 1.5rem;
+}
+
+.dataRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px dotted #1A1C20;
+}
+
+.dataRow:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.dataLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #71717A;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.dataValue {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #E4E4E7;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.avatarImg {
+  border-radius: 50%;
+  border: 1px solid #39FF14;
+}
+
+/* --- RIGHT PANEL (SCROLLING CONTENT) --- */
+.rightPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.blockHeader {
+  color: #39FF14;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-transform: uppercase;
+  border-left: 2px solid #39FF14;
+  padding-left: 0.75rem;
+}
+
+.description {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #A1A1AA;
+  max-width: 800px;
+  margin: 0;
+}
+
+.moodsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.moodBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #111316;
+  border: 1px solid #272A30;
+  color: #D4D4D8;
+  padding: 0.4rem 0.8rem;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+}
+
+.hashIcon {
+  color: #555;
+}
+
+/* Spotify Player Area */
+.playerBlock {
+  background: #090A0C;
+  border: 1px solid #1A1C20;
+  border-radius: 8px;
+  padding: 1rem;
+  animation: fadeUp 1s ease forwards 0.2s;
+  opacity: 0;
+}
+
+.iframeContainer {
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+}
+
+.spotifyIframe {
+  display: block;
+}
+
+/* Missing Signal State */
+.missingSignal {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: #050505;
+  border: 1px dashed #272A30;
+  border-radius: 6px;
+}
+
+.missingSignal p {
+  color: #FF0055;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  z-index: 2;
+  background: rgba(0,0,0,0.8);
+  padding: 0.5rem 1rem;
+  border: 1px solid #FF0055;
+}
+
+.missingLines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    #050505,
+    #050505 10px,
+    #0A0A0A 10px,
+    #0A0A0A 20px
+  );
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* ======================================================
+   ANIMATIONS & RESPONSIVE
+====================================================== */
+@keyframes pulse {
+  0% { opacity: 1; box-shadow: 0 0 10px rgba(57, 255, 20, 0.6); }
+  50% { opacity: 0.4; box-shadow: 0 0 2px rgba(57, 255, 20, 0.2); }
+  100% { opacity: 1; box-shadow: 0 0 10px rgba(57, 255, 20, 0.6); }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .studioLayout {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .stickyContent {
+    position: relative;
+    top: 0;
+  }
+  
+  .artworkWrapper {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}

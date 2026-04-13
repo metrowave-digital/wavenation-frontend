@@ -1,0 +1,60 @@
+/* ======================================================
+   LAYOUT & HEADER
+====================================================== */
+.wrapper { margin-bottom: 6rem; position: relative; z-index: 10; padding: 0 1.5rem; }
+.container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
+
+.sectionHeaderRow { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+.eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; color: #39FF14; font-family: 'Courier New', monospace; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.1em; }
+.sectionTitle { font-family: 'Oswald', sans-serif; font-size: clamp(2rem, 4vw, 2.5rem); color: #fff; margin: 0; text-transform: uppercase; }
+.sectionLink { display: flex; align-items: center; gap: 0.5rem; color: #71717A; font-family: 'Oswald', sans-serif; text-decoration: none; letter-spacing: 0.1em; transition: 0.3s; white-space: nowrap; }
+.sectionLink:hover { color: #39FF14; transform: translateX(4px); }
+
+/* ======================================================
+   GRID & CARDS
+====================================================== */
+.cardGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+.showCard { background: #090A0C; border: 1px solid #1A1C20; display: flex; flex-direction: column; text-decoration: none; position: relative; overflow: hidden; transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease; }
+.showCard:hover { transform: translateY(-6px); border-color: #39FF14; box-shadow: 0 15px 35px rgba(57, 255, 20, 0.1); }
+
+/* ======================================================
+   CINEMATIC IMAGE HEADER
+====================================================== */
+.imageWrap { position: relative; aspect-ratio: 16/9; width: 100%; border-bottom: 1px solid #1A1C20; overflow: hidden; background: #000; }
+.showImg { object-fit: cover; filter: grayscale(100%) contrast(1.1); transition: filter 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.showCard:hover .showImg { filter: grayscale(0%) contrast(1.05); transform: scale(1.05); }
+
+.imageOverlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(9, 10, 12, 1) 0%, transparent 50%); pointer-events: none; z-index: 1; }
+
+.micWrapper { position: absolute; top: 1rem; right: 1rem; width: 40px; height: 40px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(57, 255, 20, 0.4); display: flex; align-items: center; justify-content: center; border-radius: 4px; z-index: 2; backdrop-filter: blur(4px); transition: border-color 0.3s ease; }
+.showCard:hover .micWrapper { border-color: #39FF14; }
+.micIcon { color: #39FF14; }
+
+/* ======================================================
+   CARD BODY & COPY
+====================================================== */
+.cardBody { padding: 1.5rem; display: flex; flex-direction: column; position: relative; z-index: 2; flex-grow: 1; background: #090A0C; }
+
+.scheduleBadge { align-self: flex-start; background: #111316; border: 1px solid #272A30; color: #A1A1AA; font-family: 'Courier New', monospace; font-size: 0.7rem; padding: 0.3rem 0.6rem; letter-spacing: 0.05em; margin-bottom: 1rem; text-transform: uppercase; }
+
+.cardTitle { color: #fff; font-family: 'Oswald', sans-serif; font-size: 1.8rem; margin: 0 0 0.25rem 0; text-transform: uppercase; line-height: 1.1; }
+
+.talentLabel { color: #71717A; font-family: 'Oswald', sans-serif; font-size: 0.85rem; letter-spacing: 0.1em; margin: 0 0 1rem 0; text-transform: uppercase; }
+.talentLabel span { color: #fff; }
+
+/* STRICT 2-LINE CLAMP FOR SHORTER DESCRIPTIONS */
+.cardDescription { color: #A1A1AA; font-size: 0.95rem; line-height: 1.6; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ======================================================
+   EFFECTS & MOBILE
+====================================================== */
+.scanlines { position: absolute; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.2) 50%); background-size: 100% 4px; pointer-events: none; z-index: 1; }
+.accentBar { position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #39FF14; transform: scaleX(0); transform-origin: left; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 3; }
+.showCard:hover .accentBar { transform: scaleX(1); }
+
+@media (hover: none) {
+  .showImg { filter: grayscale(0%) contrast(1.05); }
+  .accentBar { transform: scaleX(1); opacity: 0.4; }
+  .showCard:active { transform: scale(0.98); border-color: #39FF14; }
+}

@@ -128,7 +128,7 @@
   transition: color 0.2s ease, opacity 0.2s ease;
   font-weight: 500;
   flex-shrink: 0; /* CRITICAL: Prevents long text from word-wrapping/squishing */
-}
+}l
 
 .item:hover {
   color: #39FF14;

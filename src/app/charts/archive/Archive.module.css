@@ -1,0 +1,25 @@
+.page { background: #030405; color: #fff; min-height: 100vh; }
+.textureOverlay { position: fixed; inset: 0; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,..."); }
+.main { max-width: 1000px; margin: 0 auto; padding: 4rem 1.5rem; position: relative; z-index: 10; }
+.navRow { margin-bottom: 2rem; }
+.backLink { color: #71717A; text-decoration: none; font-family: 'Oswald', sans-serif; font-size: 0.85rem; letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.5rem; }
+
+.header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 3rem; }
+.icon { color: #FF0055; }
+.header h1 { font-family: 'Oswald', sans-serif; font-size: 3rem; margin: 0; }
+
+.filterForm { display: flex; flex-wrap: wrap; gap: 1.5rem; background: #090A0C; padding: 1.5rem; border: 1px solid #1A1C20; margin-bottom: 3rem; align-items: flex-end; }
+.filterGroup { display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; min-width: 150px; }
+.filterGroup label { font-family: monospace; font-size: 0.75rem; color: #A1A1AA; }
+.filterGroup select { background: #000; border: 1px solid #272A30; color: #fff; padding: 0.75rem; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 1rem; outline: none; }
+.filterBtn { background: #39FF14; color: #000; border: none; padding: 0.85rem 2rem; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+.filterBtn:hover { background: #fff; }
+.clearBtn { color: #71717A; font-family: monospace; text-decoration: none; padding: 0.85rem 1rem; border: 1px solid #272A30; }
+
+.results { display: flex; flex-direction: column; gap: 1rem; }
+.archiveRow { display: flex; justify-content: space-between; padding: 1.5rem; background: #090A0C; border: 1px solid #1A1C20; text-decoration: none; color: #fff; transition: 0.3s; }
+.archiveRow:hover { border-color: #39FF14; }
+.rowTitle { font-family: 'Oswald', sans-serif; font-size: 1.5rem; text-transform: uppercase; margin-right: 1rem; }
+.rowWeek { font-family: monospace; color: #FF0055; }
+.rowDate { color: #A1A1AA; font-family: monospace; }
+.noResults { color: #A1A1AA; font-family: monospace; }

@@ -1,0 +1,145 @@
+.page { background: #030405; color: #fff; min-height: 100vh; }
+.textureOverlay { position: fixed; inset: 0; pointer-events: none; opacity: 0.04; background-image: url("data:image/svg+xml,..."); }
+.main { max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem; position: relative; z-index: 10; }
+
+.navRow { display: flex; justify-content: space-between; margin-bottom: 3rem; }
+.backLink, .prevLink { color: #71717A; text-decoration: none; font-family: 'Oswald', sans-serif; font-size: 0.85rem; letter-spacing: 0.1em; display: inline-flex; align-items: center; gap: 0.5rem; transition: 0.3s; }
+.backLink:hover, .prevLink:hover { color: #39FF14; }
+
+.billboardHeader { text-align: center; border-bottom: 2px solid #1A1C20; padding-bottom: 2rem; margin-bottom: 3rem; }
+.title { font-family: 'Oswald', sans-serif; font-size: clamp(3rem, 8vw, 7rem); text-transform: uppercase; margin: 0; line-height: 1; }
+.dateRange { color: #A1A1AA; font-family: monospace; font-size: 1.25rem; letter-spacing: 0.1em; }
+
+.accoladesGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+.accoladeCard { background: #090A0C; border: 1px solid #1A1C20; padding: 1.5rem; border-top: 3px solid #39FF14; }
+.droppedCard { border-top-color: #FF0055; }
+.accHeader { color: #fff; font-family: monospace; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; opacity: 0.7; }
+.accTrack { font-family: 'Oswald', sans-serif; font-size: 1.5rem; text-transform: uppercase; color: #fff; }
+.accArtist { color: #A1A1AA; font-size: 0.9rem; }
+.droppedList { display: flex; flex-direction: column; gap: 0.5rem; color: #A1A1AA; font-size: 0.9rem; }
+
+.tableWrap { background: #090A0C; border: 1px solid #1A1C20; border-radius: 8px; }
+.tableHead, .row { display: grid; grid-template-columns: 60px 80px 1fr 80px 80px; gap: 1rem; padding: 1rem 1.5rem; align-items: center; }
+.tableHead { background: #050608; border-bottom: 1px solid #1A1C20; font-family: monospace; font-size: 0.8rem; color: #555; }
+.row { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.row:hover { background: rgba(255,255,255,0.02); }
+.rowNo1 { background: rgba(57, 255, 20, 0.05); border: 1px solid #39FF14; padding: 2rem 1.5rem; margin-bottom: 1rem; }
+
+.colRank { text-align: center; }
+.rankText { font-family: 'Oswald', sans-serif; font-size: 2rem; color: #fff; }
+.colLW { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.lwText { font-family: monospace; font-size: 1.25rem; color: #71717A; }
+
+.colTrack { display: flex; align-items: center; gap: 1.5rem; }
+.artBox { position: relative; width: 50px; height: 50px; border: 1px solid #1A1C20; flex-shrink: 0; }
+.rowNo1 .artBox { width: 100px; height: 100px; }
+.artImg { object-fit: cover; }
+.trackMeta { display: flex; flex-direction: column; overflow: hidden; }
+.tTitle { font-family: 'Oswald', sans-serif; font-size: 1.25rem; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rowNo1 .tTitle { font-size: 2.5rem; }
+.tArtist { color: #A1A1AA; font-size: 0.9rem; }
+
+.colStats { text-align: right; font-family: monospace; color: #A1A1AA; font-size: 1.1rem; }
+
+/* Movement UI */
+.up { color: #39FF14; display: flex; align-items: center; gap: 2px; font-size: 0.7rem; font-weight: bold;}
+.down { color: #FF0055; display: flex; align-items: center; gap: 2px; font-size: 0.7rem; font-weight: bold;}
+.new { color: #00F0FF; display: flex; align-items: center; gap: 2px; font-size: 0.7rem; font-weight: bold;}
+.same { color: #555; }
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .tableHead, .row { grid-template-columns: 40px 1fr; padding: 1rem; }
+  .colLW, .colStats { display: none; } /* Hide Last Week & Stats on Mobile */
+  .artBox { width: 40px; height: 40px; margin-right: 0.5rem; }
+  .tTitle { font-size: 1rem; }
+}
+
+/* Accolades Section */
+.accoladesGrid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+  gap: 1.5rem; 
+  margin-bottom: 4rem; 
+}
+.accoladeCard { 
+  background: #090A0C; 
+  border: 1px solid #1A1C20; 
+  padding: 1.5rem; 
+  border-top: 3px solid #39FF14; 
+}
+.droppedCard { border-top-color: #FF0055; }
+.accoladeCardEmpty {
+  background: rgba(13, 15, 18, 0.4);
+  border: 1px dashed #1A1C20;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+}
+
+.accHeader { color: #fff; font-family: monospace; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; opacity: 0.7; }
+.accTrack { font-family: 'Oswald', sans-serif; font-size: 1.5rem; text-transform: uppercase; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.accArtist { color: #A1A1AA; font-size: 0.9rem; }
+
+.droppedList { display: flex; flex-direction: column; gap: 0.75rem; }
+.droppedItem { color: #E4E4E7; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dropRank { color: #71717A; font-family: monospace; font-size: 0.8rem; margin-left: 0.5rem; text-transform: none; }
+.dropMore { color: #FF0055; font-family: monospace; font-size: 0.8rem; }
+
+/* Comparison Table Matrix */
+.tableWrap { background: #090A0C; border: 1px solid #1A1C20; border-radius: 8px; overflow: hidden; }
+.tableHead, .row { 
+  display: grid; 
+  /* Explicit width definition for comparison tool: TW, LW, Track, Peak, WOC */
+  grid-template-columns: 60px 60px 1fr 80px 80px; 
+  gap: 1rem; 
+  padding: 1rem 1.5rem; 
+  align-items: center; 
+}
+.tableHead { background: #050608; border-bottom: 1px solid #1A1C20; font-family: monospace; font-size: 0.8rem; color: #555; }
+.row { border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+.row:hover { background: rgba(255,255,255,0.02); }
+.rowNo1 { background: rgba(57, 255, 20, 0.05); border: 1px solid #39FF14; padding: 2rem 1.5rem; margin-bottom: 1rem; }
+
+.colRank { text-align: center; }
+.rankText { font-family: 'Oswald', sans-serif; font-size: 2rem; color: #fff; }
+.rowNo1 .rankText { font-size: 4rem; color: #39FF14; }
+
+/* The Comparison Column (LW vs TW) */
+.colLW { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 0.5rem 0; }
+.lwText { font-family: monospace; font-size: 1.25rem; color: #71717A; }
+.moveInd { display: flex; align-items: center; justify-content: center; }
+.up { color: #39FF14; }
+.down { color: #FF0055; }
+.new { color: #00F0FF; }
+.same { color: #555; }
+
+.colTrack { display: flex; align-items: center; gap: 1.5rem; overflow: hidden; }
+.artBox { position: relative; width: 60px; height: 60px; border: 1px solid #1A1C20; flex-shrink: 0; }
+.rowNo1 .artBox { width: 120px; height: 120px; }
+.artImg { object-fit: cover; }
+.trackMeta { display: flex; flex-direction: column; overflow: hidden; }
+.tTitle { font-family: 'Oswald', sans-serif; font-size: 1.25rem; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.rowNo1 .tTitle { font-size: 2.5rem; }
+.tArtist { color: #A1A1AA; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.colStats { text-align: center; font-family: monospace; color: #A1A1AA; font-size: 1.1rem; }
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .tableHead, .row { 
+    /* Keep TW, LW, and Track on mobile, hide stats */
+    grid-template-columns: 40px 50px 1fr; 
+    padding: 1rem; 
+    gap: 0.75rem; 
+  }
+  .colStats { display: none; }
+  .artBox { width: 45px; height: 45px; gap: 0.75rem; }
+  .rowNo1 .artBox { width: 80px; height: 80px; }
+  .tTitle { font-size: 1rem; }
+  .lwText { font-size: 1rem; }
+}
