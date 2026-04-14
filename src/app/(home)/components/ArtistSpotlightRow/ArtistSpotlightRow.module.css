@@ -1,7 +1,10 @@
+/* ======================================================
+   ROOT & CONTAINER
+====================================================== */
 .section {
   position: relative;
-  background-color: #0B0D0F;
-  padding: 4rem 1.5rem;
+  background-color: #060708; /* Darkened to match event section */
+  padding: 5rem 1.5rem;
 }
 
 .container {
@@ -9,14 +12,17 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
+/* ======================================================
+   HEADER
+====================================================== */
 .header {
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid #1A1C20;
-  padding-bottom: 1rem;
+  padding-bottom: 1.5rem;
 }
 
 .kickerRow {
@@ -29,10 +35,10 @@
 .livePulse {
   width: 8px;
   height: 8px;
-  background-color: #FF0055; /* Magenta for Artists */
+  background-color: #FF0055;
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
-  animation: pulse 2s infinite;
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
+  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .eyebrow {
@@ -45,16 +51,44 @@
   margin: 0;
 }
 
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .title {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1;
   text-transform: uppercase;
   margin: 0;
 }
 
-/* Dynamic Grid: Auto-adjusts based on 1, 2, or 3 items */
+.viewAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #A0A0A0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.viewAll:hover {
+  color: #FFFFFF;
+}
+
+/* ======================================================
+   GRID & CARDS
+====================================================== */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -64,23 +98,24 @@
 .card {
   position: relative;
   aspect-ratio: 4/5;
-  background: #111316;
+  background: #0B0D0F;
   border: 1px solid #1A1C20;
   overflow: hidden;
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
   border-color: #FF0055;
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 85, 0.15);
 }
 
-/* Image Centering */
+/* ======================================================
+   IMAGE & EFFECTS
+====================================================== */
 .imageWrap {
   position: absolute;
   inset: 0;
@@ -101,26 +136,20 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(100%) contrast(1.1);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+  filter: grayscale(100%) contrast(1.2) brightness(0.6);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
 }
 
 .card:hover .image {
-  transform: scale(1.05);
-  filter: grayscale(0%) contrast(1.05);
+  transform: scale(1.08);
+  filter: grayscale(0%) contrast(1.1) brightness(0.85);
 }
 
-.imagePlaceholder {
-  width: 100%;
-  height: 100%;
-  background: #1A1C20;
-}
-
-/* Studio Effects */
+/* Studio Overlay Effects */
 .scanlines {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
   background-size: 100% 4px;
   pointer-events: none;
   z-index: 5;
@@ -129,46 +158,81 @@
 .vignette {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(11, 13, 15, 0.95) 0%, rgba(11, 13, 15, 0.2) 60%, transparent 100%);
+  background: linear-gradient(180deg, rgba(6,7,8,0.1) 0%, rgba(6,7,8,0.5) 50%, rgba(6,7,8,0.95) 100%);
   pointer-events: none;
   z-index: 6;
 }
 
-/* Overlay Content */
+.glare {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg);
+  transition: left 0.7s ease;
+  z-index: 7;
+}
+
+.card:hover .glare {
+  left: 200%;
+}
+
+/* ======================================================
+   OVERLAY CONTENT
+====================================================== */
 .overlay {
   position: relative;
   z-index: 10;
+  height: 100%;
   padding: 2rem;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+}
+
+.metaTop {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .categoryTag {
-  align-self: flex-start;
-  color: #0B0D0F;
-  background: #FF0055;
+  color: #FFFFFF;
+  background: rgba(255, 0, 85, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid #FF0055;
   font-family: 'Oswald', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 0.25rem 0.75rem;
-  margin-bottom: 1rem;
+  letter-spacing: 0.15em;
+  padding: 0.35rem 0.85rem;
+}
+
+.contentBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .cardTitle {
   color: #FFFFFF;
   font-family: 'Oswald', sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.85rem;
   line-height: 1.1;
   text-transform: uppercase;
-  margin: 0 0 1rem 0;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.8);
 }
 
 .readMore {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: #A0A0A0;
   font-family: 'Oswald', sans-serif;
   font-size: 0.875rem;
@@ -178,12 +242,23 @@
   transition: color 0.3s ease;
 }
 
+.arrow {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .card:hover .readMore {
   color: #FF0055;
 }
 
+.card:hover .arrow {
+  transform: translateX(6px);
+}
+
+/* ======================================================
+   ANIMATIONS
+====================================================== */
 @keyframes pulse {
   0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
-  70% { transform: scale(1.5); box-shadow: 0 0 0 6px rgba(255, 0, 85, 0); }
+  50% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(255, 0, 85, 0); }
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
 }

@@ -34,10 +34,15 @@ export type Chart = {
 
 interface Props {
   charts: Chart[]
+  /** Dynamic articles for the main Hero Slider */
   heroArticles: NewsArticle[]
+  /** * Manually selected articles from Payload CMS. 
+   * Typed to match SpotlightArticles component to avoid ESLint errors.
+   */
+  spotlightArticles: (NewsArticle | string | number)[] 
 }
 
-export default function HomeHeroClient({ charts, heroArticles }: Props) {
+export default function HomeHeroClient({ charts, heroArticles, spotlightArticles }: Props) {
   return (
     <section className={styles.root} aria-label="WaveNation Command Center">
       {/* BRAND OVERLAY TEXTURES */}
@@ -49,7 +54,6 @@ export default function HomeHeroClient({ charts, heroArticles }: Props) {
         <div className={styles.railWrapper}>
           <LeftRail>
             <div className={styles.railHeader}>
-              {/* Purple dot for charts */}
               <span className={`${styles.liveDot} ${styles.dotPurple}`} />
               <p className={styles.railLabel}>MARKET PULSE</p>
             </div>
@@ -62,9 +66,12 @@ export default function HomeHeroClient({ charts, heroArticles }: Props) {
         {/* ================= CENTER RAIL: MAIN BROADCAST ================= */}
         <div className={styles.centerWrapper}>
           <CenterRail>
+            {/* Main Slider: Top news feed */}
             <HeroSlider articles={heroArticles} />
+            
             <div className={styles.spotlightWrapper}>
-              <SpotlightArticles />
+              {/* Manual Selection: Specific stories pinned in CMS */}
+              <SpotlightArticles articles={spotlightArticles} />
             </div>
           </CenterRail>
         </div>
@@ -73,13 +80,13 @@ export default function HomeHeroClient({ charts, heroArticles }: Props) {
         <div className={styles.railWrapper}>
           <RightRail>
             <div className={styles.railHeader}>
-              {/* Magenta dot for talent/on-air */}
               <span className={`${styles.liveDot} ${styles.dotMagenta}`} />
               <p className={styles.railLabel}>ON AIR / TALENT</p>
             </div>
+            
             <HeroFeaturedArtist />
+            
             <div className={styles.rightContentGap}>
-               {/* HeroUpNext goes here when ready */}
                <HeroNewsletter />
             </div>
           </RightRail>

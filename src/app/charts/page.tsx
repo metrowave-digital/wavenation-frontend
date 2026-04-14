@@ -5,15 +5,23 @@ import { BarChart2, ArrowRight } from 'lucide-react';
 import { BackToTop } from '@/components/ui/BackToTop/BackToTop';
 import styles from './ChartsHub.module.css';
 
+// Define the exact order you want the charts to appear in based on their chartKeys
+const CHART_ORDER = [
+  'hitlist',
+  'rnb-soul',
+  'gospel',
+  'hip-hop',
+  'southern-soul',
+  'house-bpm'
+];
+
 export default async function ChartsHubPage() {
   const response = await getCharts({ limit: 100 }); 
   
-  // FIXED: Removed 'as any' and used proper optional chaining/checks
   const publishedCharts = (response.docs as WNChart[] || []).filter(
     (c: WNChart) => c._status === 'published' || c.status === 'published'
   );
 
-  // Type the Map for genre grouping
   const latestChartsMap = new Map<string, WNChart>();
   
   for (const chart of publishedCharts) {
@@ -22,7 +30,17 @@ export default async function ChartsHubPage() {
     }
   }
   
-  const currentCharts = Array.from(latestChartsMap.values());
+  // Extract the unique charts and sort them based on the CHART_ORDER array
+  const currentCharts = Array.from(latestChartsMap.values()).sort((a, b) => {
+    const indexA = CHART_ORDER.indexOf(a.chartKey);
+    const indexB = CHART_ORDER.indexOf(b.chartKey);
+    
+    // If a chartKey isn't in the array, push it to the bottom
+    const weightA = indexA === -1 ? 999 : indexA;
+    const weightB = indexB === -1 ? 999 : indexB;
+    
+    return weightA - weightB;
+  });
 
   return (
     <div className={styles.page}>

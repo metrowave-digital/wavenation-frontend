@@ -15,7 +15,7 @@ const quickAccessItems = [
     index: '02',
     label: 'VISUALS',
     title: 'WN One (TV)',
-    description: 'Cinematic programming, in-depth artist interviews, and exclusive live performance captures.',
+    description: 'Cinematic programming, in-depth artist interviews, and exclusive live performances.',
     color: '#FF0055', // Magenta
   },
   {
@@ -30,7 +30,7 @@ const quickAccessItems = [
     href: '/news',
     index: '04',
     label: 'EDITORIAL',
-    title: 'The Wire',
+    title: 'The Pulse',
     description: 'Breaking updates, cultural commentary, and deep-dive reporting on the voices shaping the movement.',
     color: '#39FF14', // Neon Green
   },

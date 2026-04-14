@@ -1,3 +1,6 @@
+// Force Next.js to bypass the cache so the shuffle works on every refresh
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mic2, ArrowRight, RadioTower } from 'lucide-react'
@@ -11,6 +14,14 @@ interface Host {
   title?: string;
 }
 
+interface MediaProps {
+  url: string;
+  sizes?: {
+    card?: { url: string };
+    thumb?: { url: string };
+  };
+}
+
 interface Show {
   id: string | number;
   slug: string;
@@ -19,18 +30,28 @@ interface Show {
   shortDescription?: string;
   description?: string;
   hosts?: Host[];
-  coverImage?: {
-    url: string;
-    sizes?: {
-      card?: { url: string };
-      thumb?: { url: string };
-    };
+  // Nested mediaAssets to match your Payload CMS structure
+  mediaAssets?: {
+    coverImage?: MediaProps;
+    logo?: MediaProps;
   };
+}
+
+// --- Helper: Shuffle Array ---
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 export default async function HomeShows() {
   const allShows: Show[] = await getShows();
-  const displayShows = allShows.slice(0, 3);
+  
+  // Shuffle the full array before slicing the top 3
+  const displayShows = shuffleArray(allShows).slice(0, 3);
   
   if (!displayShows || displayShows.length === 0) return null;
 
@@ -41,9 +62,9 @@ export default async function HomeShows() {
         <div className={styles.sectionHeaderRow}>
           <div>
             <p className={styles.eyebrow}><RadioTower size={14}/> LIVE BROADCASTS</p>
-            <h2 id="shows-title" className={styles.sectionTitle}>STATION PERSONALITIES</h2>
+            <h2 id="shows-title" className={styles.sectionTitle}>FEATURED SHOWS</h2>
           </div>
-          <Link href="/radio" className={styles.sectionLink}>
+          <Link href="/listen/schedule/" className={styles.sectionLink}>
             VIEW SCHEDULE <ArrowRight size={16} />
           </Link>
         </div>
@@ -55,16 +76,23 @@ export default async function HomeShows() {
               ? show.hosts.map(h => h.displayName || h.title).join(', ') 
               : 'WaveNation Team';
 
-            // Resolve Image (fallback to a default if none provided)
-            const imgUrl = show.coverImage?.sizes?.card?.url 
-              || show.coverImage?.url 
+            // Resolve Image looking inside mediaAssets
+            const mediaObject = show.mediaAssets?.coverImage || show.mediaAssets?.logo;
+            const imgUrl = mediaObject?.sizes?.card?.url 
+              || mediaObject?.url 
               || '/images/fallback-show.jpg';
 
             return (
-              <Link key={show.id} href={`/radio/shows/${show.slug}`} className={styles.showCard}>
+              <Link key={show.id} href={`/shows/${show.slug}`} className={styles.showCard}>
                 
                 <div className={styles.imageWrap}>
-                  <Image src={imgUrl} alt={show.title} fill className={styles.showImg} sizes="(max-width: 768px) 100vw, 33vw" />
+                  <Image 
+                    src={imgUrl} 
+                    alt={show.title} 
+                    fill 
+                    className={styles.showImg} 
+                    sizes="(max-width: 768px) 100vw, 33vw" 
+                  />
                   <div className={styles.imageOverlay} />
                   <div className={styles.micWrapper}>
                     <Mic2 size={20} className={styles.micIcon} />

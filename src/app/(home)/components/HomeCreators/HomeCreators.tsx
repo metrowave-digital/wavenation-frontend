@@ -30,11 +30,11 @@ export default function HomeCreators() {
         <div className={styles.grid}>
           {/* Left Side Copy */}
           <div className={styles.creatorCopy}>
-            <p className={styles.eyebrow}>PLATFORM INFRASTRUCTURE</p>
+            <p className={styles.eyebrow}>OUR MISSION</p>
             <h2 id="creator-title" className={styles.sectionTitle}>BUILT TO ELEVATE</h2>
             <div className={styles.divider} aria-hidden="true" />
             <p className={styles.sectionDescription}>
-              WaveNation is more than a station. It is a growing ecosystem for independent artists, podcasters, DJs, filmmakers, and culture-forward voices. Connect to the grid.
+              WaveNation is more than a station. It is a growing ecosystem for independent artists, podcasters, DJs, filmmakers, and culture-forward voices. Connect to our community.
             </p>
           </div>
 

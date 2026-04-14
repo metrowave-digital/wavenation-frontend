@@ -1,3 +1,6 @@
+// Force Next.js to bypass the cache so the shuffle works on every refresh
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { getTalentRoster } from '@/services/talent.api'
@@ -5,26 +8,41 @@ import { ArrowRight, User } from 'lucide-react'
 import styles from './HomeTalent.module.css'
 
 // --- TypeScript Interfaces ---
+interface MediaProps {
+  url: string;
+  sizes?: {
+    card?: { url: string };
+    thumb?: { url: string };
+  };
+}
+
 interface Talent {
   id: string | number;
   slug: string;
   displayName: string;
-  roles?: string[];
-  avatar?: {
-    url: string;
-    sizes?: {
-      card?: { url: string };
-      thumb?: { url: string };
-    };
+  role?: string; 
+  // Nested mediaAssets to match your Payload CMS structure
+  mediaAssets?: {
+    headshot?: MediaProps;
+    avatar?: MediaProps;
   };
-  headshot?: {
-    url: string;
-  };
+}
+
+// --- Helper: Shuffle Array ---
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 export default async function HomeTalent() {
   const allTalent: Talent[] = await getTalentRoster();
-  const displayTalent = allTalent.slice(0, 4);
+  
+  // Shuffle the full array before slicing the top 4
+  const displayTalent = shuffleArray(allTalent).slice(0, 4);
   
   if (!displayTalent || displayTalent.length === 0) return null;
 
@@ -44,19 +62,25 @@ export default async function HomeTalent() {
 
         <div className={styles.cardGrid}>
           {displayTalent.map((person) => {
-            const avatarUrl = person.avatar?.sizes?.card?.url 
-              || person.avatar?.url 
-              || person.headshot?.url 
+            
+            // Resolve Image looking inside mediaAssets
+            const mediaObject = person.mediaAssets?.headshot || person.mediaAssets?.avatar;
+            const avatarUrl = mediaObject?.sizes?.card?.url 
+              || mediaObject?.url 
               || '/images/wavenation-avatar.png';
               
-            const roleText = person.roles && person.roles.length > 0 
-              ? person.roles.join(' • ') 
-              : 'STATION TALENT';
+            const roleText = person.role || 'STATION TALENT';
 
             return (
               <Link key={person.id} href={`/talent/${person.slug}`} className={styles.talentCard}>
                 <div className={styles.imageWrap}>
-                  <Image src={avatarUrl} alt={person.displayName} fill className={styles.talentImg} sizes="(max-width: 768px) 100vw, 25vw" />
+                  <Image 
+                    src={avatarUrl} 
+                    alt={person.displayName} 
+                    fill 
+                    className={styles.talentImg} 
+                    sizes="(max-width: 768px) 100vw, 25vw" 
+                  />
                   <div className={styles.vignette} aria-hidden="true" />
                 </div>
                 <div className={styles.cardBody}>

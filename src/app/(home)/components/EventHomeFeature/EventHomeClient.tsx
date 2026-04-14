@@ -2,21 +2,33 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Play, Calendar, MapPin, Radio } from 'lucide-react'
+import { Calendar, MapPin, Radio } from 'lucide-react'
 import { WNEvent } from '@/types/event'
 import styles from './EventHomeFeature.module.css'
 
 export default function EventHomeClient({ event }: { event: WNEvent }) {
   const isLive = event.status === 'live'
-  const imageUrl = event.heroImage?.sizes?.hero?.url || event.heroImage?.url || ''
+  
+  // Safely fallback to an empty string or a default placeholder image
+  const imageUrl = event.heroImage?.sizes?.hero?.url || event.heroImage?.url || '/images/fallback-event.jpg'
   
   return (
     <section className={`${styles.root} ${isLive ? styles.isLive : ''}`}>
       <div className={styles.container}>
         <div className={styles.monitorFrame}>
+          
           {/* Background Image / Stream Static */}
           <div className={styles.mediaWrap}>
-            <Image src={imageUrl} alt={event.title} fill className={styles.bgImage} />
+            {imageUrl && (
+              <Image 
+                src={imageUrl} 
+                alt={event.title || 'WaveNation Event'} 
+                fill 
+                priority // Ensures this loads fast as a hero element
+                sizes="(max-width: 1400px) 100vw, 1400px" // Optimizes bandwidth
+                className={styles.bgImage} 
+              />
+            )}
             <div className={styles.vignette} />
             <div className={styles.scanlines} />
           </div>
@@ -27,7 +39,9 @@ export default function EventHomeClient({ event }: { event: WNEvent }) {
                 <span className={styles.pulse} />
                 <p>{isLive ? 'SIGNAL ACTIVE // ON AIR' : 'TRANSMISSION UPCOMING'}</p>
               </div>
-              <p className={styles.category}>{event.eventType?.toUpperCase()}</p>
+              {event.eventType && (
+                <p className={styles.category}>{event.eventType.toUpperCase()}</p>
+              )}
             </header>
 
             <div className={styles.body}>
@@ -35,7 +49,11 @@ export default function EventHomeClient({ event }: { event: WNEvent }) {
               <div className={styles.meta}>
                 <div className={styles.metaItem}>
                   <Calendar size={16} />
-                  <span>{new Date(event.startDate!).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
+                  <span>
+                    {event.startDate 
+                      ? new Date(event.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) 
+                      : 'TBA'}
+                  </span>
                 </div>
                 <div className={styles.metaItem}>
                   <MapPin size={16} />
@@ -55,7 +73,12 @@ export default function EventHomeClient({ event }: { event: WNEvent }) {
                 </Link>
               )}
               {event.ctaUrl && !isLive && (
-                <a href={event.ctaUrl} target="_blank" className={styles.secondaryBtn}>
+                <a 
+                  href={event.ctaUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" // Security best practice for external links
+                  className={styles.secondaryBtn}
+                >
                   GET TICKETS
                 </a>
               )}

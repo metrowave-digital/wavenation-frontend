@@ -1,14 +1,18 @@
 import { getHomepageCharts } from '../../../../lib/charts/getHomepageCharts'
-import { getEditorsPicks } from '@/services/news.api' // Connected news service
+import { getEditorsPicks } from '@/services/news.api'
 import HomeHeroClient from './HomeHero.client'
+import type { NewsArticle } from '@/app/news/news.types'
 
 /**
  * Server Component: HomeHero
- * Fetches all necessary data for the Command Center on the server
- * to ensure zero layout shift and SEO optimization.
+ * Updated to accept manually selected spotlight articles from the CMS.
  */
-export default async function HomeHero() {
-  // Concurrently fetch Charts and Featured News
+interface HomeHeroProps {
+  spotlightArticles: (NewsArticle | string | number)[]
+}
+
+export default async function HomeHero({ spotlightArticles }: HomeHeroProps) {
+  // Concurrently fetch Charts and Featured News for the Slider
   const [charts, heroArticles] = await Promise.all([
     getHomepageCharts(),
     getEditorsPicks(5) // Fetch top 5 Editor's Picks for the HeroSlider
@@ -18,6 +22,7 @@ export default async function HomeHero() {
     <HomeHeroClient 
       charts={charts} 
       heroArticles={heroArticles} 
+      spotlightArticles={spotlightArticles} // Now passed through to the Client UI
     />
   )
 }

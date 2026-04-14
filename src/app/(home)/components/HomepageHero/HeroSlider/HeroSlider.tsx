@@ -60,9 +60,6 @@ export function HeroSlider({ articles }: { articles: NewsArticle[] }) {
     setProgress(0)
   }
 
-  // ==========================================
-  // SKELETON LOADER STATE
-  // ==========================================
   if (!articles || articles.length === 0) {
     return (
       <section className={`${styles.root} ${styles.skeletonRoot}`}>
