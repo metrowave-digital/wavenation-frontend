@@ -1,310 +1,334 @@
 /* ======================================================
-   MAGAZINE BASE & TEXTURE
+   BRUTALIST BASE
 ====================================================== */
 .page { 
-  background-color: #060708; 
+  background-color: #000000; 
   color: #ffffff; 
   min-height: 100vh; 
   position: relative; 
   overflow-x: hidden;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.textureOverlay { 
-  position: fixed; 
-  inset: 0; 
-  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); 
-  opacity: 0.05; 
-  pointer-events: none; 
-  z-index: 10; 
+/* ======================================================
+   SPLIT HERO
+====================================================== */
+.splitHero { 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  border-bottom: 1px solid #333;
 }
 
-.spotlightWrapper {
+.heroTextCol {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(6rem, 8vw, 8rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem);
+  background: #000;
+}
+
+.heroImgCol {
   position: relative;
   width: 100%;
+  height: 100%;
+  border-left: 1px solid #333;
+  overflow: hidden;
 }
 
-/* ======================================================
-   IMMERSIVE EDITORIAL HERO
-====================================================== */
-.heroSection { 
-  position: relative; 
-  padding-top: 120px; 
-  min-height: clamp(80vh, 95vh, 1000px); /* Massive cinematic hero */
-  width: 100%; 
-  display: flex; 
-  align-items: flex-end; 
-  padding-bottom: clamp(6rem, 10vw, 10rem); 
+.heroImg {
+  object-fit: cover;
+  filter: contrast(1.1) grayscale(0.1);
 }
 
-.heroImageWrapper { position: absolute; inset: 0; z-index: 1; }
-.heroImg { object-fit: cover; filter: brightness(0.65) contrast(1.15); }
-.heroOverlay { 
-  position: absolute; 
-  inset: 0; 
-  background: linear-gradient(to top, #060708 0%, rgba(6, 7, 8, 0.7) 30%, rgba(6, 7, 8, 0) 100%); 
-}
-.scanlines { 
-  position: absolute; 
-  inset: 0; 
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%); 
-  background-size: 100% 4px; 
-  pointer-events: none; 
-  opacity: 0.4; 
+.imgPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #111;
 }
 
-/* ======================================================
-   HERO TYPOGRAPHY
-====================================================== */
-.heroContent { 
-  position: relative; 
-  z-index: 10; 
-  max-width: 1400px; 
-  margin: 0 auto; 
-  padding: 0 clamp(1.5rem, 4vw, 4rem); 
-  width: 100%; 
-  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.metaRow { 
-  display: flex; 
-  align-items: center; 
-  gap: clamp(1rem, 3vw, 2rem); 
-  margin-bottom: 1.5rem; 
-  font-family: 'Oswald', sans-serif; 
-  letter-spacing: 0.2em; 
-  font-size: clamp(0.75rem, 2vw, 0.85rem); 
-}
-
-.liveIndicator { color: #B200FF; display: flex; align-items: center; gap: 8px; font-weight: 700;}
-.dot { width: 8px; height: 8px; background: #B200FF; border-radius: 50%; box-shadow: 0 0 12px #B200FF; animation: pulse 2s infinite; }
-.readTime { color: #A1A1AA; }
-
-.mainTitle { 
-  font-family: 'Oswald', sans-serif; 
-  font-size: clamp(3rem, 9vw, 6.5rem); /* Huge scaling */
-  text-transform: uppercase; 
-  line-height: 0.95; 
-  font-weight: 800; 
-  margin-bottom: 1.5rem; 
-  max-width: 1100px; 
-  color: #fff;
-  letter-spacing: -0.02em;
-}
-
-.subTitle {
-  font-family: 'Georgia', serif; /* Elegant serif for contrast */
-  font-style: italic;
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
-  color: #E4E4E7;
-  line-height: 1.5;
-  max-width: 800px;
+/* Hero Typography */
+.heroTopMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding-bottom: 1rem;
   margin-bottom: 2rem;
-  font-weight: 400;
 }
 
-.heroCredit {
+.editorialBadge {
+  background: #B200FF;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.75rem;
+}
+
+.readTime {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.05em;
+}
+
+.heroHeadline {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: auto 0;
+}
+
+.heroBottomMeta {
+  margin-top: 3rem;
+  border-top: 1px solid #333;
+  padding-top: 2rem;
+}
+
+.heroExcerpt {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.6;
+  color: #ccc;
+  max-width: 90%;
+  margin-bottom: 1.5rem;
+}
+
+.imageCredit {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+}
+
+/* ======================================================
+   MAIN LAYOUT & DOSSIER
+====================================================== */
+.mainLayout {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 4rem);
+}
+
+.dossierSection {
+  border-bottom: 1px solid #333;
+  padding: clamp(4rem, 8vw, 6rem) 0;
+}
+
+.dossierGrid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: clamp(2rem, 5vw, 6rem);
+}
+
+.dossierVisual {
+  position: relative;
+  aspect-ratio: 3/4;
+  border: 1px solid #333;
+  background: #111;
+}
+
+.dossierImg {
+  object-fit: cover;
+  filter: grayscale(1);
+  transition: filter 0.4s ease;
+}
+
+.dossierVisual:hover .dossierImg {
+  filter: grayscale(0);
+}
+
+.dossierData {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.dataLabel {
+  display: block;
   font-family: 'Oswald', sans-serif;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #71717A;
-  margin-top: 3rem;
-  border-left: 2px solid #B200FF;
-  padding-left: 1rem;
+  color: #B200FF;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.subjectName {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  text-transform: uppercase;
+  line-height: 1;
+  color: #fff;
+  margin-top: 1rem;
+}
+
+.dossierBio p {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  line-height: 1.6;
+  color: #ccc;
+  margin-top: 1rem;
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dataLink {
+  font-size: 0.9rem;
+  color: #fff;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.dataLink:hover {
+  color: #B200FF;
+  border-color: #B200FF;
 }
 
 /* ======================================================
-   THE SPOTLIGHT FILE (GLASSMORPHISM)
+   EDITORIAL BODY
 ====================================================== */
-.mainContent { 
-  max-width: 1200px; 
-  margin: 0 auto; 
-  position: relative; 
-  z-index: 20; 
-  padding: 0 clamp(1.5rem, 4vw, 3rem) clamp(4rem, 8vw, 10rem); 
+.editorialBody {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: clamp(4rem, 8vw, 6rem) 0;
 }
 
-/* Overlaps the hero slightly */
-.spotlightCard { 
-  background: rgba(17, 19, 22, 0.6); 
-  backdrop-filter: blur(16px); 
-  border: 1px solid rgba(255, 255, 255, 0.05); 
-  border-top: 4px solid #B200FF;
-  padding: clamp(2rem, 5vw, 4rem); 
-  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8); 
-  margin-top: clamp(-5rem, -8vw, -8rem);
-  margin-bottom: clamp(4rem, 8vw, 6rem);
-  animation: fadeUp 1s ease-out 0.2s forwards;
+.articleDivider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
 }
 
-.spotlightGrid { 
-  display: grid; 
-  grid-template-columns: 1fr 1.5fr; 
-  gap: clamp(2rem, 6vw, 5rem); 
-  align-items: center; 
+.eqBar { flex: 1; height: 1px; background: #333; }
+.dividerText { font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 0.2em; color: #666; text-transform: uppercase; }
+
+/* Interactive Body / Magazine Typography */
+:global(.interactiveBody) {
+  font-family: 'Georgia', serif;
+  font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+  line-height: 1.8;
+  color: #ddd;
 }
 
-.artistFrame { 
-  position: relative; 
-  aspect-ratio: 4/5; 
-  background: #000; 
-  overflow: hidden; 
-  width: 100%;
-}
+:global(.interactiveBody) p { margin-bottom: 2rem; }
 
-.artistImg { object-fit: cover; filter: grayscale(0.2) contrast(1.1); transition: transform 0.8s ease, filter 0.8s ease; }
-.spotlightCard:hover .artistImg { transform: scale(1.03); filter: grayscale(0) contrast(1); }
-
-.eyebrow { font-family: 'Oswald', sans-serif; color: #B200FF; letter-spacing: 0.3em; font-size: clamp(0.7rem, 2vw, 0.8rem); margin-bottom: 0.5rem; }
-.artistName { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 6vw, 3.5rem); text-transform: uppercase; line-height: 1; color: #fff; margin-bottom: 1.5rem; }
-.artistBio { color: #D4D4D8; font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.7; margin-bottom: 2.5rem; }
-
-.socialGrid { display: flex; flex-wrap: wrap; gap: 1rem; }
-.socialPill { font-family: 'Oswald', sans-serif; font-size: 0.8rem; text-transform: uppercase; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.03); transition: all 0.3s ease; letter-spacing: 0.05em;}
-.socialPill:hover { border-color: #B200FF; color: #B200FF; background: rgba(178, 0, 255, 0.05); transform: translateY(-2px); }
-
-/* ======================================================
-   EDITORIAL CONTENT BODY
-====================================================== */
-.editorialContainer { max-width: 800px; margin: 0 auto; }
-
-.articleDivider { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2rem); margin-bottom: clamp(3rem, 6vw, 5rem); opacity: 0.6; }
-.eqBar { flex: 1; height: 1px; background: linear-gradient(to right, transparent, #B200FF, transparent); }
-.dividerText { font-family: 'Oswald', sans-serif; font-size: clamp(0.7rem, 2vw, 0.85rem); letter-spacing: 0.4em; color: #B200FF; white-space: nowrap; }
-
-/* Magazine Body Copy */
-.bodyWrapper { 
-  font-family: 'Georgia', serif; /* Magazine feel */
-  font-size: clamp(1.15rem, 2.5vw, 1.35rem); 
-  line-height: 1.9; 
-  color: #E4E4E7; 
-}
-
-.bodyWrapper p { margin-bottom: 2rem; }
-
-/* Drop cap for first paragraph */
-.bodyWrapper p:first-of-type::first-letter {
+:global(.interactiveBody) p:first-of-type::first-letter {
   float: left;
   font-family: 'Oswald', sans-serif;
-  font-size: 4.5rem;
+  font-size: 5rem;
   line-height: 0.8;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
-  color: #B200FF;
+  color: #fff;
 }
+
+:global(.interactiveBody) figure { margin: 3rem 0; width: 100%; border: 1px solid #333; padding: 0.5rem; }
+:global(.interactiveBody) img { width: 100%; height: auto; cursor: zoom-in; filter: grayscale(0.2); transition: filter 0.3s; }
+:global(.interactiveBody) img:hover { filter: grayscale(0); }
+:global(.interactiveBody) figcaption { margin-top: 1rem; font-size: 0.8rem; font-family: 'Helvetica', sans-serif; color: #888; text-transform: uppercase; letter-spacing: 0.05em; text-align: left; }
 
 /* ======================================================
-   FEATURED RELEASE SECTION (ALBUM)
+   GALLERY RELEASE SECTION
 ====================================================== */
-.featuredReleaseSection {
+.exhibitionSection {
   margin: clamp(4rem, 8vw, 6rem) 0;
-  background: #0B0D0F;
-  border: 1px solid #1A1C20;
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: 4px;
+  border: 1px solid #333;
+  padding: clamp(2rem, 4vw, 4rem);
+  background: #050505;
 }
 
-.releaseDivider { margin-bottom: 2rem; border-bottom: 1px solid #1A1C20; padding-bottom: 1rem; }
+.exhibitionHeader { margin-bottom: 3rem; }
+.exhibitionLabel { font-family: 'Oswald', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: #B200FF; border-bottom: 1px solid #B200FF; padding-bottom: 0.5rem; }
 
-.releaseGrid {
+.exhibitionGrid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr;
   gap: clamp(2rem, 5vw, 4rem);
   align-items: center;
 }
 
-.recordSleeve {
+.exhibitionArt {
   position: relative;
   aspect-ratio: 1/1;
-  width: 100%;
-  max-width: 350px;
-  box-shadow: 10px 10px 30px rgba(0,0,0,0.8);
-  margin: 0 auto;
+  border: 1px solid #333;
 }
 
-.albumCover { object-fit: cover; position: relative; z-index: 2; border-radius: 2px; }
-.albumPlaceholder { width: 100%; height: 100%; background: #1A1C20; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; color: #71717A; position: relative; z-index: 2; }
+.exhibitionImg { object-fit: cover; }
+.exhibitionPlaceholder { width: 100%; height: 100%; background: #111; }
 
-/* Vinyl record peeking out */
-.vinylRecord {
-  position: absolute;
-  top: 2%;
-  right: -15%;
-  width: 96%;
-  height: 96%;
-  background: radial-gradient(circle, #111 20%, #000 30%, #1a1a1a 40%, #000 50%, #111 60%, #000 70%, #1a1a1a 80%, #000 90%);
-  border-radius: 50%;
-  z-index: 1;
-  box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
-  transition: transform 0.5s ease;
-}
+.placardTitle { font-family: 'Oswald', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); text-transform: uppercase; margin-bottom: 1rem; line-height: 1.1; }
+.placardMeta { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.25rem; }
 
-.recordSleeve:hover .vinylRecord { transform: translateX(10%); }
-
-.albumTitle { font-family: 'Oswald', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); text-transform: uppercase; color: #fff; line-height: 1.1; margin-bottom: 0.5rem; }
-.albumMeta { color: #A1A1AA; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 2rem; }
-
-.tracklist {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border-top: 1px solid #1A1C20;
-}
-
-.trackItem {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #1A1C20;
-  font-family: 'Helvetica Neue', serif;
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  color: #D4D4D8;
-}
-
-.trackNum { font-family: 'Oswald', sans-serif; color: #71717A; width: 30px; font-size: 0.85rem; }
-.trackName { flex: 1; text-transform: lowercase; } 
-.trackArtist { font-size: 0.85rem; color: #A1A1AA; font-style: italic; }
+.placardTracks { border-top: 1px solid #333; padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.trackRow { display: flex; align-items: baseline; font-size: 0.9rem; color: #ccc; border-bottom: 1px dashed #222; padding-bottom: 0.5rem; }
+.trackIndex { color: #555; width: 25px; font-family: 'Oswald', sans-serif; }
+.trackTitle { flex: 1; }
+.trackFeature { color: #888; font-style: italic; font-size: 0.8rem; }
 
 /* ======================================================
-   TAGS & AD SPACE
+   TAGS & ADS
 ====================================================== */
-.articleTags { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 4rem; }
-.tagLink { font-family: 'Oswald', sans-serif; font-size: 0.85rem; text-transform: uppercase; color: #A1A1AA; text-decoration: none; padding: 0.5rem 1rem; background: #111316; border: 1px solid #27272A; transition: all 0.3s ease; }
-.tagLink:hover { border-color: #B200FF; color: #fff; background: rgba(178, 0, 255, 0.1); }
+.articleFooterBlock { margin: 4rem 0; border-top: 1px solid #333; padding-top: 2rem; }
+.tagBlock { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.editorialTag { font-family: 'Helvetica', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #666; text-decoration: none; border: 1px solid #333; padding: 0.4rem 0.8rem; transition: all 0.2s; }
+.editorialTag:hover { color: #000; background: #fff; border-color: #fff; }
 
-.horizontalAdContainer { width: 100%; max-width: 970px; margin: 0 auto clamp(4rem, 8vw, 6rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; }
-.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
-.horizontalAd { width: 100%; min-height: 90px; background: #111316; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.adInner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
-.adPrompt { color: #3F3F46; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0; }
-.adSpecs { color: #27272A; font-size: 0.8rem; }
+.adBanner { width: 100%; margin: clamp(3rem, 6vw, 5rem) 0; border: 1px solid #333; padding: 1rem; text-align: center; }
+.adLabel { font-size: 0.6rem; color: #555; text-transform: uppercase; display: block; margin-bottom: 0.5rem; }
+.adBox { width: 100%; min-height: 90px; background: #0a0a0a; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.adPrompt { font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 1rem; color: #444; margin: 0; }
+.adSpecs { font-size: 0.7rem; color: #333; }
 
 /* ======================================================
    FOOTER
 ====================================================== */
-.authorFooter { margin-top: clamp(4rem, 8vw, 8rem); padding-top: 3rem; border-top: 1px solid #1A1C20; text-align: center; }
-.footerAuthor { font-size: clamp(1.1rem, 3vw, 1.3rem); color: #D4D4D8; margin-bottom: 0.5rem; }
-.authorLink { color: #fff; text-decoration: none; transition: color 0.3s ease; }
-.authorLink:hover { color: #B200FF; }
-.publishDate { color: #71717A; font-size: 0.9rem; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
+.pageFooter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 2px solid #333;
+  padding: 2rem 0;
+  margin-top: 4rem;
+}
+
+.footerCol { display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; }
+.footerLabel { color: #555; font-size: 0.7rem; }
+.footerLink { color: #fff; text-decoration: none; transition: color 0.2s; }
+.footerLink:hover { color: #B200FF; }
 
 /* ======================================================
-   ANIMATIONS & MEDIA QUERIES
+   RESPONSIVE MEDIA QUERIES
 ====================================================== */
-@keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
-@media (max-width: 900px) {
-  .spotlightGrid { grid-template-columns: 1fr; gap: 2rem; }
-  .artistFrame { max-width: 100%; }
-  .releaseGrid { grid-template-columns: 1fr; gap: 3rem; }
-  .recordSleeve { max-width: 300px; }
-  .vinylRecord { display: none; } /* Hide vinyl on smaller screens to prevent overflow */
+@media (max-width: 1024px) {
+  .splitHero { grid-template-columns: 1fr; grid-template-rows: auto 50vh; }
+  .heroImgCol { border-left: none; border-top: 1px solid #333; }
+  .dossierGrid { grid-template-columns: 300px 1fr; }
 }
 
 @media (max-width: 768px) {
-  .heroSection { min-height: 75vh; }
-  .bodyWrapper p:first-of-type::first-letter { font-size: 3.5rem; padding-top: 0.2rem; }
-  .horizontalAdContainer { max-width: 100%; padding: 0.75rem; }
-  .horizontalAd { min-height: 100px; }
+  .heroTextCol { padding: 8rem 1.5rem 3rem; }
+  .dossierGrid { grid-template-columns: 1fr; gap: 3rem; }
+  .dossierVisual { max-width: 400px; margin: 0 auto; width: 100%; }
+  .exhibitionGrid { grid-template-columns: 1fr; gap: 3rem; }
+  .pageFooter { grid-template-columns: 1fr; gap: 2rem; }
+  :global(.interactiveBody) p:first-of-type::first-letter { font-size: 3.5rem; padding-top: 0.2rem; }
 }

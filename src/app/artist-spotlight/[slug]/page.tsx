@@ -21,7 +21,7 @@ interface SocialLink {
   url: string;
 }
 
-// 1. Define as a standalone interface with an 'id', do NOT extend ContentBlock
+// 1. Do NOT extend ContentBlock. Define standalone with 'id'
 interface ArtistSpotlightBlock {
   id: string;
   blockType: 'artistSpotlight';
@@ -54,7 +54,7 @@ interface RelatedAlbum {
 // 2. Create a Union Type containing both standard blocks and our custom spotlight block
 type ExtendedContentBlock = ContentBlock | ArtistSpotlightBlock;
 
-// 3. Override the contentBlocks array on the standard NewsArticle
+// 3. Omit the original contentBlocks array and replace it with our Extended version
 interface SpotlightArticle extends Omit<NewsArticle, 'contentBlocks'> {
   relatedAlbum?: RelatedAlbum;
   contentBlocks?: ExtendedContentBlock[];
@@ -73,10 +73,10 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
   const articleRaw = await getArticleBySlug(slug)
   if (!articleRaw) notFound()
     
-  // Safely cast to our extended interface
+  // 4. Safely cast to our extended interface
   const article = articleRaw as unknown as SpotlightArticle
 
-  // 4. Because of our Union Type, TypeScript now allows this comparison
+  // 5. Because of our Union Type, TypeScript now allows this comparison safely
   const spotlightBlock = article.contentBlocks?.find(
     (b) => b.blockType === 'artistSpotlight'
   ) as ArtistSpotlightBlock | undefined
@@ -85,7 +85,7 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return ''
-    return new Date(dateString).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   }
 
   return (
@@ -93,14 +93,29 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
       <AnalyticsPageView />
       
       <div className={styles.page}>
-        <div className={styles.textureOverlay} />
         
         {/* ===============================
-            EDITORIAL HERO
+            BRUTALIST SPLIT HERO
         =============================== */}
-        <section className={styles.heroSection}>
-          <div className={styles.heroImageWrapper}>
-            {article.hero?.image?.url && (
+        <section className={styles.splitHero}>
+          <div className={styles.heroTextCol}>
+            <div className={styles.heroTopMeta}>
+              <span className={styles.editorialBadge}>Editorial</span>
+              <span className={styles.readTime}>Vol. {new Date().getFullYear()} &mdash; {article.readingTime || 5} Min Read</span>
+            </div>
+            
+            <h1 className={styles.heroHeadline}>{article.title}</h1>
+            
+            <div className={styles.heroBottomMeta}>
+              <p className={styles.heroExcerpt}>{article.excerpt}</p>
+              {article.hero?.credit && (
+                <p className={styles.imageCredit}>Img: {article.hero.credit.replace('Photo courtesy of ', '')}</p>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.heroImgCol}>
+            {article.hero?.image?.url ? (
               <Image 
                 src={article.hero.image.sizes?.hero?.url || article.hero.image.url} 
                 alt={article.hero.image.alt || article.title} 
@@ -108,68 +123,60 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
                 priority
                 className={styles.heroImg} 
               />
-            )}
-            <div className={styles.heroOverlay} />
-            <div className={styles.scanlines} />
-          </div>
-
-          <div className={styles.heroContent}>
-            <div className={styles.metaRow}>
-              <span className={styles.liveIndicator}><span className={styles.dot} /> COVER STORY</span>
-              <span className={styles.readTime}>{article.readingTime || 5} MIN READ</span>
-            </div>
-            <h1 className={styles.mainTitle}>{article.title}</h1>
-            {article.subtitle && <h2 className={styles.subTitle}>{article.subtitle}</h2>}
-            
-            {article.hero?.credit && (
-              <p className={styles.heroCredit}>Photography: {article.hero.credit.replace('Photo courtesy of ', '')}</p>
+            ) : (
+              <div className={styles.imgPlaceholder} />
             )}
           </div>
         </section>
 
-        <main className={styles.mainContent}>
+        <main className={styles.mainLayout}>
           
           {/* ===============================
-              ARTIST FACT FILE / SPOTLIGHT
+              THE DOSSIER (Artist Fact File)
           =============================== */}
           {spotlightBlock && (
-            <section className={styles.spotlightCard}>
-              <div className={styles.spotlightGrid}>
-                <div className={styles.artistFrame}>
+            <section className={styles.dossierSection}>
+              <div className={styles.dossierGrid}>
+                <div className={styles.dossierVisual}>
                   {spotlightBlock.image?.url && (
                     <Image 
                       src={spotlightBlock.image.sizes?.card?.url || spotlightBlock.image.url} 
                       alt={spotlightBlock.artistName || 'Artist Portrait'} 
                       fill 
-                      className={styles.artistImg} 
+                      className={styles.dossierImg} 
                     />
                   )}
-                  <div className={styles.frameAccent} />
                 </div>
                 
-                <div className={styles.artistInfo}>
-                  <div className={styles.artistHeader}>
-                     <p className={styles.eyebrow}>IN FOCUS</p>
-                     <h2 className={styles.artistName}>{spotlightBlock.artistName || spotlightBlock.blockName || 'Featured Artist'}</h2>
+                <div className={styles.dossierData}>
+                  <div className={styles.dossierHeader}>
+                    <span className={styles.dataLabel}>Subject</span>
+                    <h2 className={styles.subjectName}>{spotlightBlock.artistName || spotlightBlock.blockName}</h2>
                   </div>
                   
-                  <p className={styles.artistBio}>{spotlightBlock.description}</p>
+                  <div className={styles.dossierBio}>
+                    <span className={styles.dataLabel}>Profile</span>
+                    <p>{spotlightBlock.description}</p>
+                  </div>
                   
                   {spotlightBlock.links && spotlightBlock.links.length > 0 && (
-                    <div className={styles.socialGrid}>
-                      {spotlightBlock.links.map((link: SocialLink) => (
-                        <TrackedLink 
-                          key={link.id} 
-                          href={link.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className={styles.socialPill}
-                          eventName="navigation_click"
-                          payload={{ destination: link.label, type: 'artist_social' }}
-                        >
-                          {link.label}
-                        </TrackedLink>
-                      ))}
+                    <div className={styles.dossierLinks}>
+                      <span className={styles.dataLabel}>Index</span>
+                      <div className={styles.linkList}>
+                        {spotlightBlock.links.map((link: SocialLink) => (
+                          <TrackedLink 
+                            key={link.id} 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className={styles.dataLink}
+                            eventName="navigation_click"
+                            payload={{ destination: link.label, type: 'artist_social' }}
+                          >
+                            {link.label} &#8599;
+                          </TrackedLink>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -178,80 +185,66 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
           )}
 
           {/* TOP HORIZONTAL LEADERBOARD */}
-          <section className={styles.horizontalAdContainer}>
-            <span className={styles.adLabel}>SPONSORED</span>
-            <div className={styles.horizontalAd}>
-              <div className={styles.adInner}>
-                <p className={styles.adPrompt}>Editorial Sponsor</p>
-                <span className={styles.adSpecs}>728 x 90 / 320 x 100</span>
-              </div>
+          <section className={styles.adBanner}>
+            <span className={styles.adLabel}>Advertisement</span>
+            <div className={styles.adBox}>
+              <p className={styles.adPrompt}>Premium Ad Space</p>
+              <span className={styles.adSpecs}>728x90 / 320x100</span>
             </div>
           </section>
 
           {/* ===============================
-              THE INTERVIEW / ARTICLE BODY
+              THE ARTICLE BODY
           =============================== */}
-          <div className={styles.editorialContainer}>
-            <div className={styles.articleDivider}>
-               <div className={styles.eqBar} />
-               <span className={styles.dividerText}>THE CONVERSATION</span>
-               <div className={styles.eqBar} />
-            </div>
-
-            <article className={styles.bodyWrapper}>
-              <ArticleInteractiveWrapper>
-                <ContentRenderer 
-                  blocks={(article.contentBlocks || []).filter(
-                    // 5. Use a Type Guard to satisfy the ContentRenderer's strict requirements
-                    (b): b is ContentBlock => b.blockType !== 'artistSpotlight'
-                  )} 
-                />
-              </ArticleInteractiveWrapper>
-            </article>
+          <article className={styles.editorialBody}>
+            <ArticleInteractiveWrapper>
+              <ContentRenderer 
+                blocks={(article.contentBlocks || []).filter(
+                  // 6. Use a Type Guard to satisfy the ContentRenderer's strict requirements
+                  (b): b is ContentBlock => b.blockType !== 'artistSpotlight'
+                )} 
+              />
+            </ArticleInteractiveWrapper>
 
             {/* ===============================
-                FEATURED RELEASE (ALBUM)
+                GALLERY RELEASE SECTION (ALBUM)
             =============================== */}
             {album && (
-              <section className={styles.featuredReleaseSection}>
-                <div className={styles.releaseDivider}>
-                  <span className={styles.eyebrow}>ESSENTIAL LISTENING</span>
+              <section className={styles.exhibitionSection}>
+                <div className={styles.exhibitionHeader}>
+                  <span className={styles.exhibitionLabel}>Exhibit A: Discography</span>
                 </div>
                 
-                <div className={styles.releaseGrid}>
-                  <div className={styles.releaseArtCol}>
-                    <div className={styles.recordSleeve}>
-                      {album.coverArt?.url ? (
-                        <Image 
-                          src={album.coverArt.sizes?.square?.url || album.coverArt.url} 
-                          alt={album.title}
-                          fill
-                          className={styles.albumCover}
-                        />
-                      ) : (
-                        <div className={styles.albumPlaceholder}>AUDIO</div>
-                      )}
-                      <div className={styles.vinylRecord} />
-                    </div>
+                <div className={styles.exhibitionGrid}>
+                  <div className={styles.exhibitionArt}>
+                    {album.coverArt?.url ? (
+                      <Image 
+                        src={album.coverArt.sizes?.square?.url || album.coverArt.url} 
+                        alt={album.title}
+                        fill
+                        className={styles.exhibitionImg}
+                      />
+                    ) : (
+                      <div className={styles.exhibitionPlaceholder} />
+                    )}
                   </div>
 
-                  <div className={styles.releaseInfoCol}>
-                    <h3 className={styles.albumTitle}>{album.title}</h3>
-                    <p className={styles.albumMeta}>
-                      {album.primaryArtist && <span>{album.primaryArtist}</span>}
-                      {album.releaseDate && <span> &bull; {new Date(album.releaseDate).getFullYear()}</span>}
-                      {album.label && <span> &bull; {album.label}</span>}
-                    </p>
+                  <div className={styles.exhibitionPlacard}>
+                    <h3 className={styles.placardTitle}>{album.title}</h3>
+                    <div className={styles.placardMeta}>
+                      {album.primaryArtist && <p>Artist: {album.primaryArtist}</p>}
+                      {album.releaseDate && <p>Year: {new Date(album.releaseDate).getFullYear()}</p>}
+                      {album.label && <p>Label: {album.label}</p>}
+                    </div>
 
-                    {/* Tracklist */}
                     {(album.manualTracks?.length || 0) > 0 && (
-                      <div className={styles.tracklist}>
+                      <div className={styles.placardTracks}>
                         {album.manualTracks?.map((track, idx) => (
-                          <div key={track.id} className={styles.trackItem}>
-                            <span className={styles.trackNum}>{String(idx + 1).padStart(2, '0')}</span>
-                            <span className={styles.trackName}>{track.title}</span>
+                          <div key={track.id} className={styles.trackRow}>
+                            <span className={styles.trackIndex}>{String(idx + 1).padStart(2, '0')}</span>
+                            <span className={styles.trackTitle}>{track.title}</span>
                             {track.artist && track.artist !== album.primaryArtist && (
-                              <span className={styles.trackArtist}>ft. {track.artist}</span>
+                              <span className={styles.trackFeature}>[ft. {track.artist}]</span>
                             )}
                           </div>
                         ))}
@@ -265,33 +258,36 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
             {/* ===============================
                 TAGS & ATTRIBUTION
             =============================== */}
-            {article.tags && article.tags.length > 0 && (
-              <div className={styles.articleTags}>
-                {article.tags.map((tag: Tag) => (
-                  <Link key={tag.id} href={`/tags/${tag.slug}`} className={styles.tagLink}>
-                    #{tag.label}
-                  </Link>
-                ))}
-              </div>
-            )}
+            <div className={styles.articleFooterBlock}>
+              {article.tags && article.tags.length > 0 && (
+                <div className={styles.tagBlock}>
+                  {article.tags.map((tag: Tag) => (
+                    <Link key={tag.id} href={`/tags/${tag.slug}`} className={styles.editorialTag}>
+                      {tag.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <AuthorBioBlock author={article.author} />
-          </div>
+          </article>
 
-          <footer className={styles.authorFooter}>
-             <p className={styles.footerAuthor}>
-               Words by{' '}
+          <footer className={styles.pageFooter}>
+             <div className={styles.footerCol}>
+               <span className={styles.footerLabel}>Text By</span>
                {article.author?.slug ? (
-                 <Link href={`/authors/${article.author.slug}`} className={styles.authorLink}>
-                   <strong>{article.author.fullName}</strong>
+                 <Link href={`/authors/${article.author.slug}`} className={styles.footerLink}>
+                   {article.author.fullName}
                  </Link>
                ) : (
-                 <strong>{article.author?.fullName || 'WaveNation Editorial'}</strong>
+                 <span>{article.author?.fullName || 'WaveNation Editorial'}</span>
                )}
-             </p>
-             <p className={styles.publishDate}>
-               Published {formatDate(article.publishDate)}
-             </p>
+             </div>
+             <div className={styles.footerCol}>
+               <span className={styles.footerLabel}>Published</span>
+               <span>{formatDate(article.publishDate)}</span>
+             </div>
           </footer>
         </main>
       </div>
