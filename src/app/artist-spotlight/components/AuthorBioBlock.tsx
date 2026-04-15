@@ -7,8 +7,6 @@ import styles from './AuthorBioBlock.module.css'
 /* ======================================================
    Helper Types & Function: Extract plain text from Lexical
 ====================================================== */
-
-// Define a recursive type to handle Lexical's nested JSON structure safely
 type LexicalData = string | {
   root?: LexicalData;
   children?: LexicalData[];
@@ -19,20 +17,16 @@ type LexicalData = string | {
 const extractTextFromLexical = (data: LexicalData): string => {
   if (!data) return '';
   
-  // If it's already a string, return it directly
   if (typeof data === 'string') return data;
   
-  // If it's the root node of the Lexical object
   if (typeof data === 'object' && 'root' in data && data.root) {
     return extractTextFromLexical(data.root);
   }
   
-  // If we hit a node with actual text content
   if (typeof data === 'object' && 'text' in data && typeof data.text === 'string') {
     return data.text;
   }
   
-  // If the node has children (like paragraphs), map through them
   if (typeof data === 'object' && 'children' in data && Array.isArray(data.children)) {
     return data.children.map(extractTextFromLexical).join(' ');
   }
@@ -40,13 +34,14 @@ const extractTextFromLexical = (data: LexicalData): string => {
   return '';
 };
 
+/* ======================================================
+   COMPONENT: Author Bio Block
+====================================================== */
 export function AuthorBioBlock({ author }: { author?: Author | null }) {
-  // Fail gracefully if no author data is attached to the article
   if (!author || !author.slug) return null
 
-  // Safely parse the Lexical object into a plain string using our strictly typed helper
-  // We cast author.bio as LexicalData to bridge the gap with the auto-generated types
-  const bioText = extractTextFromLexical(author.bio as LexicalData).trim();
+  // Safely parse the Lexical object into a plain string
+  const bioText = extractTextFromLexical(author.bio as LexicalData).trim()
 
   return (
     <TrackedLink 
@@ -57,6 +52,7 @@ export function AuthorBioBlock({ author }: { author?: Author | null }) {
         authorName: author.fullName, 
         placement: 'article_footer_bio' 
       }}
+      aria-label={`Read more articles by ${author.fullName}`}
     >
       <div className={styles.avatarWrapper}>
         {author.avatar?.url ? (
@@ -64,6 +60,7 @@ export function AuthorBioBlock({ author }: { author?: Author | null }) {
             src={author.avatar.url} 
             alt={author.fullName} 
             fill 
+            sizes="(max-width: 768px) 100px, 120px"
             className={styles.avatarImg} 
           />
         ) : (
@@ -78,12 +75,15 @@ export function AuthorBioBlock({ author }: { author?: Author | null }) {
         <h3 className={styles.authorName}>{author.fullName}</h3>
         {author.role && <p className={styles.authorRole}>{author.role}</p>}
         
-        {/* Render the safely extracted plain text string */}
         {bioText && (
           <p className={styles.authorBio}>{bioText}</p>
         )}
         
-        <span className={styles.viewProfileBtn}>View Full Profile &rarr;</span>
+        <div className={styles.actionRow}>
+          <span className={styles.viewProfileBtn}>
+            View Full Profile <span className={styles.arrow}>&rarr;</span>
+          </span>
+        </div>
       </div>
     </TrackedLink>
   )

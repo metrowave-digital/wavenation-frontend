@@ -1,195 +1,199 @@
 /* ======================================================
-   PAGE & TEXTURE
+   AUTHOR BIO BLOCK CONTAINER
 ====================================================== */
-.page { 
-  background-color: #060708; 
-  color: #ffffff; 
-  min-height: 100vh; 
-  position: relative; 
-  overflow-x: hidden;
+.authorContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1.5rem, 5vw, 2.5rem);
+  background: rgba(17, 19, 22, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #39FF14; /* WaveNation Green - Adjust if you prefer Spotlight Purple #B200FF */
+  padding: clamp(1.5rem, 5vw, 2.5rem);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  margin-top: clamp(4rem, 8vw, 6rem);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
 }
 
-.textureOverlay { 
-  position: fixed; 
-  inset: 0; 
-  background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); 
-  opacity: 0.04; 
-  pointer-events: none; 
-  z-index: 10; 
-}
-
-/* ======================================================
-   CINEMATIC HERO SECTION
-====================================================== */
-.heroSection { 
-  position: relative; 
-  padding-top: 100px; /* Clears the site header */
-  min-height: clamp(60vh, 80vh, 800px); 
-  width: 100%; 
-  display: flex; 
-  align-items: flex-end; 
-  padding-bottom: clamp(4rem, 8vw, 8rem); 
-}
-
-.heroImageWrapper { position: absolute; inset: 0; z-index: 1; }
-.heroImg { object-fit: cover; filter: brightness(0.6) contrast(1.1); }
-.heroOverlay { position: absolute; inset: 0; background: linear-gradient(to top, #060708 2%, rgba(6, 7, 8, 0.4) 40%, rgba(6, 7, 8, 0) 100%); }
-.scanlines { position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%); background-size: 100% 4px; pointer-events: none; opacity: 0.3; }
-
-/* ======================================================
-   HERO CONTENT
-====================================================== */
-.heroContent { 
-  position: relative; 
-  z-index: 10; 
-  max-width: 1200px; 
-  margin: 0 auto; 
-  padding: 0 1.5rem; 
-  width: 100%; 
-  animation: fadeUp 1s ease-out;
-}
-
-.metaRow { 
-  display: flex; 
-  align-items: center; 
-  gap: clamp(1rem, 3vw, 2rem); 
-  margin-bottom: 1.5rem; 
-  font-family: 'Oswald', sans-serif; 
-  letter-spacing: 0.2em; 
-  font-size: clamp(0.7rem, 2vw, 0.8rem); 
-}
-
-.liveIndicator { color: #B200FF; display: flex; align-items: center; gap: 8px; }
-.dot { width: 6px; height: 6px; background: #B200FF; border-radius: 50%; box-shadow: 0 0 10px #B200FF; animation: pulse 2s infinite; }
-.readTime { color: #71717A; }
-
-.mainTitle { 
-  font-family: 'Oswald', sans-serif; 
-  font-size: clamp(2.5rem, 8vw, 4.5rem); 
-  text-transform: uppercase; 
-  line-height: 1.1; 
-  font-weight: 800; 
-  margin-bottom: 1.5rem; 
-  max-width: 800px; 
-  color: #fff;
-}
-
-.mainExcerpt { 
-  font-size: clamp(1rem, 2.5vw, 1.15rem); 
-  color: #A1A1AA; 
-  line-height: 1.6; 
-  max-width: 650px; 
-  border-left: 2px solid #B200FF; 
-  padding-left: clamp(1rem, 3vw, 1.5rem); 
-}
-
-/* ======================================================
-   FLOATING ARTIST CARD (GLASSMORPHISM)
-====================================================== */
-.mainContent { 
-  max-width: 1100px; 
-  margin: clamp(-3rem, -5vw, -5rem) auto 0; 
-  position: relative; 
-  z-index: 20; 
-  padding: 0 1.5rem clamp(4rem, 8vw, 10rem); 
-}
-
-.spotlightCard { 
-  background: rgba(17, 19, 22, 0.8); 
-  backdrop-filter: blur(12px); 
-  border: 1px solid rgba(255, 255, 255, 0.05); 
-  padding: clamp(1.5rem, 4vw, 3rem); 
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
-  margin-bottom: clamp(3rem, 6vw, 6rem);
-  animation: fadeUp 1s ease-out 0.2s forwards;
+/* Subtle inner glow effect on hover */
+.authorContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at bottom right, rgba(57, 255, 20, 0.05), transparent 60%);
   opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
-.spotlightGrid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-  gap: clamp(2rem, 5vw, 4rem); 
-  align-items: flex-start; 
+.authorContainer:hover {
+  background: rgba(26, 28, 32, 0.9);
+  border-color: #39FF14;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
 }
 
-.artistFrame { 
-  position: relative; 
-  aspect-ratio: 4/5; 
-  background: #000; 
-  overflow: hidden; 
+.authorContainer:hover::before {
+  opacity: 1;
+}
+
+/* ======================================================
+   AVATAR 
+====================================================== */
+.avatarWrapper {
+  width: clamp(80px, 18vw, 120px);
+  height: clamp(80px, 18vw, 120px);
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #111316;
+  flex-shrink: 0;
+  border: 2px solid #27272A;
+  transition: border-color 0.4s ease, transform 0.4s ease;
+}
+
+.authorContainer:hover .avatarWrapper {
+  border-color: #39FF14;
+  transform: scale(1.05);
+}
+
+.avatarImg {
+  object-fit: cover;
+  filter: grayscale(0.5) contrast(1.1);
+  transition: filter 0.4s ease;
+}
+
+.authorContainer:hover .avatarImg {
+  filter: grayscale(0) contrast(1);
+}
+
+.avatarPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+  height: 100%;
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: #39FF14;
+  background: #0B0D0F;
 }
 
-.artistImg { object-fit: cover; transition: transform 0.8s ease; }
-.spotlightCard:hover .artistImg { transform: scale(1.05); }
-.frameAccent { position: absolute; inset: 0; border: 1px solid rgba(178, 0, 255, 0.3); pointer-events: none; }
-
-.artistHeader { margin-bottom: 1.5rem; }
-.eyebrow { font-family: 'Oswald', sans-serif; color: #B200FF; letter-spacing: 0.3em; font-size: clamp(0.7rem, 2vw, 0.75rem); margin-bottom: 0.5rem; }
-.artistName { font-family: 'Oswald', sans-serif; font-size: clamp(2.2rem, 6vw, 2.8rem); text-transform: uppercase; line-height: 1; color: #fff; }
-.artistBio { color: #D4D4D8; font-size: clamp(0.95rem, 2vw, 1.05rem); line-height: 1.6; margin-bottom: 2rem; }
-
-.socialGrid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.socialPill { font-family: 'Oswald', sans-serif; font-size: 0.75rem; text-transform: uppercase; color: #fff; text-decoration: none; padding: 0.6rem 1.2rem; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.03); transition: all 0.3s ease; }
-.socialPill:hover { border-color: #B200FF; color: #B200FF; background: rgba(178, 0, 255, 0.05); }
-
 /* ======================================================
-   EDITORIAL CONTENT BODY
+   AUTHOR INFO & TYPOGRAPHY
 ====================================================== */
-.editorialContainer { max-width: 800px; margin: 0 auto; }
-
-.articleDivider { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2rem); margin-bottom: clamp(2rem, 5vw, 4rem); opacity: 0.4; }
-.eqBar { flex: 1; height: 1px; background: linear-gradient(to right, transparent, #B200FF, transparent); }
-.dividerText { font-family: 'Oswald', sans-serif; font-size: clamp(0.6rem, 2vw, 0.7rem); letter-spacing: 0.4em; color: #B200FF; white-space: nowrap; }
-
-.bodyWrapper { font-size: clamp(1.05rem, 2.5vw, 1.2rem); line-height: 1.8; color: #E4E4E7; }
-
-/* Interactive Body Fixes (Photos & Captions) */
-.interactiveBody { width: 100%; }
-.interactiveBody figure { margin: clamp(2rem, 4vw, 3rem) 0; width: 100%; }
-.interactiveBody img { width: 100%; height: auto; border-radius: 4px; cursor: zoom-in; transition: opacity 0.3s ease; border: 1px solid #1A1C20; }
-.interactiveBody img:hover { opacity: 0.85; }
-.interactiveBody figcaption { margin-top: 0.75rem; font-size: 0.85rem; color: #A1A1AA; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; border-bottom: 1px solid #1A1C20; padding-bottom: 1rem; }
-
-/* ======================================================
-   AD SPACE
-====================================================== */
-.horizontalAdContainer { width: 100%; max-width: 970px; margin: 0 auto clamp(3rem, 6vw, 5rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; }
-.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
-.horizontalAd { width: 100%; min-height: 90px; background: #111316; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.adInner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
-.adPrompt { color: #3F3F46; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0; }
-.adSpecs { color: #27272A; font-size: 0.8rem; }
-
-/* ======================================================
-   FOOTER
-====================================================== */
-.authorFooter { margin-top: clamp(4rem, 8vw, 8rem); padding-top: 3rem; border-top: 1px solid #1A1C20; text-align: center; }
-.publishDate { color: #71717A; font-size: 0.9rem; margin-top: 0.5rem; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
-
-/* ======================================================
-   ANIMATIONS & MEDIA QUERIES
-====================================================== */
-@keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-@media (max-width: 900px) {
-  .heroSection { padding-top: 80px; min-height: 70vh; }
-  .spotlightGrid { grid-template-columns: 1fr; gap: 2rem; }
-  .artistFrame { max-width: 350px; margin: 0 auto; }
-  .mainContent { margin-top: -2rem; }
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
-@media (max-width: 768px) {
-  .horizontalAdContainer { max-width: 100%; padding: 0.75rem; }
-  .horizontalAd { min-height: 100px; }
+.eyebrow {
+  color: #71717A;
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.7rem, 2vw, 0.75rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
 }
 
-@media (max-width: 480px) {
-  .heroContent { padding-top: 2rem; }
-  .spotlightGrid { gap: 2rem; }
-  .artistFrame { width: 100%; aspect-ratio: 1/1; }
+.authorName {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.authorContainer:hover .authorName {
+  color: #39FF14;
+}
+
+.authorRole {
+  color: #39FF14;
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.authorBio {
+  color: #A1A1AA;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ======================================================
+   CALL TO ACTION BUTTON
+====================================================== */
+.actionRow {
+  display: flex;
+  margin-top: auto;
+}
+
+.viewProfileBtn {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.authorContainer:hover .viewProfileBtn {
+  opacity: 1;
+}
+
+.authorContainer:hover .arrow {
+  transform: translateX(6px);
+  color: #39FF14;
+}
+
+/* ======================================================
+   RESPONSIVE LAYOUT (MOBILE)
+====================================================== */
+@media (max-width: 640px) {
+  .authorContainer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 4px solid #39FF14;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .authorContainer:hover {
+    border-top-color: #39FF14;
+    border-left-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .actionRow {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .authorBio {
+    -webkit-line-clamp: 4; /* Allow an extra line on mobile since text is narrower */
+  }
 }
