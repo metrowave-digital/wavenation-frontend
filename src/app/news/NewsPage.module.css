@@ -1,6 +1,6 @@
 /* ======================================================
    Base & Layout
-   ====================================================== */
+====================================================== */
 .page {
   background-color: #060708;
   color: #fff;
@@ -33,7 +33,7 @@
 
 /* ======================================================
    Redesigned Page Header
-   ====================================================== */
+====================================================== */
 .pageHeader {
   margin-top: 5rem;
   margin-bottom: 3rem;
@@ -46,7 +46,7 @@
   gap: 8px;
   color: #FF0055;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.85rem;
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
   letter-spacing: 0.15em;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -63,7 +63,7 @@
 
 .mainTitle {
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(4rem, 9vw, 7.5rem);
+  font-size: clamp(2.5rem, 8vw, 7.5rem);
   line-height: 0.9;
   text-transform: uppercase;
   font-weight: 800;
@@ -87,7 +87,7 @@
 
 .sectionTitle {
   font-family: 'Oswald', sans-serif;
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   text-transform: uppercase;
   color: #fff;
 }
@@ -95,7 +95,7 @@
 .eyebrow {
   color: #FF0055;
   font-family: 'Oswald', sans-serif;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 0.25rem;
@@ -103,11 +103,11 @@
 
 /* ======================================================
    Hero Feature
-   ====================================================== */
+====================================================== */
 .heroFeature {
   position: relative;
   width: 100%;
-  min-height: 600px;
+  min-height: clamp(400px, 60vh, 600px);
   margin-bottom: 0; 
   display: flex;
   flex-direction: column;
@@ -150,7 +150,7 @@
 .heroFeatureContent {
   position: relative;
   z-index: 4;
-  padding: 4rem;
+  padding: clamp(1.5rem, 4vw, 4rem);
   max-width: 900px;
 }
 
@@ -183,24 +183,28 @@
 
 .heroTitle {
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-size: clamp(2rem, 7vw, 4.5rem);
   text-transform: uppercase;
   line-height: 1.05;
   margin-bottom: 1rem;
 }
 
 .heroSubtitle {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2vw, 1.2rem);
   line-height: 1.6;
   color: #D4D4D8;
   margin-bottom: 2rem;
   max-width: 700px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .primaryButton {
   background: #FF0055;
   color: #fff;
-  padding: 1rem 2.5rem;
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
   text-transform: uppercase;
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
@@ -218,8 +222,8 @@
 }
 
 /* ======================================================
-   Breaking News Ticker (Slowed Down)
-   ====================================================== */
+   Breaking News Ticker
+====================================================== */
 .tickerBand {
   display: flex;
   align-items: stretch;
@@ -236,13 +240,14 @@
   color: #39FF14;
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   letter-spacing: 0.15em;
-  padding: 0 1.5rem;
+  padding: 0 clamp(0.5rem, 2vw, 1.5rem);
   display: flex;
   align-items: center;
   border-right: 1px solid #1A1C20;
   z-index: 2;
+  white-space: nowrap;
 }
 
 .tickerTrack {
@@ -255,9 +260,9 @@
 
 .tickerContent {
   display: flex;
-  gap: 3rem;
+  gap: clamp(1.5rem, 3vw, 3rem);
   white-space: nowrap;
-  animation: tickerScroll 50s linear infinite; /* SLOWED DOWN */
+  animation: tickerScroll 50s linear infinite;
   padding-left: 100%;
 }
 
@@ -282,11 +287,11 @@
 
 /* ======================================================
    Cards & Grid
-   ====================================================== */
+====================================================== */
 .cardGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2.5rem;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .contentCard {
@@ -336,7 +341,7 @@
 
 .cardTitle {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.4rem;
+  font-size: clamp(1.2rem, 2.5vw, 1.4rem);
   line-height: 1.2;
   text-transform: uppercase;
   transition: color 0.3s ease;
@@ -347,20 +352,20 @@
 }
 
 /* ======================================================
-   Fixed Height EQ Separator
-   ====================================================== */
+   EQ Separator
+====================================================== */
 .eqSeparator {
   display: flex;
-  align-items: flex-end; /* Ensures bars grow upwards without pushing container */
+  align-items: flex-end;
   justify-content: center;
   gap: 6px;
   margin: 4rem 0;
-  height: 40px; /* Fixed height to prevent layout shift */
+  height: 40px;
 }
 
 .eqBar {
   width: 4px;
-  height: 8px; /* Base height */
+  height: 8px;
   background: #1A1C20;
   border-radius: 2px;
   animation: eqBounce 1.2s ease-in-out infinite alternate;
@@ -372,16 +377,16 @@
   font-size: 0.85rem;
   letter-spacing: 0.2em;
   margin: 0 1rem;
-  margin-bottom: 4px; /* visually align with bars */
+  margin-bottom: 4px;
 }
 
 /* ======================================================
    Split Layout: Image-Left Feed & Sidebar
-   ====================================================== */
+====================================================== */
 .splitLayout {
   display: grid;
   grid-template-columns: 1fr 380px;
-  gap: 4rem;
+  gap: clamp(2rem, 5vw, 4rem);
 }
 
 /* Left: Feed */
@@ -393,7 +398,7 @@
 
 .feedItem {
   display: flex;
-  flex-direction: row; /* Image on left */
+  flex-direction: row;
   align-items: center;
   gap: 2rem;
   padding-bottom: 2.5rem;
@@ -444,7 +449,7 @@
 
 .feedTitle {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.6rem;
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
   text-transform: uppercase;
   line-height: 1.1;
   margin-bottom: 0.75rem;
@@ -529,7 +534,7 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-top: 4px solid #39FF14;
-  padding: 2rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
 }
 
 .newsletterHeading {
@@ -558,6 +563,8 @@
   padding: 0.75rem 1rem;
   font-family: inherit;
   outline: none;
+  border-radius: 0;
+  -webkit-appearance: none;
 }
 
 .newsletterInput:focus {
@@ -574,6 +581,8 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.3s ease;
+  border-radius: 0;
+  -webkit-appearance: none;
 }
 
 .newsletterSubmit:hover {
@@ -603,17 +612,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.adInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adPrompt {
   color: #3F3F46;
   font-family: 'Oswald', sans-serif;
   text-transform: uppercase;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.adSpecs {
+  color: #27272A;
+  font-size: 0.8rem;
 }
 
 /* ======================================================
-   Category Blocks (Music, Film, Culture, etc.)
-   ====================================================== */
+   Category Blocks 
+====================================================== */
 .categoryBlock {
-  margin-top: 5rem;
-  margin-bottom: 3rem;
+  margin-top: clamp(3rem, 6vw, 5rem);
+  margin-bottom: clamp(2rem, 5vw, 3rem);
   animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -628,7 +656,7 @@
 
 .categoryTitle {
   font-family: 'Oswald', sans-serif;
-  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
@@ -641,13 +669,14 @@
   text-transform: uppercase;
   text-decoration: none;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .viewAllBtn:hover {
   color: #fff;
 }
 
-/* Category Grid Ad Slot */
+/* Category Grid Native Ad Slot */
 .adCard {
   background: #0B0D0F;
   border: 1px dashed #27272A;
@@ -655,6 +684,7 @@
   flex-direction: column;
   padding: 1.5rem;
   position: relative;
+  min-height: 250px;
 }
 
 .adCard .adContent {
@@ -667,6 +697,7 @@
   background: #111316;
   border: 1px solid #1A1C20;
   margin-top: 1.5rem;
+  padding: 1.5rem;
 }
 
 .adCard .adContent h3 {
@@ -677,18 +708,41 @@
   margin-bottom: 0.5rem;
 }
 
+.adCard .adContent p {
+  color: #A1A1AA;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.adButton {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #39FF14;
+  padding: 0.5rem 1rem;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.adButton:hover {
+  background: #39FF14;
+  color: #000;
+}
+
 /* ======================================================
    Tags Section
-   ====================================================== */
+====================================================== */
 .tagsSection {
-  margin-top: 6rem;
-  padding-top: 4rem;
+  margin-top: clamp(3rem, 8vw, 6rem);
+  padding-top: clamp(2rem, 5vw, 4rem);
   border-top: 1px solid #1A1C20;
 }
 
 .tagsHeader {
   font-family: 'Oswald', sans-serif;
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
   color: #fff;
   text-transform: uppercase;
   margin-bottom: 2rem;
@@ -698,7 +752,7 @@
 .tagsCloud {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
   max-width: 1000px;
   margin: 0 auto;
@@ -706,13 +760,13 @@
 
 .tagPill {
   font-family: 'Oswald', sans-serif;
-  font-size: 1rem;
+  font-size: clamp(0.85rem, 2vw, 1rem);
   color: #A1A1AA;
   text-transform: uppercase;
   text-decoration: none;
   background: #111316;
   border: 1px solid #27272A;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   transition: all 0.3s ease;
 }
@@ -724,9 +778,21 @@
   transform: translateY(-2px);
 }
 
+.allTagsPill {
+  background: rgba(57, 255, 20, 0.1) !important; 
+  border-color: rgba(57, 255, 20, 0.4) !important;
+  color: #39FF14 !important;
+  font-weight: 700;
+}
+
+.allTagsPill:hover {
+  background: #39FF14 !important;
+  color: #000 !important;
+}
+
 /* ======================================================
-   Animations & Media Queries
-   ====================================================== */
+   Animations
+====================================================== */
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.5); opacity: 0; }
@@ -740,7 +806,7 @@
 
 @keyframes eqBounce {
   0% { height: 8px; }
-  100% { height: 32px; } /* Max height fits within 40px container */
+  100% { height: 32px; } 
 }
 
 @keyframes fadeUp {
@@ -753,25 +819,115 @@
   100% { opacity: 1; transform: translateY(0); }
 }
 
+/* ======================================================
+   Media Queries (Responsive Breakpoints)
+====================================================== */
+
+/* Tablets & Small Laptops */
 @media (max-width: 1024px) {
-  .heroFeatureContent { padding: 2.5rem; }
-  .splitLayout { grid-template-columns: 1fr; gap: 4rem; }
-  .stickySidebar { position: static; gap: 2rem; }
+  .splitLayout { 
+    grid-template-columns: 1fr; 
+  }
+  .stickySidebar { 
+    position: static; 
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem; 
+    align-items: start;
+  }
 }
 
-@media (max-width: 640px) {
-  .feedItem { flex-direction: column; align-items: flex-start; }
-  .feedThumbnail { width: 100%; height: 200px; }
+/* Mobile Devices */
+@media (max-width: 768px) {
+  .main {
+    padding: 0 1rem 4rem 1rem;
+  }
+  .pageHeader {
+    margin-top: 3rem;
+  }
+  .heroFeatureContent {
+    padding: 1.5rem;
+  }
+  .tickerBand {
+    height: 40px;
+    margin-bottom: 3rem;
+  }
+  .tickerLabel {
+    padding: 0 0.75rem;
+  }
+  .feedItem { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 1.5rem;
+  }
+  .feedThumbnail { 
+    width: 100%; 
+    height: auto; 
+    aspect-ratio: 16/9; 
+  }
+  .cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
 }
 
-.allTagsPill {
-  background: rgba(57, 255, 20, 0.1) !important; /* WaveNation Green tint */
-  border-color: rgba(57, 255, 20, 0.4) !important;
-  color: #39FF14 !important;
-  font-weight: 700;
+/* Ultra Small Screens (iPhone SE, etc) */
+@media (max-width: 480px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+  .stickySidebar {
+    grid-template-columns: 1fr;
+  }
+  .sectionHeaderRow, .categoryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .viewAllBtn {
+    align-self: flex-start;
+  }
 }
 
-.allTagsPill:hover {
-  background: #39FF14 !important;
-  color: #000 !important;
+/* ======================================================
+   Horizontal Ad Banners (Leaderboards)
+====================================================== */
+.horizontalAdContainer {
+  width: 100%;
+  max-width: 970px; /* Max width for standard large leaderboards */
+  margin: 3rem auto 4rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #0B0D0F;
+  border: 1px dashed #27272A;
+  padding: 1rem;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.horizontalAd {
+  width: 100%;
+  min-height: 90px; /* Standard leaderboard height */
+  background: #111316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ensure horizontal ads shrink properly on mobile within the existing Media Queries */
+@media (max-width: 768px) {
+  .horizontalAdContainer {
+    max-width: 100%;
+    margin: 2rem auto 3rem auto;
+    padding: 0.75rem;
+  }
+  
+  .horizontalAd {
+    min-height: 100px; /* Mobile banner height (e.g., 320x100) */
+  }
+
+  .adPrompt {
+    font-size: 1rem; /* Smaller text on mobile */
+  }
 }

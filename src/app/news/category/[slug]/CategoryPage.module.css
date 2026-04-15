@@ -1,16 +1,40 @@
-.container { background-color: #060708; color: #fff; min-height: 100vh; padding: 8rem 2rem; }
-.header { max-width: 1200px; margin: 0 auto 4rem; }
-.backLink { color: #71717A; text-decoration: none; font-family: 'Oswald', sans-serif; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 2rem; display: block; transition: color 0.3s; }
+.container { background-color: #060708; color: #fff; min-height: 100vh; padding: clamp(4rem, 8vw, 8rem) 1.5rem; overflow-x: hidden; }
+.header { max-width: 1200px; margin: 0 auto clamp(2.5rem, 5vw, 4rem); animation: fadeDown 0.8s ease forwards; }
+.backLink { color: #71717A; text-decoration: none; font-family: 'Oswald', sans-serif; font-size: clamp(0.85rem, 2vw, 0.9rem); text-transform: uppercase; margin-bottom: 2rem; display: inline-block; transition: color 0.3s; }
 .backLink:hover { color: #00F0FF; }
-.title { font-family: 'Oswald', sans-serif; font-size: 4rem; text-transform: uppercase; margin-bottom: 1rem; border-left: 5px solid #39FF14; padding-left: 1.5rem; }
-.subtitle { color: #A1A1AA; font-size: 1.2rem; max-width: 800px; }
-.grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; }
+.title { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 8vw, 4rem); text-transform: uppercase; margin-bottom: 1rem; border-left: 5px solid #39FF14; padding-left: clamp(1rem, 3vw, 1.5rem); }
+.subtitle { color: #A1A1AA; font-size: clamp(1rem, 2.5vw, 1.2rem); max-width: 800px; line-height: 1.6; }
+
+/* Grid Layout */
+.grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: clamp(1.5rem, 4vw, 2.5rem); animation: fadeUp 0.8s ease forwards; }
 .card { text-decoration: none; color: inherit; display: flex; flex-direction: column; }
 .imageBox { position: relative; aspect-ratio: 16/9; background: #111316; border: 1px solid #1A1C20; margin-bottom: 1.25rem; overflow: hidden; }
 .img { object-fit: cover; transition: transform 0.5s; }
 .card:hover .img { transform: scale(1.05); }
-.date { color: #71717A; font-family: 'Oswald', sans-serif; font-size: 0.8rem; margin-bottom: 0.5rem; display: block; }
-.cardTitle { font-family: 'Oswald', sans-serif; font-size: 1.5rem; line-height: 1.2; text-transform: uppercase; margin-bottom: 0.75rem; }
+.cardPlaceholder { width: 100%; height: 100%; background: #1A1C20; }
+.content { display: flex; flex-direction: column; }
+.date { color: #71717A; font-family: 'Oswald', sans-serif; font-size: 0.8rem; margin-bottom: 0.5rem; display: block; text-transform: uppercase; }
+.cardTitle { font-family: 'Oswald', sans-serif; font-size: clamp(1.3rem, 3vw, 1.5rem); line-height: 1.2; text-transform: uppercase; margin-bottom: 0.75rem; transition: color 0.3s; }
 .card:hover .cardTitle { color: #39FF14; }
 .excerpt { color: #A1A1AA; font-size: 0.95rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.empty { text-align: center; padding: 4rem; color: #71717A; }
+.empty { text-align: center; padding: 4rem; color: #71717A; font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+
+/* Ads */
+.horizontalAdContainer { width: 100%; max-width: 1200px; margin: 0 auto clamp(2.5rem, 5vw, 4rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; }
+.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
+.horizontalAd { width: 100%; min-height: 90px; max-width: 970px; background: #111316; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.adInner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+.adPrompt { color: #3F3F46; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0; }
+.adSpecs { color: #27272A; font-size: 0.8rem; }
+.adCard { background: #0B0D0F; border: 1px dashed #27272A; display: flex; flex-direction: column; padding: clamp(1rem, 3vw, 1.5rem); position: relative; min-height: 280px; }
+.adContent { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #111316; border: 1px solid #1A1C20; margin-top: 1rem; padding: clamp(1rem, 3vw, 1.5rem); }
+.adContent h3 { font-family: 'Oswald', sans-serif; color: #39FF14; text-transform: uppercase; font-size: clamp(1.2rem, 3vw, 1.5rem); margin-bottom: 0.5rem; }
+.adContent p { color: #A1A1AA; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.adButton { background: transparent; color: #fff; border: 1px solid #39FF14; padding: 0.5rem 1rem; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; }
+.adButton:hover { background: #39FF14; color: #000; }
+
+/* Animations & Queries */
+@keyframes fadeUp { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown { 0% { opacity: 0; transform: translateY(-30px); } 100% { opacity: 1; transform: translateY(0); } }
+@media (max-width: 768px) { .horizontalAdContainer { padding: 0.75rem; } .horizontalAd { min-height: 100px; } }
+@media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }

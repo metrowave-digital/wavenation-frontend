@@ -46,7 +46,6 @@ export type AnalyticsEvent =
   | 'navigation_open'
   | 'navigation_close'
   | 'navigation_back'
-  | 'navigation_click'
   | 'subnav_click'
   | 'footer_cta_click'
   | 'now_playing_updated'
@@ -78,87 +77,33 @@ export function trackEvent(
 }
 
 /* ======================================================
-   Page View
+   Helper Functions
 ====================================================== */
 
 export function trackPageView(path: string) {
-  trackEvent('page_view', {
-    path,
-  })
+  trackEvent('page_view', { path })
 }
 
-/* ======================================================
-   Hero Analytics
-====================================================== */
-
-export function trackHeroImpression(payload: {
-  placement: string
-  id?: number | string
-  position?: number
-}) {
+export function trackHeroImpression(payload: { placement: string; id?: number | string; position?: number }) {
   trackEvent('content_impression', payload)
 }
 
-export function trackHeroClick(payload: {
-  placement: string
-  id?: number | string
-  position?: number
-}) {
+export function trackHeroClick(payload: { placement: string; id?: number | string; position?: number }) {
   trackEvent('hero_click', payload)
 }
 
-/* ======================================================
-   Poll Analytics
-====================================================== */
-
-export function trackPollVote(payload: {
-  pollId: number
-  option: string
-}) {
+export function trackPollVote(payload: { pollId: number; option: string }) {
   trackEvent('poll_vote', payload)
 }
 
-/* ======================================================
-   News Ticker Analytics
-====================================================== */
-
-export function trackNewsTickerImpression(payload: {
-  itemCount: number
-  hasBreaking: boolean
-}) {
+export function trackNewsTickerImpression(payload: { itemCount: number; hasBreaking: boolean }) {
   trackEvent('news_ticker_impression', payload)
 }
 
-export function trackNewsTickerBreaking(payload: {
-  id: string
-}) {
+export function trackNewsTickerBreaking(payload: { id: string }) {
   trackEvent('news_ticker_breaking_active', payload)
 }
 
-export function trackNewsTickerClick(payload: {
-  id: string
-  breaking?: boolean
-  external?: boolean
-}) {
+export function trackNewsTickerClick(payload: { id: string; breaking?: boolean; external?: boolean }) {
   trackEvent('news_ticker_click', payload)
-}
-
-/* ======================================================
-   Global Declarations
-====================================================== */
-
-declare global {
-  interface Window {
-    gtag?: (
-      command: 'event',
-      eventName: string,
-      params?: Record<string, unknown>
-    ) => void
-    posthog?: {
-      capture: (
-        event: string,
-        properties?: Record<string, unknown>
-      ) => void
-    }
-  }
 }

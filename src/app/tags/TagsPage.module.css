@@ -1,37 +1,100 @@
+/* ======================================================
+   Base Layout & Typography
+   ====================================================== */
 .page { background-color: #060708; color: #fff; min-height: 100vh; position: relative; overflow-x: hidden; }
 .textureOverlay { position: fixed; inset: 0; background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); opacity: 0.04; pointer-events: none; z-index: 10; }
-.main { max-width: 1400px; margin: 0 auto; padding: 6rem 1.5rem; position: relative; z-index: 20; }
+.main { max-width: 1400px; margin: 0 auto; padding: clamp(4rem, 8vw, 6rem) 1.5rem; position: relative; z-index: 20; }
 
-.pageHeader { margin-bottom: 4rem; animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.mainTitle { font-family: 'Oswald', sans-serif; font-size: clamp(4rem, 9vw, 7.5rem); line-height: 0.9; text-transform: uppercase; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+.pageHeader { margin-bottom: clamp(2rem, 5vw, 4rem); animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.mainTitle { font-family: 'Oswald', sans-serif; font-size: clamp(3.5rem, 10vw, 7.5rem); line-height: 0.9; text-transform: uppercase; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
 .outlineText { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4); }
 
-.tagHeader { margin-bottom: 4rem; text-align: center; animation: fadeDown 0.8s ease forwards; }
-.tagEyebrow { color: #39FF14; font-family: 'Oswald', sans-serif; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
-.tagTitle { font-family: 'Oswald', sans-serif; font-size: clamp(3rem, 6vw, 6rem); text-transform: uppercase; line-height: 1; margin-bottom: 0.5rem; color: #fff; }
-.tagCount { color: #71717A; font-size: 1.1rem; }
+.tagHeader { margin-bottom: clamp(2rem, 5vw, 4rem); text-align: center; animation: fadeDown 0.8s ease forwards; }
+.tagEyebrow { color: #39FF14; font-family: 'Oswald', sans-serif; font-size: clamp(0.75rem, 2vw, 0.85rem); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+.tagTitle { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 8vw, 6rem); text-transform: uppercase; line-height: 1; margin-bottom: 0.5rem; color: #fff; }
+.tagCount { color: #71717A; font-size: clamp(1rem, 2.5vw, 1.1rem); }
 
-/* Large Tag Cloud */
-.tagsCloudLarge { display: flex; flex-wrap: wrap; gap: 1.5rem; }
-.largeTagPill { font-family: 'Oswald', sans-serif; font-size: 1.5rem; color: #A1A1AA; text-transform: uppercase; text-decoration: none; background: #0D0F12; border: 1px solid #1A1C20; padding: 1rem 2rem; border-radius: 4px; transition: all 0.3s ease; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.largeTagPill:hover { background: #39FF14; color: #000; border-color: #39FF14; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(57,255,20,0.2); }
+/* ======================================================
+   Large Tag Cloud (Tags Directory)
+   ====================================================== */
+.tagsCloudLarge { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: clamp(0.75rem, 3vw, 1.5rem); 
+  justify-content: flex-start;
+}
+.largeTagPill { 
+  font-family: 'Oswald', sans-serif; 
+  font-size: clamp(1rem, 3vw, 1.5rem); 
+  color: #A1A1AA; 
+  text-transform: uppercase; 
+  text-decoration: none; 
+  background: #0D0F12; 
+  border: 1px solid #1A1C20; 
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2rem); 
+  border-radius: 4px; 
+  transition: all 0.3s ease; 
+  opacity: 0; 
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+}
+.largeTagPill:hover { 
+  background: #39FF14; 
+  color: #000; 
+  border-color: #39FF14; 
+  transform: translateY(-3px); 
+  box-shadow: 0 10px 20px rgba(57,255,20,0.2); 
+}
 
-/* Article Grid (Reused) */
-.articleGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2.5rem; }
+/* ======================================================
+   Article Grid (Tag Profile)
+   ====================================================== */
+.articleGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: clamp(1.5rem, 4vw, 2.5rem); }
 .contentCard { text-decoration: none; color: inherit; display: flex; flex-direction: column; opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .cardImageWrapper { position: relative; aspect-ratio: 16/9; background: #111316; border: 1px solid #1A1C20; border-bottom: 2px solid #39FF14; overflow: hidden; margin-bottom: 1.25rem; }
 .cardImg { object-fit: cover; filter: grayscale(1) contrast(1.1); transition: all 0.5s ease; }
 .contentCard:hover .cardImg { filter: grayscale(0); transform: scale(1.05); }
 .cardPlaceholder { width: 100%; height: 100%; background: #1A1C20; }
-.cardOverlay { position: absolute; inset: 0; background: rgba(57, 255, 20, 0.8); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 0.1em; color: #000; opacity: 0; transition: opacity 0.3s ease; }
+.cardOverlay { position: absolute; inset: 0; background: rgba(57, 255, 20, 0.8); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-weight: 700; letter-spacing: 0.1em; color: #000; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(4px); }
 .contentCard:hover .cardOverlay { opacity: 1; }
 .cardBody { padding-top: 0.5rem; }
 .cardMeta { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
 .cardCategory { color: #FF0055; font-family: 'Oswald', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
 .cardDate { color: #71717A; font-family: 'Oswald', sans-serif; font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
-.cardTitle { font-family: 'Oswald', sans-serif; font-size: 1.4rem; line-height: 1.2; text-transform: uppercase; transition: color 0.3s ease; }
+.cardTitle { font-family: 'Oswald', sans-serif; font-size: clamp(1.2rem, 3vw, 1.4rem); line-height: 1.2; text-transform: uppercase; transition: color 0.3s ease; }
 .contentCard:hover .cardTitle { color: #39FF14; }
-.emptyState { color: #71717A; font-size: 1.1rem; }
+.emptyState { color: #71717A; font-size: 1.1rem; text-align: center; padding: 4rem; border: 1px dashed #27272A; }
 
+/* ======================================================
+   Ads
+   ====================================================== */
+.horizontalAdContainer { width: 100%; max-width: 970px; margin: 0 auto clamp(2.5rem, 5vw, 4rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; animation: fadeUp 0.8s ease forwards; }
+.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; text-align: center; }
+.horizontalAd { width: 100%; min-height: 90px; background: #111316; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.adInner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+.adPrompt { color: #3F3F46; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0; }
+.adSpecs { color: #27272A; font-size: 0.8rem; }
+
+.adCard { background: #0B0D0F; border: 1px dashed #27272A; display: flex; flex-direction: column; padding: clamp(1rem, 3vw, 1.5rem); position: relative; min-height: 280px; }
+.adContent { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #111316; border: 1px solid #1A1C20; margin-top: 1rem; padding: clamp(1rem, 3vw, 1.5rem); }
+.adContent h3 { font-family: 'Oswald', sans-serif; color: #39FF14; text-transform: uppercase; font-size: clamp(1.2rem, 3vw, 1.5rem); margin-bottom: 0.5rem; }
+.adContent p { color: #A1A1AA; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.adButton { background: transparent; color: #fff; border: 1px solid #39FF14; padding: 0.5rem 1rem; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; }
+.adButton:hover { background: #39FF14; color: #000; }
+
+/* ======================================================
+   Animations & Media Queries
+   ====================================================== */
 @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 @keyframes fadeDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 768px) { 
+  .horizontalAdContainer { max-width: 100%; padding: 0.75rem; } 
+  .horizontalAd { min-height: 100px; } 
+  .tagsCloudLarge { justify-content: center; } 
+  .articleGrid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } 
+}
+
+@media (max-width: 480px) { 
+  .main { padding: 2rem 1rem; } 
+  .articleGrid { grid-template-columns: 1fr; } 
+}

@@ -6,15 +6,16 @@ import { getLatestNews, getEditorsPicks, getNewsByCategory } from '@/services/ne
 import type { NewsArticle, Tag } from './news.types'
 import styles from './NewsPage.module.css'
 
+// Import our client-side tracking components
+import { AnalyticsPageView, TrackedLink, TrackedNewsletterForm } from '@/components/analytics/TrackedComponents'
+
 export const metadata: Metadata = {
   title: 'WaveNation News — Urban Culture, Music, and Breaking Updates',
   description: 'The pulse of the culture. Get the latest breaking news, deep dives into urban culture, music releases, and creator stories from WaveNation Media.',
 }
 
 /* ======================================================
-   REUSABLE COMPONENTS
-   Moved OUTSIDE the main render function to prevent 
-   React from destroying/recreating it on every render.
+   REUSABLE COMPONENTS (Server)
 ====================================================== */
 const CategoryRow = ({ title, stories, accentColor = '#39FF14' }: { title: string, stories: NewsArticle[], accentColor?: string }) => {
   if (!stories || stories.length === 0) return null
@@ -22,13 +23,24 @@ const CategoryRow = ({ title, stories, accentColor = '#39FF14' }: { title: strin
     <section className={styles.categoryBlock}>
       <div className={styles.categoryHeader} style={{ borderBottomColor: accentColor }}>
         <h2 className={styles.categoryTitle} style={{ color: accentColor }}>{title}</h2>
-        <Link href={`/news/category/${title.toLowerCase().replace(/ /g, '-')}`} className={styles.viewAllBtn}>
+        <TrackedLink 
+          href={`/news/category/${title.toLowerCase().replace(/ /g, '-')}`} 
+          className={styles.viewAllBtn}
+          eventName="category_click"
+          payload={{ category: title, action: 'view_all' }}
+        >
           View All &rarr;
-        </Link>
+        </TrackedLink>
       </div>
       <div className={styles.cardGrid}>
         {stories.map(item => (
-          <Link key={item.id} href={`/news/${item.slug}`} className={styles.contentCard}>
+          <TrackedLink 
+            key={item.id} 
+            href={`/news/${item.slug}`} 
+            className={styles.contentCard}
+            eventName="content_click"
+            payload={{ id: item.id, title: item.title, category: title }}
+          >
             <div className={styles.cardImageWrapper}>
               {item.hero?.image?.url ? (
                 <Image src={item.hero.image.sizes?.card?.url || item.hero.image.url} alt={item.title} fill className={styles.cardImg} />
@@ -39,7 +51,7 @@ const CategoryRow = ({ title, stories, accentColor = '#39FF14' }: { title: strin
             <div className={styles.cardBody}>
               <h3 className={styles.cardTitle}>{item.title}</h3>
             </div>
-          </Link>
+          </TrackedLink>
         ))}
       </div>
     </section>
@@ -50,7 +62,6 @@ const CategoryRow = ({ title, stories, accentColor = '#39FF14' }: { title: strin
    MAIN PAGE
 ====================================================== */
 export default async function NewsPage() {
-  // 1. Fetch Data Concurrently
   const [
     latestFeed, 
     editorsPicksRaw, 
@@ -69,7 +80,6 @@ export default async function NewsPage() {
     getNewsByCategory('business-tech', 4)
   ])
 
-  // 2. AI Ranking Logic: Sort the large latest pool by AI Boost
   const aiSortedStories = [...latestFeed].sort((a, b) => {
     const boostA = a.aiRanking?.boost || 0
     const boostB = b.aiRanking?.boost || 0
@@ -79,12 +89,10 @@ export default async function NewsPage() {
   const heroArticle = aiSortedStories.length > 0 ? aiSortedStories[0] : null
   const topAIStories = aiSortedStories.slice(1, 5)
 
-  // 3. Fallback for Editor's Picks
   const editorsPicks = editorsPicksRaw.length > 0 
     ? editorsPicksRaw 
     : latestFeed.filter(item => item.id !== heroArticle?.id).slice(0, 4)
 
-  // 4. Extract unique tags
   const allTagsMap = new Map<string, Tag>()
   latestFeed.forEach(article => {
     article.tags?.forEach(tag => {
@@ -93,20 +101,23 @@ export default async function NewsPage() {
   })
   const uniqueTags = Array.from(allTagsMap.values()).slice(0, 15)
 
-  // Helper
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   }
 
   return (
     <>
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-YWB08LCGHY" strategy="afterInteractive" />
+      <AnalyticsPageView />
+      
+      {process.env.NEXT_PUBLIC_GA4_ID && (
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA4_ID}`} strategy="afterInteractive" />
+      )}
       <Script id="ga4-news-init" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-YWB08LCGHY', { page_path: '/news' });
+          gtag('config', '${process.env.NEXT_PUBLIC_GA4_ID}', { page_path: '/news' });
         `}
       </Script>
 
@@ -114,7 +125,6 @@ export default async function NewsPage() {
         <div className={styles.textureOverlay} />
         
         <main className={styles.main}>
-          
           <header className={styles.pageHeader}>
             <div className={styles.liveIndicator}>
               <span className={styles.liveDot}></span> UPDATING LIVE
@@ -144,7 +154,14 @@ export default async function NewsPage() {
                 </div>
                 <h1 className={styles.heroTitle}>{heroArticle.title}</h1>
                 <p className={styles.heroSubtitle}>{heroArticle.excerpt}</p>
-                <Link href={`/news/${heroArticle.slug}`} className={styles.primaryButton}>Read the Feature</Link>
+                <TrackedLink 
+                  href={`/news/${heroArticle.slug}`} 
+                  className={styles.primaryButton}
+                  eventName="hero_click"
+                  payload={{ id: heroArticle.id, title: heroArticle.title, placement: 'main_hero' }}
+                >
+                  Read the Feature
+                </TrackedLink>
               </div>
             </section>
           )}
@@ -157,13 +174,32 @@ export default async function NewsPage() {
             <div className={styles.tickerTrack}>
               <div className={styles.tickerContent}>
                 {latestFeed.slice(0, 8).map((news) => (
-                  <Link key={`ticker-${news.id}`} href={`/news/${news.slug}`} className={styles.tickerItem}>
+                  <TrackedLink 
+                    key={`ticker-${news.id}`} 
+                    href={`/news/${news.slug}`} 
+                    className={styles.tickerItem}
+                    eventName="news_ticker_click"
+                    payload={{ id: news.id, title: news.title }}
+                  >
                     <span className={styles.tickerDot}>•</span> {news.title}
-                  </Link>
+                  </TrackedLink>
                 ))}
               </div>
             </div>
           </div>
+
+          {/* ===============================
+              NEW: TOP HORIZONTAL LEADERBOARD
+          =============================== */}
+          <section className={styles.horizontalAdContainer}>
+            <span className={styles.adLabel}>SPONSORED</span>
+            <div className={styles.horizontalAd}>
+              <div className={styles.adInner}>
+                <p className={styles.adPrompt}>Top Leaderboard Ad Space</p>
+                <span className={styles.adSpecs}>728 x 90 / 320 x 100</span>
+              </div>
+            </div>
+          </section>
 
           {/* ===============================
               3. TOP STORIES (AI Ranked)
@@ -175,7 +211,14 @@ export default async function NewsPage() {
               </div>
               <div className={styles.cardGrid}>
                 {topAIStories.map((item, idx) => (
-                  <Link key={item.id} href={`/news/${item.slug}`} className={styles.contentCard} style={{ animationDelay: `${idx * 0.1}s` }}>
+                  <TrackedLink 
+                    key={item.id} 
+                    href={`/news/${item.slug}`} 
+                    className={styles.contentCard} 
+                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    eventName="content_click"
+                    payload={{ id: item.id, title: item.title, placement: 'ai_trending' }}
+                  >
                     <div className={styles.cardImageWrapper}>
                       {item.hero?.image?.url ? <Image src={item.hero.image.sizes?.card?.url || item.hero.image.url} alt={item.title} fill className={styles.cardImg} /> : <div className={styles.cardPlaceholder} />}
                     </div>
@@ -183,13 +226,12 @@ export default async function NewsPage() {
                       <p className={styles.cardEyebrow}>{item.categories?.[0]?.name || 'NEWS'}</p>
                       <h3 className={styles.cardTitle}>{item.title}</h3>
                     </div>
-                  </Link>
+                  </TrackedLink>
                 ))}
               </div>
             </section>
           )}
 
-          {/* Fixed Height EQ Separator */}
           <div className={styles.eqSeparator}>
             <div className={styles.eqBar} style={{ animationDelay: '0.1s' }}/>
             <div className={styles.eqBar} style={{ animationDelay: '0.3s' }}/>
@@ -205,28 +247,37 @@ export default async function NewsPage() {
           <section className={styles.section}>
             <div className={styles.splitLayout}>
               
-              {/* Feed: Image on Left */}
               <div className={styles.feedColumn}>
                 <h2 className={styles.sectionTitle}>Latest Stories</h2>
                 <div className={styles.feedList}>
                   {latestFeed.slice(0, 6).map((item) => (
                     <article key={item.id} className={styles.feedItem}>
-                      <Link href={`/news/${item.slug}`} className={styles.feedThumbnail}>
+                      <TrackedLink 
+                        href={`/news/${item.slug}`} 
+                        className={styles.feedThumbnail}
+                        eventName="content_click"
+                        payload={{ id: item.id, title: item.title, placement: 'latest_feed_thumb' }}
+                      >
                         {item.hero?.image?.url ? (
                           <Image src={item.hero.image.sizes?.thumb?.url || item.hero.image.url} alt={item.title} fill className={styles.feedImg} />
                         ) : (
                           <div className={styles.cardPlaceholder} />
                         )}
-                      </Link>
+                      </TrackedLink>
                       
                       <div className={styles.feedContent}>
                         <div className={styles.feedMetaRow}>
                           <p className={styles.eyebrow}>{item.categories?.[0]?.name || 'NEWS'}</p>
                           <span className={styles.feedTime}>{formatDate(item.publishDate)}</span>
                         </div>
-                        <Link href={`/news/${item.slug}`} className={styles.feedTitleLink}>
+                        <TrackedLink 
+                          href={`/news/${item.slug}`} 
+                          className={styles.feedTitleLink}
+                          eventName="content_click"
+                          payload={{ id: item.id, title: item.title, placement: 'latest_feed_title' }}
+                        >
                           <h3 className={styles.feedTitle}>{item.title}</h3>
-                        </Link>
+                        </TrackedLink>
                         <p className={styles.feedExcerpt}>{item.excerpt}</p>
                       </div>
                     </article>
@@ -234,41 +285,59 @@ export default async function NewsPage() {
                 </div>
               </div>
 
-              {/* Sidebar: Editor's Picks, Newsletter & Ads */}
               <aside className={styles.sidebarColumn}>
                 <div className={styles.stickySidebar}>
-                  
-                  {/* Editor's Picks (Fixed unescaped quote here) */}
                   <h3 className={styles.sidebarTitle}>Editor&apos;s Picks</h3>
                   <div className={styles.railList}>
                     {editorsPicks.map((pick) => (
-                      <Link key={pick.id} href={`/news/${pick.slug}`} className={styles.railItem}>
+                      <TrackedLink 
+                        key={pick.id} 
+                        href={`/news/${pick.slug}`} 
+                        className={styles.railItem}
+                        eventName="content_click"
+                        payload={{ id: pick.id, title: pick.title, placement: 'editors_picks' }}
+                      >
                         <h4 className={styles.railTitle}>{pick.title}</h4>
                         <p className={styles.railMeta}>Featured</p>
-                      </Link>
+                      </TrackedLink>
                     ))}
                   </div>
 
-                  {/* Sidebar Newsletter */}
                   <div className={styles.sidebarNewsletter}>
                     <h4 className={styles.newsletterHeading}>Get the Brief</h4>
                     <p className={styles.newsletterText}>Top stories delivered straight to your inbox daily.</p>
-                    <form className={styles.newsletterForm}>
-                      <input type="email" placeholder="Email Address" required className={styles.newsletterInput} />
-                      <button type="submit" className={styles.newsletterSubmit}>Join</button>
-                    </form>
+                    <TrackedNewsletterForm 
+                      formClass={styles.newsletterForm}
+                      inputClass={styles.newsletterInput}
+                      btnClass={styles.newsletterSubmit}
+                    />
                   </div>
 
-                  {/* Sidebar Ad Slot */}
+                  {/* Sidebar Responsive Ad Slot */}
                   <div className={styles.sidebarAd}>
                     <span className={styles.adLabel}>SPONSORED</span>
                     <div className={styles.adSquare}>
-                      <p>Premium Ad Space</p>
+                      <div className={styles.adInner}>
+                        <p className={styles.adPrompt}>Premium Ad Space</p>
+                        <span className={styles.adSpecs}>300 x 250 / 300 x 600</span>
+                      </div>
                     </div>
                   </div>
-
                 </div>
               </aside>
+            </div>
+          </section>
+
+          {/* ===============================
+              NEW: MID-PAGE HORIZONTAL BANNER
+          =============================== */}
+          <section className={styles.horizontalAdContainer}>
+            <span className={styles.adLabel}>SPONSORED</span>
+            <div className={styles.horizontalAd}>
+              <div className={styles.adInner}>
+                <p className={styles.adPrompt}>Mid-Page Banner Ad</p>
+                <span className={styles.adSpecs}>Reach highly engaged users.</span>
+              </div>
             </div>
           </section>
 
@@ -280,30 +349,45 @@ export default async function NewsPage() {
           <CategoryRow title="Film & TV" stories={filmStories} accentColor="#B200FF" />
           
           {/* ===============================
-              6. SPORTS & AD BLOCK
+              6. SPORTS & GRID AD BLOCK
           =============================== */}
           <section className={styles.categoryBlock}>
             <div className={styles.categoryHeader} style={{ borderBottomColor: '#FF6600' }}>
               <h2 className={styles.categoryTitle} style={{ color: '#FF6600' }}>Sports</h2>
-              <Link href="/news/category/sports" className={styles.viewAllBtn}>View All &rarr;</Link>
+              <TrackedLink 
+                href="/news/category/sports" 
+                className={styles.viewAllBtn}
+                eventName="category_click"
+                payload={{ category: 'Sports', action: 'view_all' }}
+              >
+                View All &rarr;
+              </TrackedLink>
             </div>
             <div className={styles.cardGrid}>
               {sportsStories.map(item => (
-                <Link key={item.id} href={`/news/${item.slug}`} className={styles.contentCard}>
+                <TrackedLink 
+                  key={item.id} 
+                  href={`/news/${item.slug}`} 
+                  className={styles.contentCard}
+                  eventName="content_click"
+                  payload={{ id: item.id, title: item.title, category: 'Sports' }}
+                >
                   <div className={styles.cardImageWrapper}>
                     {item.hero?.image?.url ? <Image src={item.hero.image.sizes?.card?.url || item.hero.image.url} alt={item.title} fill className={styles.cardImg} /> : <div className={styles.cardPlaceholder} />}
                   </div>
                   <div className={styles.cardBody}>
                     <h3 className={styles.cardTitle}>{item.title}</h3>
                   </div>
-                </Link>
+                </TrackedLink>
               ))}
               
+              {/* Native Grid Ad Card */}
               <div className={styles.adCard}>
                 <span className={styles.adLabel}>SPONSORED</span>
                 <div className={styles.adContent}>
-                  <h3>Your Ad Here</h3>
-                  <p>Join the WaveNation network.</p>
+                  <h3>Your Brand Here</h3>
+                  <p>Join the WaveNation network and reach millions.</p>
+                  <button className={styles.adButton}>Advertise With Us</button>
                 </div>
               </div>
             </div>
@@ -318,21 +402,28 @@ export default async function NewsPage() {
             <section className={styles.tagsSection}>
               <h2 className={styles.tagsHeader}>Explore Topics</h2>
               <div className={styles.tagsCloud}>
-                {/* 1. Add the "All Topics" / Archive Link first */}
-                <Link href="/news/archive" className={`${styles.tagPill} ${styles.allTagsPill}`}>
+                <TrackedLink 
+                  href="/news/archive" 
+                  className={`${styles.tagPill} ${styles.allTagsPill}`}
+                  eventName="tag_show_all_click"
+                >
                   View All Topics &rarr;
-                </Link>
+                </TrackedLink>
 
-                {/* 2. Map through the extracted unique tags */}
                 {uniqueTags.map(tag => (
-                  <Link key={tag.slug} href={`/tags/${tag.slug}`} className={styles.tagPill}>
+                  <TrackedLink 
+                    key={tag.slug} 
+                    href={`/tags/${tag.slug}`} 
+                    className={styles.tagPill}
+                    eventName="tag_click"
+                    payload={{ tag: tag.label }}
+                  >
                     #{tag.label}
-                  </Link>
+                  </TrackedLink>
                 ))}
               </div>
             </section>
           )}
-
         </main>
       </div>
     </>
