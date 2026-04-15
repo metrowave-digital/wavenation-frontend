@@ -40,7 +40,6 @@ const extractTextFromLexical = (data: LexicalData): string => {
 export function AuthorBioBlock({ author }: { author?: Author | null }) {
   if (!author || !author.slug) return null
 
-  // Safely parse the Lexical object into a plain string
   const bioText = extractTextFromLexical(author.bio as LexicalData).trim()
 
   return (

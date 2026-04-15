@@ -1,5 +1,5 @@
 /* ======================================================
-   PAGE & TEXTURE
+   MAGAZINE BASE & TEXTURE
 ====================================================== */
 .page { 
   background-color: #060708; 
@@ -13,7 +13,7 @@
   position: fixed; 
   inset: 0; 
   background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png"); 
-  opacity: 0.04; 
+  opacity: 0.05; 
   pointer-events: none; 
   z-index: 10; 
 }
@@ -24,34 +24,45 @@
 }
 
 /* ======================================================
-   CINEMATIC HERO SECTION
+   IMMERSIVE EDITORIAL HERO
 ====================================================== */
 .heroSection { 
   position: relative; 
-  padding-top: 100px; 
-  min-height: clamp(60vh, 80vh, 800px); 
+  padding-top: 120px; 
+  min-height: clamp(80vh, 95vh, 1000px); /* Massive cinematic hero */
   width: 100%; 
   display: flex; 
   align-items: flex-end; 
-  padding-bottom: clamp(4rem, 8vw, 8rem); 
+  padding-bottom: clamp(6rem, 10vw, 10rem); 
 }
 
 .heroImageWrapper { position: absolute; inset: 0; z-index: 1; }
-.heroImg { object-fit: cover; filter: brightness(0.6) contrast(1.1); }
-.heroOverlay { position: absolute; inset: 0; background: linear-gradient(to top, #060708 2%, rgba(6, 7, 8, 0.4) 40%, rgba(6, 7, 8, 0) 100%); }
-.scanlines { position: absolute; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%); background-size: 100% 4px; pointer-events: none; opacity: 0.3; }
+.heroImg { object-fit: cover; filter: brightness(0.65) contrast(1.15); }
+.heroOverlay { 
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(to top, #060708 0%, rgba(6, 7, 8, 0.7) 30%, rgba(6, 7, 8, 0) 100%); 
+}
+.scanlines { 
+  position: absolute; 
+  inset: 0; 
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%); 
+  background-size: 100% 4px; 
+  pointer-events: none; 
+  opacity: 0.4; 
+}
 
 /* ======================================================
-   HERO CONTENT
+   HERO TYPOGRAPHY
 ====================================================== */
 .heroContent { 
   position: relative; 
   z-index: 10; 
-  max-width: 1200px; 
+  max-width: 1400px; 
   margin: 0 auto; 
-  padding: 0 1.5rem; 
+  padding: 0 clamp(1.5rem, 4vw, 4rem); 
   width: 100%; 
-  animation: fadeUp 1s ease-out;
+  animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .metaRow { 
@@ -61,60 +72,76 @@
   margin-bottom: 1.5rem; 
   font-family: 'Oswald', sans-serif; 
   letter-spacing: 0.2em; 
-  font-size: clamp(0.7rem, 2vw, 0.8rem); 
+  font-size: clamp(0.75rem, 2vw, 0.85rem); 
 }
 
-.liveIndicator { color: #B200FF; display: flex; align-items: center; gap: 8px; }
-.dot { width: 6px; height: 6px; background: #B200FF; border-radius: 50%; box-shadow: 0 0 10px #B200FF; animation: pulse 2s infinite; }
-.readTime { color: #71717A; }
+.liveIndicator { color: #B200FF; display: flex; align-items: center; gap: 8px; font-weight: 700;}
+.dot { width: 8px; height: 8px; background: #B200FF; border-radius: 50%; box-shadow: 0 0 12px #B200FF; animation: pulse 2s infinite; }
+.readTime { color: #A1A1AA; }
 
 .mainTitle { 
   font-family: 'Oswald', sans-serif; 
-  font-size: clamp(2.5rem, 8vw, 4.5rem); 
+  font-size: clamp(3rem, 9vw, 6.5rem); /* Huge scaling */
   text-transform: uppercase; 
-  line-height: 1.1; 
+  line-height: 0.95; 
   font-weight: 800; 
   margin-bottom: 1.5rem; 
-  max-width: 800px; 
+  max-width: 1100px; 
   color: #fff;
+  letter-spacing: -0.02em;
 }
 
-.mainExcerpt { 
-  font-size: clamp(1rem, 2.5vw, 1.15rem); 
-  color: #A1A1AA; 
-  line-height: 1.6; 
-  max-width: 650px; 
-  border-left: 2px solid #B200FF; 
-  padding-left: clamp(1rem, 3vw, 1.5rem); 
+.subTitle {
+  font-family: 'Georgia', serif; /* Elegant serif for contrast */
+  font-style: italic;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: #E4E4E7;
+  line-height: 1.5;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+.heroCredit {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #71717A;
+  margin-top: 3rem;
+  border-left: 2px solid #B200FF;
+  padding-left: 1rem;
 }
 
 /* ======================================================
-   FLOATING ARTIST CARD (GLASSMORPHISM)
+   THE SPOTLIGHT FILE (GLASSMORPHISM)
 ====================================================== */
 .mainContent { 
-  max-width: 1100px; 
-  margin: clamp(-3rem, -5vw, -5rem) auto 0; 
+  max-width: 1200px; 
+  margin: 0 auto; 
   position: relative; 
   z-index: 20; 
-  padding: 0 1.5rem clamp(4rem, 8vw, 10rem); 
+  padding: 0 clamp(1.5rem, 4vw, 3rem) clamp(4rem, 8vw, 10rem); 
 }
 
+/* Overlaps the hero slightly */
 .spotlightCard { 
-  background: rgba(17, 19, 22, 0.8); 
-  backdrop-filter: blur(12px); 
+  background: rgba(17, 19, 22, 0.6); 
+  backdrop-filter: blur(16px); 
   border: 1px solid rgba(255, 255, 255, 0.05); 
-  padding: clamp(1.5rem, 4vw, 3rem); 
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
-  margin-bottom: clamp(3rem, 6vw, 6rem);
+  border-top: 4px solid #B200FF;
+  padding: clamp(2rem, 5vw, 4rem); 
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8); 
+  margin-top: clamp(-5rem, -8vw, -8rem);
+  margin-bottom: clamp(4rem, 8vw, 6rem);
   animation: fadeUp 1s ease-out 0.2s forwards;
-  opacity: 0;
 }
 
 .spotlightGrid { 
   display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-  gap: clamp(2rem, 5vw, 4rem); 
-  align-items: flex-start; 
+  grid-template-columns: 1fr 1.5fr; 
+  gap: clamp(2rem, 6vw, 5rem); 
+  align-items: center; 
 }
 
 .artistFrame { 
@@ -123,106 +150,161 @@
   background: #000; 
   overflow: hidden; 
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
 }
 
-.artistImg { object-fit: cover; transition: transform 0.8s ease; }
-.spotlightCard:hover .artistImg { transform: scale(1.05); }
-.frameAccent { position: absolute; inset: 0; border: 1px solid rgba(178, 0, 255, 0.3); pointer-events: none; }
+.artistImg { object-fit: cover; filter: grayscale(0.2) contrast(1.1); transition: transform 0.8s ease, filter 0.8s ease; }
+.spotlightCard:hover .artistImg { transform: scale(1.03); filter: grayscale(0) contrast(1); }
 
-.artistHeader { margin-bottom: 1.5rem; }
-.eyebrow { font-family: 'Oswald', sans-serif; color: #B200FF; letter-spacing: 0.3em; font-size: clamp(0.7rem, 2vw, 0.75rem); margin-bottom: 0.5rem; }
-.artistName { font-family: 'Oswald', sans-serif; font-size: clamp(2.2rem, 6vw, 2.8rem); text-transform: uppercase; line-height: 1; color: #fff; }
-.artistBio { color: #D4D4D8; font-size: clamp(0.95rem, 2vw, 1.05rem); line-height: 1.6; margin-bottom: 2rem; }
+.eyebrow { font-family: 'Oswald', sans-serif; color: #B200FF; letter-spacing: 0.3em; font-size: clamp(0.7rem, 2vw, 0.8rem); margin-bottom: 0.5rem; }
+.artistName { font-family: 'Oswald', sans-serif; font-size: clamp(2.5rem, 6vw, 3.5rem); text-transform: uppercase; line-height: 1; color: #fff; margin-bottom: 1.5rem; }
+.artistBio { color: #D4D4D8; font-size: clamp(1rem, 2vw, 1.15rem); line-height: 1.7; margin-bottom: 2.5rem; }
 
-.socialGrid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.socialPill { font-family: 'Oswald', sans-serif; font-size: 0.75rem; text-transform: uppercase; color: #fff; text-decoration: none; padding: 0.6rem 1.2rem; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.03); transition: all 0.3s ease; }
-.socialPill:hover { border-color: #B200FF; color: #B200FF; background: rgba(178, 0, 255, 0.05); }
+.socialGrid { display: flex; flex-wrap: wrap; gap: 1rem; }
+.socialPill { font-family: 'Oswald', sans-serif; font-size: 0.8rem; text-transform: uppercase; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.03); transition: all 0.3s ease; letter-spacing: 0.05em;}
+.socialPill:hover { border-color: #B200FF; color: #B200FF; background: rgba(178, 0, 255, 0.05); transform: translateY(-2px); }
 
 /* ======================================================
    EDITORIAL CONTENT BODY
 ====================================================== */
 .editorialContainer { max-width: 800px; margin: 0 auto; }
 
-.articleDivider { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2rem); margin-bottom: clamp(2rem, 5vw, 4rem); opacity: 0.4; }
+.articleDivider { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2rem); margin-bottom: clamp(3rem, 6vw, 5rem); opacity: 0.6; }
 .eqBar { flex: 1; height: 1px; background: linear-gradient(to right, transparent, #B200FF, transparent); }
-.dividerText { font-family: 'Oswald', sans-serif; font-size: clamp(0.6rem, 2vw, 0.7rem); letter-spacing: 0.4em; color: #B200FF; white-space: nowrap; }
+.dividerText { font-family: 'Oswald', sans-serif; font-size: clamp(0.7rem, 2vw, 0.85rem); letter-spacing: 0.4em; color: #B200FF; white-space: nowrap; }
 
-.bodyWrapper { font-size: clamp(1.05rem, 2.5vw, 1.2rem); line-height: 1.8; color: #E4E4E7; }
+/* Magazine Body Copy */
+.bodyWrapper { 
+  font-family: 'Georgia', serif; /* Magazine feel */
+  font-size: clamp(1.15rem, 2.5vw, 1.35rem); 
+  line-height: 1.9; 
+  color: #E4E4E7; 
+}
 
-/* Interactive Body Fixes (Photos & Captions) */
-.interactiveBody { width: 100%; }
-.interactiveBody figure { margin: clamp(2rem, 4vw, 3rem) 0; width: 100%; }
-.interactiveBody img { width: 100%; height: auto; border-radius: 4px; cursor: zoom-in; transition: opacity 0.3s ease; border: 1px solid #1A1C20; }
-.interactiveBody img:hover { opacity: 0.85; }
-.interactiveBody figcaption { margin-top: 0.75rem; font-size: 0.85rem; color: #A1A1AA; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; border-bottom: 1px solid #1A1C20; padding-bottom: 1rem; }
+.bodyWrapper p { margin-bottom: 2rem; }
+
+/* Drop cap for first paragraph */
+.bodyWrapper p:first-of-type::first-letter {
+  float: left;
+  font-family: 'Oswald', sans-serif;
+  font-size: 4.5rem;
+  line-height: 0.8;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  color: #B200FF;
+}
 
 /* ======================================================
-   AD SPACE
+   FEATURED RELEASE SECTION (ALBUM)
 ====================================================== */
-.horizontalAdContainer { width: 100%; max-width: 970px; margin: 0 auto clamp(3rem, 6vw, 5rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; }
-.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; text-align: center; }
-.horizontalAd { width: 100%; min-height: 90px; background: #111316; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.featuredReleaseSection {
+  margin: clamp(4rem, 8vw, 6rem) 0;
+  background: #0B0D0F;
+  border: 1px solid #1A1C20;
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 4px;
+}
+
+.releaseDivider { margin-bottom: 2rem; border-bottom: 1px solid #1A1C20; padding-bottom: 1rem; }
+
+.releaseGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.recordSleeve {
+  position: relative;
+  aspect-ratio: 1/1;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: 10px 10px 30px rgba(0,0,0,0.8);
+  margin: 0 auto;
+}
+
+.albumCover { object-fit: cover; position: relative; z-index: 2; border-radius: 2px; }
+.albumPlaceholder { width: 100%; height: 100%; background: #1A1C20; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; color: #71717A; position: relative; z-index: 2; }
+
+/* Vinyl record peeking out */
+.vinylRecord {
+  position: absolute;
+  top: 2%;
+  right: -15%;
+  width: 96%;
+  height: 96%;
+  background: radial-gradient(circle, #111 20%, #000 30%, #1a1a1a 40%, #000 50%, #111 60%, #000 70%, #1a1a1a 80%, #000 90%);
+  border-radius: 50%;
+  z-index: 1;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+  transition: transform 0.5s ease;
+}
+
+.recordSleeve:hover .vinylRecord { transform: translateX(10%); }
+
+.albumTitle { font-family: 'Oswald', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); text-transform: uppercase; color: #fff; line-height: 1.1; margin-bottom: 0.5rem; }
+.albumMeta { color: #A1A1AA; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 2rem; }
+
+.tracklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid #1A1C20;
+}
+
+.trackItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #1A1C20;
+  font-family: 'Helvetica Neue', serif;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: #D4D4D8;
+}
+
+.trackNum { font-family: 'Oswald', sans-serif; color: #71717A; width: 30px; font-size: 0.85rem; }
+.trackName { flex: 1; text-transform: lowercase; } 
+.trackArtist { font-size: 0.85rem; color: #A1A1AA; font-style: italic; }
+
+/* ======================================================
+   TAGS & AD SPACE
+====================================================== */
+.articleTags { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 4rem; }
+.tagLink { font-family: 'Oswald', sans-serif; font-size: 0.85rem; text-transform: uppercase; color: #A1A1AA; text-decoration: none; padding: 0.5rem 1rem; background: #111316; border: 1px solid #27272A; transition: all 0.3s ease; }
+.tagLink:hover { border-color: #B200FF; color: #fff; background: rgba(178, 0, 255, 0.1); }
+
+.horizontalAdContainer { width: 100%; max-width: 970px; margin: 0 auto clamp(4rem, 8vw, 6rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; }
+.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
+.horizontalAd { width: 100%; min-height: 90px; background: #111316; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .adInner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
 .adPrompt { color: #3F3F46; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0; }
 .adSpecs { color: #27272A; font-size: 0.8rem; }
 
 /* ======================================================
-   FOOTER (Hyperlinked Author)
+   FOOTER
 ====================================================== */
-.authorFooter { 
-  margin-top: clamp(4rem, 8vw, 8rem); 
-  padding-top: 3rem; 
-  border-top: 1px solid #1A1C20; 
-  text-align: center; 
-}
-
-.footerAuthor {
-  font-size: clamp(1.1rem, 3vw, 1.3rem);
-  color: #D4D4D8;
-  margin-bottom: 0.5rem;
-}
-
-.authorLink {
-  color: #fff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.authorLink:hover {
-  color: #B200FF;
-}
-
-.publishDate { 
-  color: #71717A; 
-  font-size: 0.9rem; 
-  font-family: 'Oswald', sans-serif; 
-  letter-spacing: 0.05em; 
-  text-transform: uppercase; 
-}
+.authorFooter { margin-top: clamp(4rem, 8vw, 8rem); padding-top: 3rem; border-top: 1px solid #1A1C20; text-align: center; }
+.footerAuthor { font-size: clamp(1.1rem, 3vw, 1.3rem); color: #D4D4D8; margin-bottom: 0.5rem; }
+.authorLink { color: #fff; text-decoration: none; transition: color 0.3s ease; }
+.authorLink:hover { color: #B200FF; }
+.publishDate { color: #71717A; font-size: 0.9rem; font-family: 'Oswald', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
 
 /* ======================================================
    ANIMATIONS & MEDIA QUERIES
 ====================================================== */
 @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 900px) {
-  .heroSection { padding-top: 80px; min-height: 70vh; }
   .spotlightGrid { grid-template-columns: 1fr; gap: 2rem; }
-  .artistFrame { max-width: 350px; margin: 0 auto; }
-  .mainContent { margin-top: -2rem; }
+  .artistFrame { max-width: 100%; }
+  .releaseGrid { grid-template-columns: 1fr; gap: 3rem; }
+  .recordSleeve { max-width: 300px; }
+  .vinylRecord { display: none; } /* Hide vinyl on smaller screens to prevent overflow */
 }
 
 @media (max-width: 768px) {
+  .heroSection { min-height: 75vh; }
+  .bodyWrapper p:first-of-type::first-letter { font-size: 3.5rem; padding-top: 0.2rem; }
   .horizontalAdContainer { max-width: 100%; padding: 0.75rem; }
   .horizontalAd { min-height: 100px; }
-}
-
-@media (max-width: 480px) {
-  .heroContent { padding-top: 2rem; }
-  .spotlightGrid { gap: 2rem; }
-  .artistFrame { width: 100%; aspect-ratio: 1/1; }
 }
