@@ -59,8 +59,8 @@ export function AuthorBioBlock({ author }: { author?: Author | null }) {
           <Image 
             src={author.avatar.url} 
             alt={author.fullName} 
-            fill 
-            sizes="(max-width: 768px) 100px, 120px"
+            width={120} 
+            height={120} 
             className={styles.avatarImg} 
           />
         ) : (
