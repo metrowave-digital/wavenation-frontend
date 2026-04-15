@@ -18,6 +18,11 @@
   z-index: 10; 
 }
 
+.spotlightWrapper {
+  position: relative;
+  width: 100%;
+}
+
 /* ======================================================
    CINEMATIC HERO SECTION
 ====================================================== */
@@ -136,7 +141,7 @@
 .socialPill:hover { border-color: #B200FF; color: #B200FF; background: rgba(178, 0, 255, 0.05); }
 
 /* ======================================================
-   EDITORIAL CONTENT BODY & INTERACTIVE WRAPPER
+   EDITORIAL CONTENT BODY
 ====================================================== */
 .editorialContainer { max-width: 800px; margin: 0 auto; }
 
@@ -153,29 +158,49 @@
 .interactiveBody img:hover { opacity: 0.85; }
 .interactiveBody figcaption { margin-top: 0.75rem; font-size: 0.85rem; color: #A1A1AA; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; border-bottom: 1px solid #1A1C20; padding-bottom: 1rem; }
 
-/* Full-Screen Lightbox */
-.lightboxOverlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; cursor: zoom-out; animation: fadeIn 0.3s ease forwards; }
-.lightboxClose { position: absolute; top: 1.5rem; right: 2rem; background: none; border: none; color: #fff; font-size: 3rem; line-height: 1; cursor: pointer; transition: color 0.2s ease; z-index: 10000; }
-.lightboxClose:hover { color: #B200FF; }
-.lightboxContent { position: relative; max-width: 1200px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; align-items: center; }
-.lightboxImg { max-width: 100%; max-height: 75vh; object-fit: contain; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-.lightboxCaption { margin-top: 1.5rem; color: #D4D4D8; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; font-size: clamp(0.9rem, 2vw, 1.1rem); text-align: center; max-width: 800px; }
-
 /* ======================================================
    AD SPACE
 ====================================================== */
 .horizontalAdContainer { width: 100%; max-width: 970px; margin: 0 auto clamp(3rem, 6vw, 5rem) auto; display: flex; flex-direction: column; align-items: center; background: #0B0D0F; border: 1px dashed #27272A; padding: 1rem; }
-.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; }
+.adLabel { font-size: 0.65rem; color: #71717A; text-transform: uppercase; margin-bottom: 0.75rem; display: block; text-align: center; }
 .horizontalAd { width: 100%; min-height: 90px; background: #111316; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .adInner { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
 .adPrompt { color: #3F3F46; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0; }
 .adSpecs { color: #27272A; font-size: 0.8rem; }
 
 /* ======================================================
-   FOOTER
+   FOOTER (Hyperlinked Author)
 ====================================================== */
-.authorFooter { margin-top: clamp(4rem, 8vw, 8rem); padding-top: 3rem; border-top: 1px solid #1A1C20; text-align: center; }
-.publishDate { color: #71717A; font-size: 0.9rem; margin-top: 0.5rem; }
+.authorFooter { 
+  margin-top: clamp(4rem, 8vw, 8rem); 
+  padding-top: 3rem; 
+  border-top: 1px solid #1A1C20; 
+  text-align: center; 
+}
+
+.footerAuthor {
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+  color: #D4D4D8;
+  margin-bottom: 0.5rem;
+}
+
+.authorLink {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.authorLink:hover {
+  color: #B200FF;
+}
+
+.publishDate { 
+  color: #71717A; 
+  font-size: 0.9rem; 
+  font-family: 'Oswald', sans-serif; 
+  letter-spacing: 0.05em; 
+  text-transform: uppercase; 
+}
 
 /* ======================================================
    ANIMATIONS & MEDIA QUERIES
@@ -184,11 +209,16 @@
 @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+@media (max-width: 900px) {
+  .heroSection { padding-top: 80px; min-height: 70vh; }
+  .spotlightGrid { grid-template-columns: 1fr; gap: 2rem; }
+  .artistFrame { max-width: 350px; margin: 0 auto; }
+  .mainContent { margin-top: -2rem; }
+}
+
 @media (max-width: 768px) {
   .horizontalAdContainer { max-width: 100%; padding: 0.75rem; }
   .horizontalAd { min-height: 100px; }
-  .lightboxOverlay { padding: 1rem; }
-  .lightboxClose { top: 1rem; right: 1rem; font-size: 2.5rem; }
 }
 
 @media (max-width: 480px) {

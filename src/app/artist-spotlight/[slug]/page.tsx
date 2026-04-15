@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getArticleBySlug } from '@/services/news.api'
 import { ContentRenderer } from '@/app/news/[slug]/components/ContentRenderer'
@@ -9,10 +10,9 @@ import styles from './ArtistSpotlight.module.css'
 
 // Import client-side tracking, interactive wrappers, and the author block
 import { AnalyticsPageView } from '@/components/analytics/TrackedComponents'
-import { ArticleInteractiveWrapper } from '../../news/[slug]/components/ArticleInteractiveWrapper'
-import { AuthorBioBlock } from '../components/AuthorBioBlock'
+import { ArticleInteractiveWrapper } from '@/app/news/[slug]/components/ArticleInteractiveWrapper'
+import { AuthorBioBlock } from '../components/AuthorBioBlock' // Adjust path if needed
 
-// Define specific interfaces for the Artist Spotlight block
 interface SocialLink {
   id: string;
   label: string;
@@ -142,7 +142,6 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
             </div>
 
             <article className={styles.bodyWrapper}>
-              {/* Wrapped in interactive component for image lightboxing and responsive captions */}
               <ArticleInteractiveWrapper>
                 <ContentRenderer 
                   blocks={article.contentBlocks.filter((b) => (b.blockType as string) !== 'artistSpotlight')} 
@@ -150,11 +149,22 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
               </ArticleInteractiveWrapper>
             </article>
 
-            {/* AUTHOR BIO BLOCK */}
+            {/* FULL AUTHOR BIO BLOCK (Cards Layout) */}
             <AuthorBioBlock author={article.author} />
           </div>
 
           <footer className={styles.authorFooter}>
+             {/* EXPLICIT HYPERLINKED ATTRIBUTION */}
+             <p className={styles.footerAuthor}>
+               Words by{' '}
+               {article.author?.slug ? (
+                 <Link href={`/authors/${article.author.slug}`} className={styles.authorLink}>
+                   <strong>{article.author.fullName}</strong>
+                 </Link>
+               ) : (
+                 <strong>{article.author?.fullName || 'WaveNation Editorial'}</strong>
+               )}
+             </p>
              <p className={styles.publishDate}>
                Published {new Date(article.publishDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
              </p>
