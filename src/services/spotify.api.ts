@@ -12,7 +12,7 @@ export async function getAccessToken() {
 
   const basic = Buffer.from(`${client_id}:${client_secret}`).toString('base64');
   
-  // FIXED: Official Spotify Token URL
+  // FIX 1: Use the actual Spotify Token endpoint
   const response = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
     headers: {
@@ -38,7 +38,7 @@ export async function getSpotifyArtwork(trackTitle: string, artist: string): Pro
 
     const query = encodeURIComponent(`track:${cleanTrack} artist:${cleanArtist}`);
     
-    // FIXED: Official Spotify Search URL and added the missing "?q="
+    // FIX 2 & 3: Use the official Search API endpoint and fix the template literal syntax (${query})
     const SEARCH_ENDPOINT = `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`;
 
     const res = await fetch(SEARCH_ENDPOINT, {

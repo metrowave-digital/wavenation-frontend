@@ -100,7 +100,7 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
         <section className={styles.splitHero}>
           <div className={styles.heroTextCol}>
             <div className={styles.heroTopMeta}>
-              <span className={styles.editorialBadge}>Editorial</span>
+              <span className={styles.editorialBadge}>Spotlight</span>
               <span className={styles.readTime}>Vol. {new Date().getFullYear()} &mdash; {article.readingTime || 5} Min Read</span>
             </div>
             
@@ -275,7 +275,7 @@ export default async function ArtistSpotlightPage({ params }: { params: Promise<
 
           <footer className={styles.pageFooter}>
              <div className={styles.footerCol}>
-               <span className={styles.footerLabel}>Text By</span>
+               <span className={styles.footerLabel}>Feature By</span>
                {article.author?.slug ? (
                  <Link href={`/authors/${article.author.slug}`} className={styles.footerLink}>
                    {article.author.fullName}
