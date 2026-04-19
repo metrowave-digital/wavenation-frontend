@@ -60,6 +60,18 @@ const nextConfig: NextConfig = {
         hostname: 'image-cdn-fa.spotifycdn.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'coverartarchive.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'archive.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'is1-ssl.mzstatic.com', // Apple's image server
+      },
     ],
   },
 

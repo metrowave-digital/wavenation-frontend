@@ -31,25 +31,38 @@
 
 /* ACCOLADES GRID */
 .accoladesGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #111; margin-bottom: 5rem; border: 1px solid #111; }
-.accCard { background: #030405; padding: 2rem; text-align: center; }
+.accCard { background: #030405; padding: 2rem; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
 .accType { display: block; font-family: monospace; font-size: 0.65rem; color: #555; letter-spacing: 0.3em; margin-bottom: 1rem; }
 .accName { font-family: 'Oswald', sans-serif; font-size: 1.25rem; text-transform: uppercase; color: #fff; margin: 0; }
-.accVal { color: #39FF14; font-family: 'Oswald', sans-serif; font-size: 0.8rem; margin-top: 0.5rem; }
+.accVal { color: #39FF14; font-family: 'Oswald', sans-serif; font-size: 0.8rem; margin-top: 1rem; }
+
+/* NEW: Dropped Tracks Faded List */
+.droppedList { flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem; max-height: 80px; overflow-y: auto; text-align: center; }
+.droppedList::-webkit-scrollbar { width: 4px; }
+.droppedList::-webkit-scrollbar-thumb { background: #333; }
+.droppedTrack { font-family: 'Oswald', sans-serif; font-size: 1rem; color: #777; text-decoration: line-through; opacity: 0.5; transition: 0.2s; }
+.droppedTrack:hover { opacity: 1; color: #aaa; text-decoration: none; }
+.droppedArtist { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: #444; }
+
+/* ... keep everything above this the same ... */
 
 /* DATA MATRIX (THE LIST) */
 .tableWrap { background: #030405; border-top: 2px solid #fff; }
+
+/* REVERTED: Grid updated to remove the 50px artwork column */
 .tableHead { display: grid; grid-template-columns: 80px 60px 1fr 80px 80px 80px; padding: 1rem 0; font-family: monospace; font-size: 0.7rem; color: #444; border-bottom: 1px solid #111; text-align: center; }
 .colTrack { text-align: left; padding-left: 2rem; }
 
-.row { display: grid; grid-template-columns: 80px 60px 1fr 80px 80px 80px; padding: 1.5rem 0; align-items: center; border-bottom: 1px solid #111; transition: 0.2s; text-align: center; }
+.row { display: grid; grid-template-columns: 80px 60px 1fr 80px 80px 80px; padding: 1rem 0; align-items: center; border-bottom: 1px solid #111; transition: background 0.2s; text-align: center; }
 .row:hover { background: #08090a; }
 
-.colRank { font-family: 'Oswald', sans-serif; font-size: 2.5rem; color: #1a1a1a; transition: 0.3s; }
-.row:hover .colRank { color: #fff; }
+/* SCROLL HIGHLIGHT LOGIC */
+.colRank { font-family: 'Oswald', sans-serif; font-size: 2.5rem; color: #1a1a1a; transition: color 0.4s ease, text-shadow 0.4s ease; }
+.rowActive .colRank { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
 
 .trackContent { display: flex; flex-direction: column; text-align: left; padding-left: 2rem; }
-.tTitle { font-family: 'Oswald', sans-serif; font-size: 1.75rem; text-transform: uppercase; color: #fff; line-height: 1; }
-.tArtist { font-family: 'Oswald', sans-serif; font-size: 0.9rem; color: #444; text-transform: uppercase; margin-top: 0.25rem; }
+.tTitle { font-family: 'Oswald', sans-serif; font-size: 1.5rem; text-transform: uppercase; color: #fff; line-height: 1; }
+.tArtist { font-family: 'Oswald', sans-serif; font-size: 0.85rem; color: #444; text-transform: uppercase; margin-top: 0.25rem; }
 
 .colLW, .colPeak, .colWoc { font-family: monospace; font-size: 1.1rem; color: #333; }
 .row:hover .colLW, .row:hover .colPeak, .row:hover .colWoc { color: #777; }
@@ -63,8 +76,76 @@
 /* MOBILE */
 @media (max-width: 1000px) {
   .heroSection { grid-template-columns: 1fr; gap: 2rem; }
+  /* REVERTED: Collapse Grid for Mobile */
   .tableHead, .row { grid-template-columns: 60px 50px 1fr; }
-  .colLW, .colPeak, .colWoc { display: none; }
+  .colLW, .colPeak, .colWoc, .tableHead .colLW, .tableHead .colPeak, .tableHead .colWoc { display: none; }
+  .colRank { font-size: 1.8rem; }
   .heroTitle { font-size: 3rem; }
   .accoladesGrid { grid-template-columns: 1fr; }
 }
+
+/* ... keep top sections same ... */
+
+/* ACCOLADES CARD */
+.accCard { 
+  background: #030405; 
+  padding: 2rem; 
+  text-align: center; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between;
+  min-height: 200px;
+  overflow: hidden; 
+}
+
+/* TICKER SYSTEM */
+.tickerContainer {
+  position: relative;
+  height: 60px; /* Fixed height for the "one at a time" area */
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tickerItem {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.tickerActive {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.droppedTitle {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.droppedArtist {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #555;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Remove Strikethrough from earlier */
+.droppedTrack {
+  text-decoration: none;
+  font-family: 'Oswald', sans-serif;
+  color: #444;
+}
+
+/* ... keep the rest of the file ... */

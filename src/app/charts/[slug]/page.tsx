@@ -1,29 +1,15 @@
+// app/charts/[slug]/page.tsx
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getChartBySlug, getChartById } from '@/services/charts.api';
 import { getSpotifyArtwork } from '@/services/spotify.api';
-import { 
-  ArrowLeft, TrendingUp, TrendingDown, Minus, 
-  Sparkles, Flame, Rocket, Skull, Disc3, ChevronRight 
-} from 'lucide-react';
+import { ArrowLeft, Flame, Disc3, ChevronRight } from 'lucide-react';
 import { BackToTop } from '@/components/ui/BackToTop/BackToTop';
+import { ChartRow, ChartEntryData } from './ChartRow';
+import { DroppedTicker } from './DroppedTicker';
 import styles from './ChartDetail.module.css';
-
-interface ChartEntryData {
-  id: string;
-  rank: number;
-  previousRank: number | null;
-  peakRank: number | null;
-  weeksOnChart: number;
-  movement: string | null;
-  trackTitle: string;
-  artist: string;
-  jump?: number;
-  manualTrack?: { artwork?: { url: string } };
-  mediaAssets?: { artwork?: { url: string } };
-}
 
 export default async function ChartDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -32,7 +18,6 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
 
   const entries = (chart.entries as ChartEntryData[]) || [];
   
-  // Only fetch artwork for the Top Track to save on API overhead and focus design
   const topTrack = entries.find(e => e.rank === 1);
   let topTrackArt = '/images/default-track.jpg';
 
@@ -56,8 +41,11 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
     const key = `${entry.trackTitle}-${entry.artist}`.toLowerCase().trim();
     currentTrackKeys.add(key);
     if (entry.movement === 'up' && entry.previousRank) {
-      const jump = entry.previousRank - entry.rank;
-      if (jump > maxJump) { maxJump = jump; biggestGainer = { ...entry, jump }; }
+      const jumpValue = entry.previousRank - entry.rank;
+      if (jumpValue > maxJump) { 
+        maxJump = jumpValue; 
+        biggestGainer = { ...entry, jump: jumpValue }; 
+      }
     }
     if (entry.movement === 'new') {
       if (!highestDebut || entry.rank < (highestDebut.rank || 999)) highestDebut = entry;
@@ -79,7 +67,6 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
   return (
     <div className={styles.page}>
       <div className={styles.textureOverlay} />
-      
       <main className={styles.main}>
         <nav className={styles.navRow}>
           <Link href="/charts" className={styles.backLink}><ArrowLeft size={16} /> HUB</Link>
@@ -108,18 +95,16 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
           )}
         </header>
 
-        {/* --- HERO: NUMBER ONE TRACK --- */}
         {topTrack && (
           <section className={styles.heroSection}>
             <div className={styles.heroArtWrap}>
               <div className={styles.heroRank}>01</div>
-              {topTrackArt.includes('scdn.co') ? (
+              {topTrackArt.includes('mzstatic') || topTrackArt.includes('scdn') || topTrackArt.includes('archive') ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={topTrackArt} alt="" className={styles.heroArt} />
               ) : (
                 <Image src={topTrackArt} alt="" fill className={styles.heroArt} priority />
               )}
-              <div className={styles.glitchOverlay} />
             </div>
             <div className={styles.heroMeta}>
               <div className={styles.heroLabel}><Flame size={18} /> CURRENT DOMINATOR</div>
@@ -133,7 +118,6 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
           </section>
         )}
 
-        {/* --- ACCOLADES --- */}
         <div className={styles.accoladesGrid}>
           <div className={styles.accCard}>
              <span className={styles.accType}>GAINER</span>
@@ -147,12 +131,12 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
           </div>
           <div className={styles.accCard}>
              <span className={styles.accType}>DROPPED</span>
-             <h3 className={styles.accName}>{droppedTracks[0]?.trackTitle || 'NONE'}</h3>
+             {/* THE TICKER REPLACES THE STATIC LIST */}
+             <DroppedTicker tracks={droppedTracks} />
              <p className={styles.accVal}>{droppedTracks.length} TRACKS EXIT</p>
           </div>
         </div>
 
-        {/* --- THE MATRIX (TABLE) --- */}
         <section className={styles.tableWrap}>
           <div className={styles.tableHead}>
             <div className={styles.colRank}>#</div>
@@ -162,35 +146,13 @@ export default async function ChartDetailPage({ params }: { params: Promise<{ sl
             <div className={styles.colPeak}>PK</div>
             <div className={styles.colWoc}>WKS</div>
           </div>
-
           <div className={styles.tableBody}>
             {entries.filter(e => e.rank > 1).map((entry) => (
-              <div key={entry.id} className={styles.row}>
-                <div className={styles.colRank}>{entry.rank < 10 ? `0${entry.rank}` : entry.rank}</div>
-                
-                <div className={styles.colMove}>
-                  {entry.movement === 'up' && <TrendingUp size={16} className={styles.up}/>}
-                  {entry.movement === 'down' && <TrendingDown size={16} className={styles.down}/>}
-                  {entry.movement === 'new' && <Sparkles size={16} className={styles.new}/>}
-                  {(entry.movement === 'same' || !entry.movement) && <Minus size={16} className={styles.same}/>}
-                </div>
-
-                <div className={styles.colTrack}>
-                  <div className={styles.trackContent}>
-                    <span className={styles.tTitle}>{entry.trackTitle}</span>
-                    <span className={styles.tArtist}>{entry.artist}</span>
-                  </div>
-                </div>
-
-                <div className={styles.colLW}>{entry.previousRank || '--'}</div>
-                <div className={styles.colPeak}>{entry.peakRank || entry.rank}</div>
-                <div className={styles.colWoc}>{entry.weeksOnChart}</div>
-              </div>
+              <ChartRow key={entry.id} entry={entry} />
             ))}
           </div>
         </section>
       </main>
-
       <BackToTop />
     </div>
   );
