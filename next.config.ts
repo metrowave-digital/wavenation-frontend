@@ -77,6 +77,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'is1-ssl.mzstatic.com', // Apple's image server
       },
+       {
+        protocol: 'https',
+        hostname: 'media.radio.co',
+        port: "",
+        pathname: '/artwork/**',
+      },
     ],
   },
 

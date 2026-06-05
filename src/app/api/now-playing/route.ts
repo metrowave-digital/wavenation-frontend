@@ -2,59 +2,154 @@ import { NextResponse } from "next/server";
 import { getSpotifyArtwork } from "@/lib/spotify/getSpotifyArtwork";
 
 /* ----------------------------------------
-   Types
+   Route Configuration
 ----------------------------------------- */
 
-type AzuraCastSong = {
-  id?: string;
-  artist: string;
-  title: string;
-  art?: string;
+export const revalidate = 15;
+
+const STATION_ID =
+  process.env.RADIOCO_STATION_ID ??
+  process.env.NEXT_PUBLIC_RADIO_STATION_ID ??
+  "s70d96b137";
+
+const STATUS_URL =
+  process.env.RADIOCO_STATUS_URL ??
+  `https://public.radio.co/stations/${STATION_ID}/status`;
+
+const CURRENT_TRACK_URL =
+  process.env.RADIOCO_CURRENT_TRACK_URL ??
+  `https://public.radio.co/api/v2/${STATION_ID}/track/current`;
+
+/* ----------------------------------------
+   Radio.co Types
+----------------------------------------- */
+
+type RadioCoSource = {
+  type?: string;
+  collaborator?: {
+    id?: string;
+    name?: string;
+  } | null;
+  relay?: unknown | null;
 };
 
-type AzuraCastHistoryItem = {
-  played_at: number;
-  song: AzuraCastSong;
+type RadioCoStatusTrack = {
+  title?: string;
+  start_time?: string;
+  artwork_url?: string | null;
+  artwork_url_large?: string | null;
 };
 
-type AzuraCastResponse = {
-  is_online: boolean;
-  now_playing?: {
-    is_live?: boolean;
-    song?: AzuraCastSong;
-  };
-  live?: {
-    is_live?: boolean;
-  };
-  listeners?: {
-    current?: number;
-  };
-  song_history?: AzuraCastHistoryItem[];
+type RadioCoStatusResponse = {
+  status?: string;
+  source?: RadioCoSource;
+  current_track?: RadioCoStatusTrack | null;
+  history?: RadioCoStatusTrack[];
+  logo_url?: string | null;
+};
+
+type RadioCoArtworkUrls = {
+  standard?: string | null;
+  large?: string | null;
+};
+
+type RadioCoCurrentTrack = {
+  title?: string;
+  start_time?: string;
+  artwork_urls?: RadioCoArtworkUrls | null;
+  track_artist?: string | null;
+  track_title?: string | null;
+  track_album?: string | null;
+};
+
+type RadioCoCurrentTrackResponse = {
+  data?: RadioCoCurrentTrack | null;
 };
 
 /* ----------------------------------------
    Helpers
 ----------------------------------------- */
 
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+    },
+    next: {
+      revalidate: 15,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Radio.co request failed with status ${response.status}: ${url}`,
+    );
+  }
+
+  return response.json() as Promise<T>;
+}
+
+function splitRadioCoTrackTitle(value?: string | null): {
+  artist: string;
+  title: string;
+} {
+  const text = value?.trim() ?? "";
+
+  if (!text) {
+    return {
+      artist: "",
+      title: "",
+    };
+  }
+
+  /*
+   * Radio.co status history commonly returns:
+   * "Artist Name - Track Title"
+   */
+  const match = text.match(/^(.+?)\s[-–—]\s(.+)$/);
+
+  if (!match) {
+    return {
+      artist: "",
+      title: text,
+    };
+  }
+
+  return {
+    artist: match[1].trim(),
+    title: match[2].trim(),
+  };
+}
+
 function normalizeTrack(artist: string, title: string) {
   const cleanTitle = title
     .replace(/\(.*?\)/g, "")
     .replace(/\[.*?\]/g, "")
-    .replace(/- clean/i, "")
-    .replace(/- radio edit/i, "")
-    .replace(/feat\.?.*/i, "")
-    .replace(/ft\.?.*/i, "")
+    .replace(/\s*-\s*clean$/i, "")
+    .replace(/\s*-\s*radio edit$/i, "")
+    .replace(/\s+(feat|ft)\.?.*$/i, "")
     .trim();
 
   const cleanArtist = artist
-    .replace(/feat\.?.*/i, "")
-    .replace(/ft\.?.*/i, "")
+    .replace(/\s+(feat|ft)\.?.*$/i, "")
     .trim();
 
   return {
     artist: cleanArtist,
     title: cleanTitle,
   };
+}
+
+function toUnixSeconds(value?: string | null): number {
+  if (!value) return 0;
+
+  const timestamp = Date.parse(value);
+
+  if (Number.isNaN(timestamp)) {
+    return 0;
+  }
+
+  return Math.floor(timestamp / 1000);
 }
 
 /* ----------------------------------------
@@ -66,16 +161,21 @@ type ArtworkCacheEntry = {
   updatedAt: number;
 };
 
-const ARTWORK_CACHE_TTL = 1000 * 60 * 60 * 6; // 6 hours
+const ARTWORK_CACHE_TTL = 1000 * 60 * 60 * 6;
 const artworkCache = new Map<string, ArtworkCacheEntry>();
 
-function getCachedArtwork(key: string): string | null {
+function getCachedArtwork(
+  key: string,
+): string | null | undefined {
   const entry = artworkCache.get(key);
-  if (!entry) return null;
+
+  if (!entry) {
+    return undefined;
+  }
 
   if (Date.now() - entry.updatedAt > ARTWORK_CACHE_TTL) {
     artworkCache.delete(key);
-    return null;
+    return undefined;
   }
 
   return entry.artwork;
@@ -83,7 +183,7 @@ function getCachedArtwork(key: string): string | null {
 
 function setCachedArtwork(
   key: string,
-  artwork: string | null
+  artwork: string | null,
 ) {
   artworkCache.set(key, {
     artwork,
@@ -97,55 +197,108 @@ function setCachedArtwork(
 
 export async function GET() {
   try {
-    const res = await fetch(
-      "https://a12.asurahosting.com/api/nowplaying/307",
-      { cache: "no-store" }
+    /*
+     * Status endpoint provides:
+     * - online/offline status
+     * - source type
+     * - history
+     *
+     * Current-track endpoint provides:
+     * - separate artist/title fields
+     * - improved artwork fields
+     */
+    const [statusData, currentTrackData] = await Promise.all([
+      fetchJson<RadioCoStatusResponse>(STATUS_URL),
+
+      fetchJson<RadioCoCurrentTrackResponse>(
+        CURRENT_TRACK_URL,
+      ).catch((error) => {
+        console.warn(
+          "Radio.co current-track endpoint unavailable:",
+          error,
+        );
+
+        return null;
+      }),
+    ]);
+
+    const currentTrack = currentTrackData?.data;
+
+    const fallbackTrack = splitRadioCoTrackTitle(
+      statusData.current_track?.title,
     );
 
-    if (!res.ok) {
-      throw new Error("AzuraCast unavailable");
-    }
+    const artist =
+      currentTrack?.track_artist?.trim() ||
+      fallbackTrack.artist;
 
-    const data: AzuraCastResponse = await res.json();
-    const now = data.now_playing?.song;
+    const title =
+      currentTrack?.track_title?.trim() ||
+      fallbackTrack.title;
+
+    const isOnline =
+      statusData.status?.toLowerCase() === "online";
+
+    const sourceType =
+      statusData.source?.type?.toLowerCase() ?? "";
 
     const isLive =
-      data.is_online === true &&
-      (data.live?.is_live === true ||
-        data.now_playing?.is_live === true);
+      isOnline &&
+      (sourceType === "live" ||
+        statusData.source?.collaborator != null);
 
     /* ----------------------------------------
        Artwork Resolution Order
-       1. AzuraCast real art
-       2. Spotify (normalized + cached)
-       3. Default
+       1. Radio.co track artwork
+       2. Spotify artwork
+       3. Default artwork
     ----------------------------------------- */
 
     let artwork: string | null =
-      now?.art &&
-      !now.art.includes("generic_song")
-        ? now.art
-        : null;
+      currentTrack?.artwork_urls?.large ??
+      currentTrack?.artwork_urls?.standard ??
+      statusData.current_track?.artwork_url_large ??
+      statusData.current_track?.artwork_url ??
+      null;
 
-    if (!artwork && now?.artist && now?.title) {
-      const normalized = normalizeTrack(
-        now.artist,
-        now.title
-      );
+    /*
+     * Radio.co may return the station logo when track
+     * artwork is unavailable. Ignore it so Spotify can
+     * attempt to find the actual album artwork.
+     */
+    if (
+      artwork &&
+      statusData.logo_url &&
+      artwork === statusData.logo_url
+    ) {
+      artwork = null;
+    }
 
-      const cacheKey = `${normalized.artist}|${normalized.title}`;
+    if (!artwork && artist && title) {
+      const normalized = normalizeTrack(artist, title);
 
-      const cached = getCachedArtwork(cacheKey);
-      if (cached !== null) {
-        artwork = cached;
+      const cacheKey =
+        `${normalized.artist}|${normalized.title}`.toLowerCase();
+
+      const cachedArtwork = getCachedArtwork(cacheKey);
+
+      if (cachedArtwork !== undefined) {
+        artwork = cachedArtwork;
       } else {
-        const spotifyArt = await getSpotifyArtwork(
-          normalized.artist,
-          normalized.title
-        );
+        try {
+          const spotifyArtwork = await getSpotifyArtwork(
+            normalized.artist,
+            normalized.title,
+          );
 
-        setCachedArtwork(cacheKey, spotifyArt);
-        artwork = spotifyArt;
+          setCachedArtwork(cacheKey, spotifyArtwork);
+          artwork = spotifyArtwork;
+        } catch (error) {
+          console.warn(
+            "Spotify artwork lookup failed:",
+            error,
+          );
+        }
       }
     }
 
@@ -153,33 +306,63 @@ export async function GET() {
       artwork = "/images/player/default-artwork.jpg";
     }
 
-    return NextResponse.json({
-      nowPlaying: {
-        artist: now?.artist ?? "",
-        title: now?.title ?? "",
-        artwork,
-        isLive,
-        mode: isLive ? "LIVE" : "AUTO",
+    const history =
+      statusData.history?.slice(0, 5).map((item) => {
+        const track = splitRadioCoTrackTitle(item.title);
+
+        return {
+          artist: track.artist,
+          title: track.title,
+          playedAt: toUnixSeconds(item.start_time),
+        };
+      }) ?? [];
+
+    return NextResponse.json(
+      {
+        nowPlaying: {
+          artist,
+          title,
+          artwork,
+          isLive,
+          mode: isLive ? "LIVE" : isOnline ? "AUTO" : "OFFLINE",
+        },
+
+        /*
+         * Radio.co's documented public status response does not
+         * include the current listener count.
+         */
+        listeners: 0,
+
+        history,
       },
-      listeners: data.listeners?.current ?? 0,
-      history:
-        data.song_history?.slice(0, 5).map((h) => ({
-          artist: h.song.artist,
-          title: h.song.title,
-          playedAt: h.played_at,
-        })) ?? [],
-    });
-  } catch {
-    return NextResponse.json({
-      nowPlaying: {
-        artist: "",
-        title: "",
-        artwork: "/images/player/default-artwork.jpg",
-        isLive: false,
-        mode: "OFFLINE",
+      {
+        headers: {
+          "Cache-Control":
+            "public, s-maxage=15, stale-while-revalidate=45",
+        },
       },
-      listeners: 0,
-      history: [],
-    });
+    );
+  } catch (error) {
+    console.error("Radio now-playing route failed:", error);
+
+    return NextResponse.json(
+      {
+        nowPlaying: {
+          artist: "",
+          title: "",
+          artwork: "/images/player/default-artwork.jpg",
+          isLive: false,
+          mode: "OFFLINE",
+        },
+        listeners: 0,
+        history: [],
+      },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      },
+    );
   }
 }
