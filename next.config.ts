@@ -38,6 +38,11 @@ const nextConfig: NextConfig = {
         hostname: 'images.unsplash.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cms.wavenation.online',
+        pathname: '/**',
+      },
 
       // --- SPOTIFY IMAGE CDNS ---
       {
